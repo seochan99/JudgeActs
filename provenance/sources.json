@@ -1,0 +1,20 @@
+{
+  "fetched_utc": "2026-09-30T11:04:52.461494+00:00",
+  "dataset": {
+    "id": "mair-lab/CulturalFrames",
+    "revision": "7a44117634da41d438411b21cecf3467ac782da7",
+    "license": "NOT_DECLARED_IN_CARD"
+  },
+  "models": {
+    "qwen": {
+      "id": "Qwen/Qwen3-VL-4B-Instruct",
+      "revision": "ebb281ec70b05090aa6165b016eac8ec08e71b17",
+      "license": "apache-2.0"
+    },
+    "smol": {
+      "id": "HuggingFaceTB/SmolVLM2-2.2B-Instruct",
+      "revision": "482adb537c021c86670beed01cd58990d01e72e4",
+      "license": "apache-2.0"
+    }
+  }
+}

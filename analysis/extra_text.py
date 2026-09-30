@@ -11,7 +11,8 @@ GEN = ROOT / "paper/generated"
 
 
 def v(x):
-    return f"{x:.3f}"
+    x = 0.0 if abs(x) < 5e-4 else x
+    return f"$-${abs(x):.3f}" if x < 0 else f"{x:.3f}"
 
 
 def p(x):
@@ -33,7 +34,7 @@ def baselines_text(b, rob):
     out = [
         "Would a simpler scorer that cannot be influenced by order do as well? "
         f"We score each candidate by CLIP prompt--image similarity \\citep{{radford2021clip,hessel2021clipscore}} and return the highest-scoring image. "
-        f"This content-only selector has regret {v(c['regret'])} (95\\% CI {ci(c['regret_ci'])}) and gain over random "
+        f"This CLIP baseline has regret {v(c['regret'])} (95\\% CI {ci(c['regret_ci'])}) and gain over random "
         f"{v(c['gain'])} {ci(c['gain_ci'])}, compared with Qwen's {v(q['regret'])} and {v(q['gain'])}; the paired "
         f"difference in gain favors CLIP by {v(d['mean'])} {ci(d['ci'])}. CLIP also selects a below-mean image less often "
         f"({p(c['hsr'])} versus {p(q['hsr'])}). Yet it raises the stereotype rating relative to random by "
@@ -65,9 +66,9 @@ def ablations_text(a):
         return "Ablation results are being computed."
     co, ol, r4 = (a[k] for k in need)
     parts = [
-        "The slot preference could be an artifact of our interface rather than of the judge. We ran three post-hoc "
-        "ablations with Qwen on all 300 prompts, leaving the frozen main results unchanged (Figure~\ref{fig:ablations}, "
-        "Appendix Table~\ref{tab:ablations}).",
+        "The position bias could be an artifact of our interface rather than of the judge. We ran three post-hoc "
+        "ablations with Qwen on all 300 prompts, leaving the frozen main results unchanged (Figure~\\ref{fig:ablations}, "
+        "Appendix Table~\\ref{tab:ablations}).",
         f"\\textit{{Output format.}} The main contract asks for a full ranking whose first entry is the choice, which could "
         f"prime the first label. With a choice-only contract, Qwen still picks the first slot in {p(co['slot_first_rate'])} "
         f"of calls (uniform {p(co['slot_first_uniform'])}) and changes its choice across orders on {p(co['flip_rate'])} of "
@@ -85,11 +86,11 @@ def ablations_text(a):
     persists = all(x["slot_first_rate"] > x["slot_first_uniform"] + 0.05 for x in (co, ol, r4))
     gate_ok = all(x.get("unanimous_gain_ci", [0])[0] > 0 for x in (co, ol, r4) if "unanimous_gain_ci" in x)
     if persists and gate_ok:
-        parts.append("In every variant the preference for the first slot remains and unanimity still keeps prompts on which "
+        parts.append("In every variant the bias toward the first slot remains and unanimity still keeps prompts on which "
                      "the judge beats random. The preference is a property of the judge, not of the letter labels or the "
                      "ranking format.")
     elif persists:
-        parts.append("In every variant the preference for the first slot remains, so it is not produced by the letter "
+        parts.append("In every variant the bias toward the first slot remains, so it is not produced by the letter "
                      "labels or the ranking format.")
     else:
         parts.append("The preference weakens in at least one variant, so part of it depends on the interface; we report "

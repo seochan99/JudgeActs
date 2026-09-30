@@ -12,9 +12,9 @@ from . import style
 RES = ROOT / "results/main"
 DEST = ROOT / "paper/figures"
 GEN = ROOT / "paper/generated"
-CONDITIONS = [("reference_main", "Main"), ("choice_only", "Choice\nonly"),
-              ("opaque_labels", "Opaque\nlabels"), ("rotation4", "4\norders")]
-LONG = {"Main": "Main (3 orders)", "Choice\nonly": "Choice-only format", "Opaque\nlabels": "Opaque labels",
+CONDITIONS = [("reference_main", "Main"), ("choice_only", "No\nranking"),
+              ("opaque_labels", "Opaque\ncodes"), ("rotation4", "4\norders")]
+LONG = {"Main": "Main (3 orders)", "No\nranking": "No ranking (choice-only format)", "Opaque\ncodes": "Opaque codes (no letters)",
         "4\norders": "Four orders (4-image pools)"}
 
 
@@ -34,7 +34,7 @@ def flat(a, key):
 def figure(a):
     style.apply()
     rows = [(label, flat(a, key)) for key, label in CONDITIONS if key in a]
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(style_width := 3.33, 1.95), gridspec_kw={"wspace": .55})
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(3.33, 2.0), gridspec_kw={"wspace": .5})
     x = np.arange(len(rows))
     ax1.bar(x, [r["slot_first_rate"] for _, r in rows], width=.62, color=style.QWEN)
     for i, (_, r) in enumerate(rows):

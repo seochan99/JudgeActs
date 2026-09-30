@@ -2,7 +2,10 @@
 
 
 def val(x):
-    return "NA" if x is None else f"{x:.3f}"
+    if x is None:
+        return "NA"
+    x = 0.0 if abs(x) < 5e-4 else x
+    return f"$-${abs(x):.3f}" if x < 0 else f"{x:.3f}"
 
 
 def pct(x):
@@ -55,9 +58,9 @@ def completed(summary, country, decomposition, order, status, categories, positi
         + (" and falls short of a simple CLIP similarity baseline" if clip and clip["gain"] > q["gain"] else "")
         + f". Its choices show strong position bias: it picks the first image shown {ratio:.1f} times as often as chance, "
         f"and reordering the same candidates changes its choice on {round(100 * flip)}\\% of prompts. "
-        "Self-consistency is nonetheless informative: decisions that survive reordering are much better than random, "
+        "Agreement across orders is nonetheless informative: decisions that survive reordering are much better than random, "
         "whereas agreement with a second, weaker judge keeps the wrong decisions. Both the judge and the CLIP baseline "
-        "reduce missing cultural details but slightly increase stereotyped content. We argue that judges should be "
+        "reduce missing cultural details but slightly raise stereotype ratings. We argue that judges should be "
         "evaluated by what they choose, with order sensitivity reported and cultural errors measured separately from "
         "prompt alignment."
     )
@@ -102,6 +105,12 @@ def completed(summary, country, decomposition, order, status, categories, positi
             f"easier: their candidates differ more in rating than the rejected ones (mean best-minus-worst range "
             f"{val(un['score_range'])} versus {val(rest['score_range'])}), leaving more room for error. The gate only filters "
             "prompts; on kept prompts the choice is unchanged."
+        )
+    two = by.get("Qwen agree 2/3")
+    if two:
+        gates.append(
+            f"The two-of-three gate is an intermediate operating point: it keeps {pct(two['coverage'])} of prompts with gain "
+            f"{val(two['gain'])} {ci(two, 'gain')} (Appendix Table~\\ref{{tab:policies}})."
         )
     if majority:
         gates.append(
@@ -150,8 +159,8 @@ def completed(summary, country, decomposition, order, status, categories, positi
              r"Policy & $n$ & Cov.\,(\%) & Align. & Regret [95\% CI] & Gain over random [95\% CI] & BMR\,(\%) & Best\,(\%) & Worst\\",
              r"\midrule"]
     rows = [("Random", "Random"), ("Qwen", "Qwen"), ("Qwen majority", "Qwen, majority of 3 orders"),
-            ("Qwen unanimous", "Qwen, unanimous gate"), ("Smol", "Smol"), ("Cross-model", "Cross-model gate"),
-            ("CLIP", "CLIP similarity"), ("Oracle", "Oracle")]
+            ("Qwen unanimous", "Qwen, unanimity gate (3/3 orders)"), ("Smol", "Smol"), ("Cross-model", "Cross-model gate"),
+            ("CLIP", "CLIP baseline"), ("Oracle", "Oracle")]
     for key, name in rows:
         r = by.get(key) or (baselines["policies"].get(key) if baselines else None)
         if not r:
@@ -186,7 +195,8 @@ def completed(summary, country, decomposition, order, status, categories, positi
         ) + (
             f"Its choices depend strongly on presentation order: it picks the first-listed image in {pct(qa['rate'])} of calls. "
             "Agreement across orders separates prompts where the judge adds value from prompts where it falls below "
-            "chance, whereas agreement with a weaker judge does not. Neither selector avoids stereotyped images."
+            "chance, whereas agreement with a weaker judge does not. Neither selector reduces stereotype ratings; both slightly raise them, "
+            "and for the VLM judge this increase is not robust to multiple-comparison adjustment."
         ),
         "table_main": "\n".join(table),
         "table_decomposition": "\n".join(decomposition_table),

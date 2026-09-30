@@ -109,8 +109,8 @@ def _panel_regret(ax, summary):
 
 GATE_ROWS = [  # (policy key, short label, group)
     ("Qwen", "All prompts", None),
-    ("Qwen unanimous", "3/3 orders agree", "Order gate"),
-    ("Qwen, not unanimous", "Orders disagree", "Order gate"),
+    ("Qwen unanimous", "3/3 orders agree", "Unanimity gate"),
+    ("Qwen, not unanimous", "Orders disagree", "Unanimity gate"),
     ("Cross-model", "Judges agree", "Cross-model gate"),
     ("Qwen, judges disagree", "Judges disagree", "Cross-model gate"),
 ]
@@ -143,11 +143,11 @@ def _panel_gates(ax, summary):
     ax.tick_params(axis="y", length=0)
     ax.set_ylim(5.75, -.5)
     tr = ax.get_yaxis_transform()
-    for y, g in ((ys[1] - .78, "Order gate"),
+    for y, g in ((ys[1] - .78, "Unanimity gate"),
                  (ys[3] - .78, "Cross-model gate")):
         ax.text(.015, y, g, transform=tr, ha="left", va="center", fontsize=6.3,
                 color=AGREE, fontweight="bold")
-    ax.set_xlabel("Gain over random (regret reduction)")
+    ax.set_xlabel("Gain over random")
     ax.set_title("(b) Gain over random: kept vs. rejected")
     _grid(ax, "x")
 
@@ -215,8 +215,8 @@ def country_bars(country):
 # --------------------------------------------------------- cultural_deltas
 def cultural_deltas(summary):
     r = summary["Qwen"]
-    items = [("stereotype", "Stereotype"), ("missing_explicit", "Missing explicit\ncue"),
-             ("missing_implicit", "Missing implicit\ncue")]
+    items = [("stereotype", "Stereotype"), ("missing_explicit", "Missing explicit\nexpectation"),
+             ("missing_implicit", "Missing implicit\nexpectation")]
     ys = np.arange(len(items))
     fig, ax = plt.subplots(figsize=(COL, 1.75))
     for y, (k, _) in zip(ys, items):

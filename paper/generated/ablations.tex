@@ -1,3 +1,9 @@
-The slot preference could be induced by our interface rather than by the judge. We ran three post-hoc ablations with Qwen, leaving the frozen main results unchanged.
+The slot preference could be an artifact of our interface rather than of the judge. We ran three post-hoc ablations with Qwen on all 300 prompts, leaving the frozen main results unchanged (Figure~ef{fig:ablations}, Appendix Table~ef{tab:ablations}).
 
-\textit{Full rotation.} Adding the fourth rotation for the 153 four-image pools places every image in every slot once. Slot shares are then A 51.0\%, B 20.8\%, C 14.7\%, D 13.6\% (uniform 25.0\%); unanimity over four orders keeps 28.8\% of these pools with regret 0.095, and the order-plurality policy has gain 0.062 [0.031, 0.092].
+\textit{Output format.} The main contract asks for a full ranking whose first entry is the choice, which could prime the first label. With a choice-only contract, Qwen still picks the first slot in 44.8\% of calls (uniform 27.8\%) and changes its choice across orders on 54.0\% of prompts. Its gain over random is 0.047 [0.024, 0.069], and unanimity keeps 46.0\% of prompts with gain 0.123 [0.094, 0.153].
+
+\textit{Label identity.} Replacing A/B/C/D with opaque two-character codes unrelated to order, Qwen picks the first-presented image in 51.8\% of calls (uniform 27.8\%) and changes its choice on 62.7\% of prompts, with gain 0.021 [-0.001, 0.044].
+
+\textit{Full rotation.} Adding a fourth rotation for the 200 four-image pools places every image in every slot once. Slot shares are then A 52.5\%, B 20.4\%, C 14.4\%, D 12.8\% (uniform 25.0\%). Unanimity over four orders keeps 27.5\% of these pools with regret 0.095 and gain 0.127 [0.073, 0.178], and voting over the four orders gives gain 0.061 [0.034, 0.087].
+
+In every variant the preference for the first slot remains and unanimity still keeps prompts on which the judge beats random. The preference is a property of the judge, not of the letter labels or the ranking format.

@@ -186,7 +186,7 @@
     "figure": "paper/figures/gallery_appendix.pdf",
     "size_in": [
       7.0,
-      8.41
+      6.105
     ],
     "rule": "Per country (alphabetical), the first prompt in data/derived/main.jsonl order with 4 candidates (fallback 3). Representative, unfiltered sample: chosen by manifest position only, not by judge outcome or image content. Picks are permutation-0 (original order) selections from runs/qwen_main.jsonl and runs/smol_main.jsonl.",
     "rows": [

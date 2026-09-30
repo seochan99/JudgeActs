@@ -1,0 +1,123 @@
+{
+ "models": {
+  "qwen": {
+   "label": "Qwen3-VL-4B",
+   "calls": 900,
+   "share": {
+    "A": 0.4878,
+    "B": 0.2489,
+    "C": 0.1933,
+    "D": 0.07
+   },
+   "uniform": {
+    "A": 0.2778,
+    "B": 0.2778,
+    "C": 0.2778,
+    "D": 0.1667
+   }
+  },
+  "smol": {
+   "label": "SmolVLM2-2.2B",
+   "calls": 886,
+   "share": {
+    "A": 0.43,
+    "B": 0.5034,
+    "C": 0.0418,
+    "D": 0.0248
+   },
+   "uniform": {
+    "A": 0.2777,
+    "B": 0.2777,
+    "C": 0.2777,
+    "D": 0.167
+   }
+  }
+ },
+ "chi2": {
+  "qwen": 219.2,
+  "smol": 521.5
+ },
+ "variants": [
+  {
+   "key": "main",
+   "label": "Main",
+   "note": "choice and ranking, 3 orders",
+   "calls": 900,
+   "share": {
+    "A": 0.4878,
+    "B": 0.2489,
+    "C": 0.1933,
+    "D": 0.07
+   },
+   "uniform": {
+    "A": 0.2778,
+    "B": 0.2778,
+    "C": 0.2778,
+    "D": 0.1667
+   },
+   "first": 0.4878,
+   "first_uniform": 0.2778
+  },
+  {
+   "key": "choice_only",
+   "label": "Choice only",
+   "note": "no ranking in the output",
+   "calls": 900,
+   "first": 0.4478,
+   "first_uniform": 0.2778,
+   "share": {
+    "A": 0.4478,
+    "B": 0.2656,
+    "C": 0.1978,
+    "D": 0.0889
+   },
+   "uniform": {
+    "A": 0.2778,
+    "B": 0.2778,
+    "C": 0.2778,
+    "D": 0.1667
+   }
+  },
+  {
+   "key": "opaque_labels",
+   "label": "Opaque labels",
+   "note": "two-character codes instead of letters",
+   "calls": 900,
+   "first": 0.5178,
+   "first_uniform": 0.2778,
+   "share": {
+    "A": 0.5178,
+    "B": 0.2389,
+    "C": 0.1711,
+    "D": 0.0722
+   },
+   "uniform": {
+    "A": 0.2778,
+    "B": 0.2778,
+    "C": 0.2778,
+    "D": 0.1667
+   }
+  },
+  {
+   "key": "rotation4",
+   "label": "4 orders",
+   "note": "fourth rotation, 200 four-image pools",
+   "calls": 200,
+   "first": 0.525,
+   "first_uniform": 0.25,
+   "share": {
+    "A": 0.525,
+    "B": 0.2037,
+    "C": 0.1437,
+    "D": 0.1275
+   },
+   "uniform": {
+    "A": 0.25,
+    "B": 0.25,
+    "C": 0.25,
+    "D": 0.25
+   }
+  }
+ ],
+ "omitted": []
+}

@@ -3,7 +3,7 @@
 **When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts**
 Huichan Seo · Independent Researcher
 
-[Project page](https://seochan99.github.io/JudgeActs/) · Paper (coming soon)
+[Project page](https://seochan99.github.io/JudgeActs/) · [Data](https://huggingface.co/datasets/seochan99/JudgeActs) · Paper (coming soon)
 
 When a vision-language model (VLM) picks which generated image a user receives, its choice is an action, not a score. This repository audits such choices on 300 culturally situated prompts from CulturalFrames. Each returned image is compared with released human ratings the judge never sees, and with exact random choice on the same candidate pool, under three rotations of candidate order.
 

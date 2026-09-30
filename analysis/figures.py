@@ -6,6 +6,7 @@ from .framework_figure import main as render_framework
 from .gallery_figure import main as render_gallery
 from .result_figures import main as render_results
 from .appendix_tables import main as render_appendix_tables
+from .ablation_figure import main as render_ablations
 
 
 def main():
@@ -16,6 +17,17 @@ def main():
     render_gallery()
     render_results()
     render_appendix_tables()
+    render_ablations()
+    crop_all()
+
+
+def crop_all():
+    """Trim blank page margins so every figure fills the width it is placed at."""
+    import subprocess
+    from src.common import ROOT
+    for pdf in sorted((ROOT / "paper/figures").glob("*.pdf")):
+        subprocess.run(["pdfcrop", "--margins", "2", str(pdf), str(pdf)], check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 if __name__ == "__main__":

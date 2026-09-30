@@ -60,38 +60,41 @@ def baselines_text(b, rob):
 
 
 def ablations_text(a):
-    if not a:
+    need = ("choice_only", "opaque_labels", "rotation4")
+    if not a or any(k not in a or "slot_first_rate" not in a[k] for k in need) or a["opaque_labels"]["calls"] < 900:
         return "Ablation results are being computed."
-    parts = []
-    base = a.get("main_reference", {})
-    co, ol, r4 = a.get("choice_only"), a.get("opaque_labels"), a.get("rotation4")
-    parts.append(
-        "The slot preference could be induced by our interface rather than by the judge. We ran three post-hoc ablations "
-        "with Qwen, leaving the frozen main results unchanged."
-    )
-    if co:
-        parts.append(
-            f"\\textit{{Output schema.}} The main contract asks for a full ranking whose first entry is the choice, which could "
-            f"prime the first label. With a choice-only contract, Qwen still selects the first slot in {p(co['slot_first_rate'])} "
-            f"of calls (uniform {p(co['slot_first_uniform'])}), its choice changes across orders for {p(co['flip_rate'])} of prompts, "
-            f"and its gain over random is {v(co['gain'])} {ci(co['gain_ci'])}."
-        )
-    if ol:
-        parts.append(
-            f"\\textit{{Label identity.}} Replacing A/B/C/D with opaque two-character codes that carry no order, Qwen selects the "
-            f"first-presented image in {p(ol['slot_first_rate'])} of calls (uniform {p(ol['slot_first_uniform'])}) and changes its "
-            f"choice across orders for {p(ol['flip_rate'])} of prompts, with gain {v(ol['gain'])} {ci(ol['gain_ci'])}."
-        )
-    if r4:
-        parts.append(
-            f"\\textit{{Full rotation.}} Adding the fourth rotation for the {r4['n_prompts']} four-image pools places every image in "
-            f"every slot once. Slot shares are then {', '.join(f'{k} {p(x)}' for k, x in r4['slot_rates'].items())} "
-            f"(uniform 25.0\\%); unanimity over four orders keeps {p(r4['unanimous_coverage'])} of these pools with regret "
-            f"{v(r4['unanimous_regret'])}, and the order-plurality policy has gain {v(r4['plurality_gain'])} "
-            f"{ci(r4['plurality_gain_ci'])}."
-        )
-    parts.append(a.get("conclusion", ""))
-    return "\n\n".join(x for x in parts if x)
+    co, ol, r4 = (a[k] for k in need)
+    parts = [
+        "The slot preference could be an artifact of our interface rather than of the judge. We ran three post-hoc "
+        "ablations with Qwen on all 300 prompts, leaving the frozen main results unchanged (Figure~\ref{fig:ablations}, "
+        "Appendix Table~\ref{tab:ablations}).",
+        f"\\textit{{Output format.}} The main contract asks for a full ranking whose first entry is the choice, which could "
+        f"prime the first label. With a choice-only contract, Qwen still picks the first slot in {p(co['slot_first_rate'])} "
+        f"of calls (uniform {p(co['slot_first_uniform'])}) and changes its choice across orders on {p(co['flip_rate'])} of "
+        f"prompts. Its gain over random is {v(co['gain'])} {ci(co['gain_ci'])}, and unanimity keeps {p(co['unanimous_coverage'])} "
+        f"of prompts with gain {v(co['unanimous_gain'])} {ci(co['unanimous_gain_ci'])}.",
+        f"\\textit{{Label identity.}} Replacing A/B/C/D with opaque two-character codes unrelated to order, Qwen picks the "
+        f"first-presented image in {p(ol['slot_first_rate'])} of calls (uniform {p(ol['slot_first_uniform'])}) and changes "
+        f"its choice on {p(ol['flip_rate'])} of prompts, with gain {v(ol['gain'])} {ci(ol['gain_ci'])}.",
+        f"\\textit{{Full rotation.}} Adding a fourth rotation for the {r4['n_prompts']} four-image pools places every image "
+        f"in every slot once. Slot shares are then " + ", ".join(f"{k} {p(x)}" for k, x in r4["slot_rates"].items())
+        + f" (uniform {p(r4['slot_first_uniform'])}). Unanimity over four orders keeps {p(r4['unanimous_coverage'])} of these "
+        f"pools with regret {v(r4['unanimous_regret'])} and gain {v(r4['unanimous_gain'])} {ci(r4['unanimous_gain_ci'])}, and "
+        f"voting over the four orders gives gain {v(r4['plurality_gain'])} {ci(r4['plurality_gain_ci'])}.",
+    ]
+    persists = all(x["slot_first_rate"] > x["slot_first_uniform"] + 0.05 for x in (co, ol, r4))
+    gate_ok = all(x.get("unanimous_gain_ci", [0])[0] > 0 for x in (co, ol, r4) if "unanimous_gain_ci" in x)
+    if persists and gate_ok:
+        parts.append("In every variant the preference for the first slot remains and unanimity still keeps prompts on which "
+                     "the judge beats random. The preference is a property of the judge, not of the letter labels or the "
+                     "ranking format.")
+    elif persists:
+        parts.append("In every variant the preference for the first slot remains, so it is not produced by the letter "
+                     "labels or the ranking format.")
+    else:
+        parts.append("The preference weakens in at least one variant, so part of it depends on the interface; we report "
+                     "each variant separately.")
+    return "\n\n".join(parts)
 
 
 def main():

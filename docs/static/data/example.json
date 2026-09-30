@@ -1,0 +1,77 @@
+{
+ "prompt_id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23",
+ "prompt": "Chilean family lunch, children eagerly finishing homemade pastel de choclo",
+ "country": "Chile",
+ "category": "etiquette",
+ "judge": "Qwen3-VL-4B",
+ "candidates": [
+  {
+   "id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_SD35",
+   "key": "SD35",
+   "generator": "SD-3.5-Large",
+   "src": "static/images/example/sd35.jpg",
+   "rating": 0.0,
+   "ratings": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "n": 3
+  },
+  {
+   "id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_flux",
+   "key": "flux",
+   "generator": "Flux.1-Dev",
+   "src": "static/images/example/flux.jpg",
+   "rating": 0.5,
+   "ratings": [
+    0.5,
+    0.5,
+    0.5
+   ],
+   "n": 3
+  },
+  {
+   "id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_gpt-image",
+   "key": "gpt-image",
+   "generator": "GPT-Image",
+   "src": "static/images/example/gpt-image.jpg",
+   "rating": 0.8333,
+   "ratings": [
+    1.0,
+    1.0,
+    0.5
+   ],
+   "n": 3
+  }
+ ],
+ "orders": [
+  {
+   "slots": {
+    "A": "SD35",
+    "B": "flux",
+    "C": "gpt-image"
+   },
+   "choice": "A",
+   "selected": "SD35"
+  },
+  {
+   "slots": {
+    "A": "flux",
+    "B": "gpt-image",
+    "C": "SD35"
+   },
+   "choice": "A",
+   "selected": "flux"
+  },
+  {
+   "slots": {
+    "A": "gpt-image",
+    "B": "SD35",
+    "C": "flux"
+   },
+   "choice": "A",
+   "selected": "gpt-image"
+  }
+ ]
+}

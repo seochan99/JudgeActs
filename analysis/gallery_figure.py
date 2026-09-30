@@ -188,6 +188,28 @@ class Canvas:
         for ext, kw in [("pdf", {}), ("png", {"dpi": 300})]:
             self.fig.savefig(FIG_DIR / f"{stem}.{ext}", **kw)
         plt.close(self.fig)
+        jpeg_pdf(FIG_DIR / f"{stem}.pdf")
+
+
+def jpeg_pdf(path, quality=90):
+    """Re-encode embedded raster thumbnails as JPEG (matplotlib writes lossless Flate)."""
+    import io
+    import pymupdf
+    doc = pymupdf.open(path)
+    for page in doc:
+        for info in page.get_images(full=True):
+            xref = info[0]
+            pix = pymupdf.Pixmap(doc, xref)
+            if pix.alpha or pix.n != 3 or min(pix.width, pix.height) < 32:
+                continue
+            im = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+            buf = io.BytesIO()
+            im.save(buf, "JPEG", quality=quality, optimize=True)
+            page.replace_image(xref, stream=buf.getvalue())
+    tmp = path.with_suffix(".tmp.pdf")
+    doc.save(tmp, garbage=4, deflate=True)
+    doc.close()
+    tmp.replace(path)
 
 
 def fit_lines(text, width_chars, max_lines):
@@ -272,56 +294,57 @@ def teaser(selected, picks):
 
 # ----------------------------------------------------------------------------- figure B
 def gallery(groups, picks):
-    W = 7.0
-    s, g = 0.72, 0.09
-    pitch = s + 0.085
-    lab_w, txt_w = 0.22, 1.95
-    ncol = 4
-    grid_w = lab_w + txt_w + ncol * s + (ncol - 1) * g
-    left = (W - grid_w) / 2
-    top0 = 0.06
-    H = top0 + len(groups) * pitch + 0.30
+    """Two columns of five countries (alphabetical, top-to-bottom then left-to-right)."""
+    W, s, g, col_gap, lab_w = 7.0, 0.715, 0.07, 0.30, 0.20
+    half_w = lab_w + 4 * s + 3 * g
+    left = (W - (2 * half_w + col_gap)) / 2
+    head, after = 0.37, 0.09
+    pitch = head + s + after
+    n_rows = (len(groups) + 1) // 2
+    top0 = 0.02
+    grid_bottom = top0 + n_rows * pitch - after
+    H = grid_bottom + 0.30
     cv = Canvas(W, H)
     records = []
-    for r, grp in enumerate(groups):
+    for i, grp in enumerate(groups):
+        col, r = divmod(i, n_rows)
+        x0 = left + col * (half_w + col_gap)
+        ty = top0 + r * pitch
+        iy = ty + head
         rq, rs = picks["qwen"].get(grp["prompt_id"]), picks["smol"].get(grp["prompt_id"])
         cands = presented(grp, rq)
         q, sm = pick(rq), pick(rs)
         us = [c["utility"] for c in cands]
         top_u, mean = max(us), float(np.mean(us))
-        ty = top0 + r * pitch
         if r:
-            cv.fig.add_artist(Line2D([left, left + grid_w], [cv.y(ty - 0.045)] * 2,
-                                     transform=cv.tr, color=GRID, lw=0.6))
-        cv.text(left + 0.07, ty + s / 2, country_name(grp["country"]), fontsize=7.8,
-                weight="bold", rotation=90, ha="center", va="center")
-        tx = left + lab_w
-        lines = fit_lines(grp["prompt"], 40, 3)
-        cv.text(tx, ty + 0.02, "\n".join(lines), fontsize=6.6, style="italic",
-                va="top", linespacing=1.25)
-        cv.text(tx, ty + s - 0.02,
-                f"{grp['category'].replace('-', ' ').replace('_', ' ')}  ·  "
-                f"pool mean {mean:.2f}", fontsize=6.0, color=MUTED, va="bottom")
-        ix0 = tx + txt_w
-        for i, c in enumerate(cands):
-            x = ix0 + i * (s + g)
-            cv.image(thumb(c["image"], 240), x, ty, s)
-            if c["id"] == q and c["id"] == sm:
-                cv.frame(x, ty, s, QWEN, lw=2.0, pad=0.04, rad=0.05)
-                cv.frame(x, ty, s, SMOL, lw=1.6, pad=0.012, rad=0.03)
-            elif c["id"] == q:
-                cv.frame(x, ty, s, QWEN, lw=2.0)
-            elif c["id"] == sm:
-                cv.frame(x, ty, s, SMOL, lw=2.0)
-            bx = x + s - 0.085
-            if c["id"] == sm:
-                cv.icon(bx, ty + 0.085, 0.058, "letter", SMOL, "S")
-                bx -= 0.135
+            cv.fig.add_artist(Line2D([x0, x0 + half_w], [cv.y(ty - after / 2 - 0.005)] * 2,
+                                     transform=cv.tr, color=GRID, lw=0.5))
+        cv.text(x0 + 0.085, iy + s / 2, country_name(grp["country"]), fontsize=8.5,
+                weight="bold", rotation=90, ha="center", va="center", **SERIF)
+        tx = x0 + lab_w
+        cv.text(tx, iy - 0.165, "\n".join(fit_lines(f"“{grp['prompt']}”", 70, 2)),
+                fontsize=6.9, style="italic", va="bottom", linespacing=1.12, **SERIF)
+        cv.text(tx, iy - 0.045,
+                f"{grp['category'].replace('-', ' ').replace('_', ' ')}  ·  pool mean {mean:.2f}",
+                fontsize=6.4, color=MUTED, va="bottom", **SERIF)
+        for k, c in enumerate(cands):
+            x = tx + k * (s + g)
+            badges = []
             if c["id"] == q:
-                cv.icon(bx, ty + 0.085, 0.058, "letter", QWEN, "Q")
-            if c["utility"] >= top_u - EPS:
-                cv.icon(x + 0.085, ty + 0.085, 0.058, "check", GOOD)
-            cv.pill(x + 0.05, ty + s - 0.075, f"{c['utility']:.2f}", 6.4)
+                badges.append(("letter", QWEN, "Q"))
+            if c["id"] == sm:
+                badges.append(("letter", SMOL, "S"))
+            frame = QWEN if c["id"] == q else (SMOL if c["id"] == sm else None)
+            tile(cv, thumb(c["image"], 360), x, iy, s, f"{c['utility']:.2f}", frame=frame,
+                 icon_tr=badges or None,
+                 icon_tl=("check", GOOD, None) if c["utility"] >= top_u - EPS else None)
+            if c["id"] == q and c["id"] == sm:  # nested: outer blue (Qwen), inner orange (Smol)
+                p = 0.014
+                cv.fig.add_artist(Rectangle((x + p, cv.y(iy + s) + p), s - 2 * p, s - 2 * p,
+                                            transform=cv.tr, fill=False, edgecolor=SMOL,
+                                            lw=1.8, joinstyle="miter", zorder=6))
+        for k in range(len(cands), 4):
+            placeholder(cv, tx + k * (s + g), iy, s, len(cands))
         records.append(dict(
             country=grp["country"], prompt_id=grp["prompt_id"], prompt=grp["prompt"],
             category=grp["category"], n_candidates=len(cands), pool_mean=mean,
@@ -330,13 +353,14 @@ def gallery(groups, picks):
                 id=c["id"], source_model=c["source_model"], utility=c["utility"],
                 qwen_pick=c["id"] == q, smol_pick=c["id"] == sm,
                 annotation_best=c["utility"] >= top_u - EPS) for c in cands]))
-    ly = top0 + len(groups) * pitch + 0.10
-    cv.legend(ly, [
+    cv.fig.add_artist(Line2D([W / 2] * 2, [cv.y(top0), cv.y(grid_bottom)], transform=cv.tr,
+                             color=GRID, lw=0.7))
+    cv.legend(H - 0.12, [
         ("check", GOOD, None, "highest human rating"),
         ("letter", QWEN, "Q", "Qwen’s pick (original order)"),
         ("letter", SMOL, "S", "Smol’s pick (original order)"),
-        (None, None, None, "number: mean human prompt-alignment (0–1)"),
-    ])
+        (None, None, None, "numbers: mean human prompt-alignment (0–1)"),
+    ], fontsize=7.4, family="Times New Roman")
     cv.save("gallery_appendix")
     return records, (W, H)
 
@@ -430,6 +454,14 @@ def tile(cv, arr, x, top, s, label, frame=None, icon_tr=None, icon_tl=None, fs=6
     cv.text(x + 0.045, top + s - 0.05, label, fontsize=fs, color="white", weight="bold",
             va="bottom", zorder=9,
             bbox=dict(boxstyle="square,pad=0.18", fc=(0, 0, 0, .55), ec="none"))
+
+
+def placeholder(cv, x, top, s, n):
+    """Intentional empty cell for pools smaller than the widest row."""
+    cv.fig.add_artist(Rectangle((x, cv.y(top + s)), s, s, transform=cv.tr, facecolor="#F2F2F2",
+                                edgecolor="#D0D0D0", lw=0.4, zorder=2))
+    cv.text(x + s / 2, top + s / 2, f"{n}-image\npool", fontsize=7, color=MUTED, style="italic",
+            ha="center", va="center", linespacing=1.1, **SERIF)
 
 
 def cand_records(cands, **flags):
@@ -541,6 +573,8 @@ def fig_clip(clip_better, qwen_better, picks):
             tile(cv, thumb(c["image"], 240), x + i * (s + g), iy, s, f"{c['utility']:.2f}",
                  frame=frame, icon_tr=badge or None,
                  icon_tl=("check", GOOD, None) if c["utility"] >= top_u - EPS else None)
+        for i in range(len(cands), 4):
+            placeholder(cv, x + i * (s + g), iy, s, len(cands))
         records.append(dict(
             country=grp["country"], prompt_id=grp["prompt_id"], prompt=grp["prompt"],
             clip_pick=item["clip"], qwen_pick=item["qwen"],
@@ -588,6 +622,8 @@ def fig_stereo(rows, picks):
                  frame=BAD if is_q else None,
                  icon_tr=("cross", BAD, None) if is_q else None,
                  icon_tl=("check", GOOD, None) if c["id"] in item["alts"] else None)
+        for i in range(len(cands), 4):
+            placeholder(cv, x + i * (s + g), iy, s, len(cands))
         records.append(dict(
             country=grp["country"], prompt_id=grp["prompt_id"], prompt=grp["prompt"],
             qwen_pick=item["qwen"], stereotype_gap=item["gap"],

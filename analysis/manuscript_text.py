@@ -44,29 +44,22 @@ def completed(summary, country, decomposition, order, status, categories, positi
     clip = baselines["policies"]["CLIP"] if baselines else None
     dclip = baselines["clip_minus_qwen_gain"] if baselines else None
 
-    abl = ablations or {}
-    co, ol = abl.get("choice_only"), abl.get("opaque_labels")
-    abl_sentence = ""
-    if co and ol and "slot_first_rate" in co and "slot_first_rate" in ol:
-        abl_sentence = (f" The preference persists without a ranking output ({pct(co['slot_first_rate'])}) and with "
-                        f"opaque labels in place of letters ({pct(ol['slot_first_rate'])}).")
+    ratio = qa["rate"] / qa["uniform_rate"]
     abstract = (
-        "Vision-language models (VLMs) increasingly act as selectors: given several generated images, they decide which "
-        "one a user receives. Such judges are usually validated by how well their scores agree with human ratings, which "
-        "says little about the images they actually return. We audit VLM selection as an action. On 300 culturally "
-        "situated prompts, we compare each returned image with released human ratings the judge never sees and with exact "
-        "random choice on the same pool, under three rotations of candidate order. We make three contributions. "
-        "(1) A matched-baseline audit protocol for selectors, released with a deterministic artifact. "
-        f"(2) Evidence that presentation strongly shapes small judges: a 4B-parameter judge picks the first-listed image in "
-        f"{pct(qa['rate'])} of calls ({pct(qa['uniform_rate'])} expected), changes its choice under reordering on {pct(flip)} "
-        f"of prompts, and beats random only slightly (gain {val(q['gain'])}, 95\\% CI {ci(q, 'gain')})"
-        + (f", less than a CLIP similarity scorer ({val(clip['gain'])})." if clip else ".")
-        + abl_sentence
-        + (f" (3) An audit of agreement gates on what they keep and what they reject: requiring agreement across orders keeps "
-           f"{pct(un['coverage'])} of prompts, on which the judge beats random by {val(un['gain'])}, whereas agreement with a "
-           "weaker second judge keeps below-random choices." if un and cross else "")
-        + " Both selectors reduce missing cultural expectations but slightly raise stereotype ratings, so cultural errors "
-        "must be audited separately from alignment."
+        "Vision-language models (VLMs) are increasingly used as judges that pick the best of several generated images, "
+        "so their choices decide what users see. Such judges are usually validated by how well their scores agree with "
+        "human ratings, not by the quality of the images they actually choose. We audit VLM judges as decision-makers. "
+        "On 300 culturally situated prompts, we compare the image a judge returns with human ratings it never sees and with "
+        "random choice from the same candidates, and we repeat every decision with the candidates reordered. "
+        "A 4B-parameter judge improves only marginally on random selection"
+        + (" and falls short of a simple CLIP similarity baseline" if clip and clip["gain"] > q["gain"] else "")
+        + f". Its choices show strong position bias: it picks the first image shown {ratio:.1f} times as often as chance, "
+        f"and reordering the same candidates changes its choice on {round(100 * flip)}\\% of prompts. "
+        "Self-consistency is nonetheless informative: decisions that survive reordering are much better than random, "
+        "whereas agreement with a second, weaker judge keeps the wrong decisions. Both the judge and the CLIP baseline "
+        "reduce missing cultural details but slightly increase stereotyped content. We argue that judges should be "
+        "evaluated by what they choose, with order sensitivity reported and cultural errors measured separately from "
+        "prompt alignment."
     )
 
     direct = [

@@ -4,8 +4,10 @@ __pycache__/
 data/raw/
 data/images/
 models/
-runs/*.jsonl
 results/dev/inspection/
+results/dev/plot_preview/
+results/pdf_preview/
+results/visual_review/
 paper/preview_*.png
 *.aux
 *.log
@@ -16,3 +18,14 @@ paper/preview_*.png
 *.fls
 *.synctex.gz
 .DS_Store
+
+# Internal notes and submission packaging (not part of the public artifact)
+provenance/review_*.md
+provenance/figure_design_references.md
+submission-setup.md
+submission-metadata.txt
+submission-source.zip
+arxiv-source/
+arxiv-source.zip
+paper/main.pdf
+runs/ablations/*.meta.json

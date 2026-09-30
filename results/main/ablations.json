@@ -1,0 +1,281 @@
+{
+  "post_hoc": true,
+  "bootstrap": {
+    "resamples": 10000,
+    "seed": 20261002,
+    "unit": "prompt"
+  },
+  "n_prompts": 300,
+  "reference_main": {
+    "calls": 900,
+    "valid": 900,
+    "invalid": 0,
+    "runtime_failed": 0,
+    "seconds_median": 3.532731375000367,
+    "slot_choice": {
+      "valid_calls": 900,
+      "slots": {
+        "A_position": {
+          "count": 439,
+          "share": 0.48777777777777775,
+          "uniform": 0.2777777777777789
+        },
+        "B_position": {
+          "count": 224,
+          "share": 0.24888888888888888,
+          "uniform": 0.2777777777777789
+        },
+        "C_position": {
+          "count": 174,
+          "share": 0.19333333333333333,
+          "uniform": 0.2777777777777789
+        },
+        "D_position": {
+          "count": 63,
+          "share": 0.07,
+          "uniform": 0.16666666666666666
+        }
+      },
+      "chi2": 219.15199999999865,
+      "df": 3,
+      "p_value": 3.0621675317575127e-47
+    },
+    "orders": {
+      "complete_prompts": 300,
+      "flip_rate": 0.5966666666666667,
+      "unanimity_coverage": 0.4033333333333333,
+      "unanimous": {
+        "n": 121,
+        "coverage": 0.4033333333333333,
+        "utility": 0.8539944903581267,
+        "regret": 0.07369146005509641,
+        "regret_ci": [
+          0.049586776859504134,
+          0.09951790633608816
+        ],
+        "gain_vs_random": 0.14136822773186408,
+        "gain_ci": [
+          0.110393709825528,
+          0.17254935720844808
+        ],
+        "human_best": 0.7107438016528925
+      }
+    },
+    "original_order": {
+      "n": 300,
+      "coverage": 1.0,
+      "utility": 0.7695277777777778,
+      "regret": 0.15977777777777777,
+      "regret_ci": [
+        0.13613819444444444,
+        0.18444444444444444
+      ],
+      "gain_vs_random": 0.039314814814814816,
+      "gain_ci": [
+        0.016376099537037034,
+        0.06164843749999999
+      ],
+      "human_best": 0.51
+    },
+    "order_majority": {
+      "n": 300,
+      "coverage": 1.0,
+      "utility": 0.7948055555555555,
+      "regret": 0.1345,
+      "regret_ci": [
+        0.1135277777777778,
+        0.15594444444444444
+      ],
+      "gain_vs_random": 0.0645925925925926,
+      "gain_ci": [
+        0.04313408564814814,
+        0.08622459490740743
+      ],
+      "human_best": 0.5433333333333333
+    },
+    "slot_first_rate": 0.48777777777777775,
+    "slot_first_uniform": 0.2777777777777789,
+    "flip_rate": 0.5966666666666667,
+    "gain": 0.039314814814814816,
+    "gain_ci": [
+      0.016376099537037034,
+      0.06164843749999999
+    ],
+    "unanimous_coverage": 0.4033333333333333,
+    "unanimous_gain": 0.14136822773186408,
+    "unanimous_gain_ci": [
+      0.110393709825528,
+      0.17254935720844808
+    ],
+    "majority_gain": 0.0645925925925926,
+    "majority_gain_ci": [
+      0.04313408564814814,
+      0.08622459490740743
+    ]
+  },
+  "rotation4": {
+    "calls": 153,
+    "valid": 153,
+    "invalid": 0,
+    "runtime_failed": 0,
+    "seconds_median": 5.332899332999659,
+    "four_candidate_pools": 200,
+    "pools_with_all_4_orders": 153,
+    "balanced_latin_rotation": true,
+    "permutation3_only_slot_choice": {
+      "valid_calls": 153,
+      "slots": {
+        "A_position": {
+          "count": 108,
+          "share": 0.7058823529411765,
+          "uniform": 0.25
+        },
+        "B_position": {
+          "count": 11,
+          "share": 0.0718954248366013,
+          "uniform": 0.25
+        },
+        "C_position": {
+          "count": 2,
+          "share": 0.013071895424836602,
+          "uniform": 0.25
+        },
+        "D_position": {
+          "count": 32,
+          "share": 0.20915032679738563,
+          "uniform": 0.25
+        }
+      },
+      "chi2": 181.98039215686273,
+      "df": 3,
+      "p_value": 3.2944234441529366e-39
+    },
+    "combined_slot_choice": {
+      "valid_calls": 612,
+      "slots": {
+        "A_position": {
+          "count": 312,
+          "share": 0.5098039215686274,
+          "uniform": 0.25
+        },
+        "B_position": {
+          "count": 127,
+          "share": 0.20751633986928106,
+          "uniform": 0.25
+        },
+        "C_position": {
+          "count": 90,
+          "share": 0.14705882352941177,
+          "uniform": 0.25
+        },
+        "D_position": {
+          "count": 83,
+          "share": 0.13562091503267973,
+          "uniform": 0.25
+        }
+      },
+      "chi2": 227.62091503267976,
+      "df": 3,
+      "p_value": 4.52051606999244e-49
+    },
+    "orders_over_4": {
+      "complete_prompts": 153,
+      "flip_rate": 0.7124183006535948,
+      "unanimity_coverage": 0.2875816993464052,
+      "unanimous": {
+        "n": 44,
+        "coverage": 0.2875816993464052,
+        "utility": 0.8295454545454546,
+        "regret": 0.09469696969696971,
+        "regret_ci": [
+          0.05113636363636364,
+          0.14393939393939392
+        ],
+        "gain_vs_random": 0.12329545454545454,
+        "gain_ci": [
+          0.06789772727272726,
+          0.1790719696969697
+        ],
+        "human_best": 0.6590909090909091
+      }
+    },
+    "same_slot_all_4_orders": {
+      "A": 18
+    },
+    "original_order_on_4pools": {
+      "n": 153,
+      "coverage": 1.0,
+      "utility": 0.7708605664488017,
+      "regret": 0.16704793028322443,
+      "regret_ci": [
+        0.13502178649237473,
+        0.19983796296296297
+      ],
+      "gain_vs_random": 0.029384531590413945,
+      "gain_ci": [
+        -0.0022058823529411743,
+        0.060743464052287574
+      ],
+      "human_best": 0.49673202614379086
+    },
+    "order_averaged_plurality_over_4": {
+      "n": 153,
+      "coverage": 1.0,
+      "utility": 0.802995642701525,
+      "regret": 0.13491285403050107,
+      "regret_ci": [
+        0.1053921568627451,
+        0.165958605664488
+      ],
+      "gain_vs_random": 0.06151960784313725,
+      "gain_ci": [
+        0.03086703431372549,
+        0.09196725217864922
+      ],
+      "human_best": 0.5620915032679739
+    },
+    "main_majority_over_3_on_4pools": {
+      "n": 153,
+      "coverage": 1.0,
+      "utility": 0.7942810457516339,
+      "regret": 0.14362745098039217,
+      "regret_ci": [
+        0.11476034858387801,
+        0.17391339869281042
+      ],
+      "gain_vs_random": 0.05280501089324618,
+      "gain_ci": [
+        0.02318831699346405,
+        0.08223039215686274
+      ],
+      "human_best": 0.5163398692810458
+    },
+    "n_prompts": 153,
+    "slot_rates": {
+      "A": 0.5098039215686274,
+      "B": 0.20751633986928106,
+      "C": 0.14705882352941177,
+      "D": 0.13562091503267973
+    },
+    "slot_first_rate": 0.5098039215686274,
+    "slot_first_uniform": 0.25,
+    "flip_rate": 0.7124183006535948,
+    "unanimous_coverage": 0.2875816993464052,
+    "unanimous_regret": 0.09469696969696971,
+    "unanimous_gain": 0.12329545454545454,
+    "unanimous_gain_ci": [
+      0.06789772727272726,
+      0.1790719696969697
+    ],
+    "gain": 0.029384531590413945,
+    "gain_ci": [
+      -0.0022058823529411743,
+      0.060743464052287574
+    ],
+    "plurality_gain": 0.06151960784313725,
+    "plurality_gain_ci": [
+      0.03086703431372549,
+      0.09196725217864922
+    ]
+  }
+}

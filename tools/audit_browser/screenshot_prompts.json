@@ -1,0 +1,31 @@
+{
+  "detail": {
+    "prompt_id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23",
+    "rule": "fixed example (Chile, pastel de choclo)",
+    "file": "paper/figures/browser_detail.png"
+  },
+  "detail_2": {
+    "prompt_id": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d",
+    "prompt": "Shint\u014d priest performing purification ritual at a rural shrine",
+    "country": "Japan",
+    "rule": "4-candidate prompt with largest Qwen original-order regret (ties by prompt_id)",
+    "qwen_regret": 1.0,
+    "file": "paper/figures/browser_detail_2.png"
+  },
+  "detail_3": {
+    "prompt_id": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048",
+    "prompt": "Japanese host guiding guests to their seats in a tatami room.",
+    "country": "Japan",
+    "rule": "cross-model agreement (Qwen pick == Smol pick, original order) with largest regret (ties by prompt_id), excluding the detail_2 prompt, which the rule would otherwise select again",
+    "regret": 0.8333333333333334,
+    "file": "paper/figures/browser_detail_3.png"
+  },
+  "explore_below": {
+    "route": "#explore?outcome=below&sort=regret",
+    "file": "paper/figures/browser_explore_below.png"
+  },
+  "explore_unanimous": {
+    "route": "#explore?outcome=unanimous",
+    "file": "paper/figures/browser_explore_unanimous.png"
+  }
+}

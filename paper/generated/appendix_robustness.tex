@@ -1,0 +1,31 @@
+% Disagreement median 0.0417; high consensus n=138, low n=162; unique best n=181.
+
+\scriptsize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llrrllrrl}
+\toprule
+Subset & Policy & $n$ & Rand. regret & Regret [95\% CI] & Gain [95\% CI] & BMR & Rand. BMR & $\Delta$Stereotype [95\% CI]\\
+\midrule
+High consensus & Qwen & 138 & 0.185 & 0.138 [0.106, 0.172] & 0.047 [0.014, 0.079] & 31.9 & 40.3 & 0.033 [0.004, 0.063]\\
+High consensus & Qwen unanimous & 60 & 0.217 & 0.072 [0.037, 0.111] & 0.146 [0.100, 0.192] & 15.0 & 42.1 & 0.009 [$-$0.029, 0.049]\\
+Low consensus & Qwen & 162 & 0.211 & 0.178 [0.146, 0.212] & 0.033 [0.002, 0.062] & 40.1 & 45.4 & 0.015 [$-$0.014, 0.045]\\
+Low consensus & Qwen unanimous & 61 & 0.213 & 0.076 [0.045, 0.111] & 0.137 [0.095, 0.178] & 18.0 & 44.9 & 0.012 [$-$0.029, 0.054]\\
+Unique best & Qwen & 181 & 0.250 & 0.195 [0.163, 0.229] & 0.056 [0.025, 0.087] & 38.7 & 49.2 & 0.014 [$-$0.012, 0.040]\\
+Unique best & Qwen unanimous & 80 & 0.260 & 0.092 [0.060, 0.127] & 0.169 [0.127, 0.210] & 18.8 & 48.8 & $-$0.008 [$-$0.040, 0.024]\\
+\bottomrule
+\end{tabular*}
+
+\vspace{4pt}
+
+\footnotesize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrrr}
+\toprule
+Category & Qwen calls & Qwen A (\%) & Unif. (\%) & Qwen flip (\%) & Smol A (\%) & Unif. (\%) & Smol flip (\%)\\
+\midrule
+Dates of significance & 309 & 48.2 & 28.6 & 56.3 & 29.9 & 28.6 & 98.0\\
+Etiquette & 237 & 49.4 & 26.8 & 63.3 & 45.1 & 26.8 & 97.4\\
+Family & 111 & 44.1 & 28.6 & 51.4 & 50.9 & 28.6 & 97.2\\
+Greetings & 135 & 51.9 & 27.2 & 66.7 & 63.6 & 27.2 & 97.6\\
+Religion & 108 & 50.0 & 27.3 & 61.1 & 41.9 & 27.3 & 97.1\\
+All & 900 & 48.8 & 27.8 & 59.7 & 43.0 & 27.8 & 97.6\\
+\bottomrule
+\end{tabular*}

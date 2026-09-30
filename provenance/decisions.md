@@ -10,3 +10,11 @@
 - Smol development showed inability to satisfy full rankings and inconsistent JSON field names. Its secondary interface requests a choice only and normalizes an explicit single label (bare or in one recognized one-field structured object). JSON validity, exact-schema validity, and recovered-decision validity are reported separately. No explanatory prose or ambiguous choice is recovered.
 - Smol's default preprocessor upsamples images to 1536 pixels and creates 17 views per square image, imposing excessive memory use when all candidates are supplied. The secondary adapter instead uses one native 384-pixel view per image, documented as a model-specific visual-budget limitation. These decisions were made on the dev split before secondary main inference; Qwen's primary main interface is unchanged.
 - OpenReview approval and IASEAI portal connection were confirmed directly by the user during preparation. No author-list or track choice is inferred from that confirmation.
+
+## Execution scheduling (no protocol change)
+
+- Concurrent MPS execution of both judges caused memory pressure and sustained
+  paging on the 24 GB host. The secondary process was stopped after 617 recorded
+  main calls so the primary judge could run alone. Completed records are retained;
+  the secondary runner resumes only missing request keys with identical metadata.
+  This changes execution scheduling, not prompts, data, decoding, parsers, or outcomes.

@@ -11,7 +11,7 @@
 \frenchspacing
 \pdfinfo{/TemplateVersion (2027.1)}
 \setcounter{secnumdepth}{2}
-\title{When the Judge Acts: Auditing Cultural Risk\\in VLM-Guided Image Selection}
+\title{When the Judge Acts: Auditing VLM-Guided Image Selection\\on Culturally Situated Prompts}
 \author{Anonymous Submission}
 \affiliations{}
 \input{generated/macros}
@@ -22,92 +22,103 @@
 \end{abstract}
 \input{generated/status}
 
+
 \section{Introduction}
-A vision-language model (VLM) can serve as a descriptive evaluator or as a decision maker. In the first role, a judgment enters an evaluation report. In the second, a judgment determines which image a system returns. The same preference error can therefore have different consequences depending on the authority assigned to the evaluator. This distinction is relevant to generative systems that use automated judges to choose among candidate outputs or to verify intermediate actions.
+A vision-language model (VLM) that selects one of several generated images does more than report a quality score. Its choice determines which candidate a user would receive. The practical question is whether that choice improves the available outputs, not just whether the judge's scores correlate with human ratings.
 
-Cultural representation makes this distinction particularly consequential. A prompt may describe a named object, a social interaction, or a practice whose visual realization depends on context. Choosing an image that looks polished or contains recognizable cultural symbols need not satisfy that request. If automated selection consistently favors such an image over a more faithful alternative, the system changes the content a user would otherwise receive. Evaluating the resulting decision requires an outcome reference independent of the judge.
 
-Existing cultural-generation studies document representation failures and shortcomings of automated evaluation. CulturalFrames distinguishes explicit and implicit cultural expectations and reports weak agreement between automatic metrics and human judgments \citep{culturalframes}. Related work audits generation and editing across culturally situated requests \citep{seo2025}. These findings motivate a policy-level question: when an evaluator chooses among the available outputs, does its decision improve their human-rated utility, and where does it fail?
 
-We study a controlled selection setting using existing public candidates and annotations. For each prompt, an open-weight VLM sees three or four images and selects the one to return. Generator identities, country metadata, and human ratings are withheld from the judge. We then retrieve the selected candidate's existing annotation scores. All policies act on the same candidate pool, allowing a paired comparison with the exact expectation of uniform random selection and with a retrospective annotation oracle.
+For culturally situated requests, visual polish and recognizable symbols can be poor guides to prompt satisfaction. An image may include a requested object while misrepresenting the social context around it. A selector can favor that image even when another candidate better satisfies the request. Evaluating this choice requires ratings that did not come from the selector itself.
 
-Our primary outcome is \emph{selection regret}: the gap between the best available human-rated utility and the utility of the selected candidate. We additionally measure how often a policy selects below the candidate-set mean, using the operational term \emph{harmful steering rate} (HSR). This term denotes a reference-relative utility shortfall; it does not establish injury to users or an objective ranking of cultures. Stereotype annotations remain a separate endpoint.
+CulturalFrames provides generated images and human ratings that distinguish missing explicit expectations, missing implicit expectations, and stereotypes. It also reports weak agreement between automatic metrics and human judgments \citep{culturalframes}. Related work examines cultural representation in generation and editing \citep{seo2025}. We use the public CulturalFrames release to study a different decision: choosing which existing image to return.
 
-We ask four questions. (RQ1) Does selection improve human-rated utility relative to random choice? (RQ2) How do regret and below-baseline selection vary across country groupings? (RQ3) What risks arise in sets where explicit or implicit error annotations distinguish candidates? (RQ4) Does agreement under candidate-order changes identify selections on which automation can be retained with lower regret?
+For each prompt, an open-weight VLM sees three or four candidate images and selects one. It receives no generator names, country metadata, or human ratings. We retrieve the selected image's released ratings and compare its score with the exact expectation of random selection and the highest available annotation score. The candidate pool is fixed, so differences between policies arise from selection rather than generation.
 
-The contribution is a deployment-oriented audit protocol, rather than a new cultural benchmark or a claim that regret is a novel decision-theoretic quantity. We operationalize evaluator reliability through selected outcomes, subgroup uncertainty, and selective control. We test candidate-order consistency and agreement between two judges as inexpensive abstention signals. Both may fail: consistency can indicate a stable mistake, and reducing coverage can remove difficult cases without making the remaining decisions better than an appropriate baseline.
+
+\begin{figure}[!b]
+\centering
+\includegraphics[width=\columnwidth]{figures/hero_column.pdf}
+\caption{Same request, same images, three orders. Each row shows the three candidates in one presentation order, with mean human prompt-alignment ratings. Qwen3-VL-4B picks the image in slot A every time (framed), so its returned image is rated 0.00, 0.50, or 0.83 depending only on order. Images: CulturalFrames \citep{culturalframes}.}
+\label{fig:hero}
+\end{figure}
+
+The primary outcome is \emph{selection regret}, measured from the mean human prompt-alignment rating. It is the gap between the highest-rated available candidate and the selected image. Prompt alignment measures request satisfaction, not cultural accuracy alone. We therefore report stereotype and missing-expectation ratings separately. We also measure how often the selected score falls below random expected utility. We call this the \emph{below-mean rate} (BMR). It is a score shortfall relative to random choice, not a measure of harm to users.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/overview.pdf}
-\caption{Scoring to steering. The judge observes the prompt and candidate images, and its decision determines a simulated returned image. Existing human annotations enter only a retrospective audit. Abstention leaves the return decision unresolved; no human-oracle fallback is assumed. The diagram contains symbolic quantities, not fabricated empirical scores.}
-\label{fig:overview}
+\includegraphics[width=\textwidth]{figures/teaser.pdf}
+\caption{VLM judges can return below-average images when a clearly better candidate exists. Each group is one CulturalFrames prompt \citep{culturalframes}; numbers are mean human prompt-alignment ratings. Red: Qwen3-VL-4B's original-order choice, below the pool mean. Green: highest-rated candidate. Prompts follow a fixed rule applied without viewing images (Appendix~\ref{app:gallery}); they illustrate the failure mode, not its frequency (Figure~\ref{fig:results}).}
+\label{fig:teaser}
+\end{figure*}
+
+We ask four questions. (RQ1) Does VLM selection improve prompt alignment relative to random choice? (RQ2) How do regret and below-baseline selection vary across country groups? (RQ3) How does selection behave when explicit or implicit error ratings differ across candidates? (RQ4) Does agreement across candidate orders identify selections with lower regret?
+
+The audit connects each judge's choice to an independently collected outcome rating. We contribute a matched-baseline audit protocol and three findings:
+\begin{itemize}
+\item \textbf{A matched-baseline selection audit.} Each choice is compared with the exact expectation of random selection on the same candidate pool, so gains, below-mean selections, and cultural-error ratings are paired rather than pooled.
+\item \textbf{Presentation strongly shapes small judges' choices.} Both judges strongly prefer early presentation slots; the same prompt can yield the worst or the best available image depending only on candidate order (Figure~\ref{fig:hero}).
+\item \textbf{Agreement rules must be audited on what they reject.} Order unanimity separates prompts where the judge beats random from those where it falls below random, whereas agreement with a weaker second judge retains below-random choices.
+\end{itemize}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/framework.pdf}
+\caption{Audit protocol. (a) Frozen candidate pools from CulturalFrames: culturally situated prompts with three or four images from four generators. (b) Selection: each judge sees only the prompt and the images, in three cyclic orders; agreement gates decide whether to act or abstain. (c) Retrospective audit: released human ratings, never shown to the judge, are joined by image identifier after selection and compared with exact random selection on the same pools.}
+\label{fig:framework}
 \end{figure*}
 
 \section{Related Work}
 \paragraph{Cultural representation and evaluation.}
-CulturalFrames provides culturally situated prompts, multiple generated images, and annotations of missing expectations and stereotypes \citep{culturalframes}. Its metric-correlation findings motivate auditing outcomes beyond a scalar agreement score. \citet{seo2025} study cultural representation across generation and editing. Our experiment uses a separate public benchmark and a newly implemented selection audit. It neither reproduces editing trajectories nor estimates the effects of repeated edits.
+CulturalFrames supplies culturally situated prompts, multiple generated images, and ratings of missing expectations and stereotypes \citep{culturalframes}. Its analysis compares automatic metrics with human ratings of individual images. Our analysis instead evaluates choices within a candidate set. \citet{seo2025} study cultural representation in image generation and editing; we study selection among existing outputs.
+
+\citet{chang2026} train a cultural reward model on preferences derived from CulturalFrames and evaluate pairwise agreement. This is closely related evidence that cultural image preferences can be learned. We do not propose a competing reward model; we audit frozen, prompted selectors and the requests retained by their abstention rules.
 
 \paragraph{VLM judges.}
-\citet{zou2026} show that a multimodal judge can favor informative answers while insufficiently grounding its decision in visual evidence. \citet{park2026} study conflicts between textual narratives and perception and develop training interventions for grounded judgments. These studies concern different tasks from image selection. We use them as motivation for independent outcome evaluation, without assuming that their failure mechanisms explain every cultural selection error.
+\citet{zou2026} show that multimodal judges can favor informative answers without adequately using visual evidence. \citet{park2026} examine conflicts between textual narratives and perception, and train judges to ground their decisions more reliably. Both concern tasks distinct from our candidate-image selection setting. They motivate checking selected outcomes against independent ratings, but do not establish the mechanism behind the errors measured here.
 
-\paragraph{Evaluation inside a deployed system.}
-\citet{yao2026} investigate multimodal reinforcement learning with imperfect reward signals; improving a proxy need not improve task performance. WORLDVIEW audits prompt revision as an intermediate source of cultural stereotyping \citep{urman2026}. Together these motivate examining individual decision stages. Our study isolates candidate selection, without reinforcement learning, optimization against a reward model, or a sequential feedback process.
+K-Sort Eval uses multi-image VLM rankings, posterior correction, and adaptive comparisons to evaluate visual generators \citep{ksort2026}. Our study asks about the selected image within each prompt's candidate pool, rather than the accuracy or efficiency of a generator leaderboard. We do not claim that comparative image judging or best-of-pool selection is new.
+
+\paragraph{Position bias in model judges.}
+Language-model judges are sensitive to the order in which options are presented: pairwise judges favor a position \citep{zheng2023judging,wang2024fair,shi2025judging}, and multiple-choice accuracy shifts with option order \citep{pezeshkpour2024order}. Multimodal judges also show position and consistency effects on vision-language benchmarks \citep{chen2024mllmjudge}, over-score earlier sentences and prefer their own captions when assessing image-text alignment \citep{saito2025haldec}, and can be swayed by visual manipulations unrelated to quality \citep{hwang2025fooling}. Proposed mitigations include swapping or averaging over orders \citep{zheng2023judging,wang2024fair} and de-biased judging protocols \citep{asaria2026judging}. VLM evaluators are also used to audit generated images at scale, with human validation on a subset \citep{seo2026portrait}. We measure the same phenomenon when the judge's output is an action, and ask how it interacts with agreement-based abstention.
+
+\paragraph{Judgments used as decision rules.}
+\citet{yao2026} investigate multimodal reinforcement learning with imperfect rewards, where gains on a proxy can diverge from task performance. WORLDVIEW examines cultural stereotyping introduced during prompt revision \citep{urman2026}. We isolate a later decision, selecting an existing candidate. The experiment does not optimize generators against a reward model or simulate a sequential feedback process.
 
 \paragraph{Selective prediction.}
-Risk--coverage analysis formalizes prediction with a reject option \citep{elyaniv2010,geifman2017}. We adapt this reporting framework to image-selection policies. Our agreement thresholds provide empirical operating points. They offer neither a calibrated confidence score nor a distribution-free risk guarantee.
+Risk--coverage analysis evaluates prediction with a reject option \citep{elyaniv2010,geifman2017}. We apply it to image selection, using agreement across orders or judges as acceptance rules. These rules yield measured operating points, not calibrated confidence scores or risk guarantees.
 
-\section{Selection Policies and Outcome References}
-\subsection{Candidate-Set Formulation}
-Let $p$ be a prompt and $C_p=\{x_{p1},\ldots,x_{pm_p}\}$ its candidate images, with $m_p\in\{3,4\}$. A policy observes the prompt and images and returns a candidate identity $\pi(p)$ or abstains. Candidate identities are preserved independently of presentation labels, so that ``A'' in one ordering can denote ``C'' in another.
+\section{Problem and Measures}
+\label{sec:measures}
+\paragraph{Selection task.} Let $p$ denote a prompt and $C_p=\{x_{p1},\ldots,x_{pm_p}\}$ its pool of $m_p\in\{3,4\}$ candidate images, already generated and held fixed. A \emph{selection policy} $\pi$ receives the prompt and the images, shown in a given order with labels, and either returns the index $\pi(p)\in\{1,\ldots,m_p\}$ of one candidate or abstains. We always record the chosen image's identity, not its label, so the same image can carry the label ``A'' in one order and ``C'' in another.
 
-For candidate $i$, let $a_{pir}\in\{0,0.5,1\}$ be annotator $r$'s released prompt-alignment rating. The primary utility is
+\paragraph{Human reference utility.} Each candidate $x_{pi}$ has $n_{pi}$ released prompt-alignment ratings $a_{pir}\in\{0,0.5,1\}$, one per annotator $r$. Its utility is the mean rating,
 \begin{equation}
-h_{pi}=\frac{1}{n_{pi}}\sum_{r=1}^{n_{pi}} a_{pir}.
+h_{pi}=\frac{1}{n_{pi}}\sum_{r=1}^{n_{pi}} a_{pir}\in[0,1].
 \end{equation}
-This is a \emph{human-annotated reference}. It summarizes the available evaluators, rather than establishing a culturally universal preference. The reference may be noisy or biased and is not a causal measurement of harm.
+Judges never see these ratings; they are joined to the chosen image only after selection.
 
-\subsection{Baselines and Selected Utility}
-Uniform random selection has exact expected utility
+\paragraph{Baselines.} Choosing uniformly at random has expected utility $\bar h_p=\frac{1}{m_p}\sum_{i=1}^{m_p} h_{pi}$, which we compute exactly rather than by simulation. The \emph{annotation oracle} picks the highest-rated candidate, with utility $h^\star_p=\max_i h_{pi}$; it is a reference point, not a deployable selector.
+
+\paragraph{Outcome measures.} For a policy that acts on prompt $p$ and returns image $x_{p,\pi(p)}$, with utility $h_{p,\pi(p)}$, we report three quantities:
+\begin{align}
+\text{regret:}\quad & R_p(\pi)=h^\star_p-h_{p,\pi(p)}, \label{eq:regret}\\
+\text{gain over random:}\quad & G_p(\pi)=h_{p,\pi(p)}-\bar h_p, \label{eq:gain}\\
+\text{below-mean event:}\quad & B_p(\pi)=\mathbb{1}\{h_{p,\pi(p)}<\bar h_p\}. \label{eq:bmr}
+\end{align}
+Regret is the primary outcome: zero means the judge returned a best-rated image. Gain is positive when the judge beats random choice on the same pool, and the two are linked by $G_p=(h^\star_p-\bar h_p)-R_p$. Averaging $B_p$ over prompts gives the \emph{below-mean rate} (BMR), a score shortfall relative to random, not a measure of user harm. Random choice has its own below-mean probability, the share of candidates rated below $\bar h_p$, which we use as its matched comparison. We also report how often the policy returns a best-rated image, counting ties. Every average is taken over the set $A_\pi$ of prompts on which the policy acts, and each policy is compared with random choice on exactly those prompts.
+
+\paragraph{Cultural-error outcomes.} CulturalFrames also releases, per image, the share of annotators who flag a stereotype, a missing explicit expectation, or a missing implicit expectation. For each of these error rates we report the chosen image's value minus the random-choice average over the same pool, so that negative values mean fewer errors than chance. These outcomes are kept separate from alignment and are not combined into a composite score. A pool is \emph{sensitive} to an error type when that error rate differs across its candidates, so that selection can change it; we report results on each sensitive subset (Table~\ref{tab:decomposition}). As a secondary utility we also use overall satisfaction, rescaled from its 1--5 scale to $[0,1]$.
+
+\paragraph{Presentation orders and agreement gates.} Each pool is shown in $K=3$ cyclic orders $k\in\{1,2,3\}$ (order~1 is canonical, orders~2 and~3 rotate it). Let $\pi_k(p)$ be the index chosen under order $k$ and
 \begin{equation}
-U_{\mathrm{rand}}(p)=\frac{1}{m_p}\sum_i h_{pi}.
+q_p=\frac{1}{K}\max_{i}\bigl|\{k:\pi_k(p)=i\}\bigr|
 \end{equation}
-We compute it analytically instead of sampling one candidate. A deterministic judge obtains $U_\pi(p)=h_{p,\pi(p)}$. The retrospective oracle obtains $U_*(p)=\max_i h_{pi}$. It uses the same annotation means on which policies are evaluated and therefore represents a within-pool reference ceiling, not a deployable policy or a human-system performance guarantee.
+the share of orders that agree on the most frequent choice. A \emph{gate} with threshold $\tau$ acts only when $q_p\ge\tau$ and then returns that majority choice: $\tau=1$ is \emph{unanimity}, $\tau=2/3$ requires two of three, and $\tau=1/3$ always acts. The \emph{cross-model gate} acts only when two judges make the same order-1 choice. For every gate we report coverage $|A_\pi|/N$ over the $N=300$ prompts, the outcomes on the prompts it keeps, and, because a gate can look good simply by keeping easy pools, the same outcomes for random choice and for the ungated judge on both the kept and the rejected prompts.
 
-The paired utility gain is $D_p=U_\pi(p)-U_{\mathrm{rand}}(p)$. Mean gain answers whether adding the selector improves this candidate pool on average. It does not quantify the benefit of a different generator, the availability of unobserved candidates, or repeated generation attempts.
-
-\subsection{Regret and Below-Baseline Selection}
-Selection regret is
-\begin{equation}
-R_p(\pi)=\max_i h_{pi}-h_{p,\pi(p)}.
-\label{eq:regret}
-\end{equation}
-We report its mean, median, and 95\% prompt-level bootstrap interval. Exact ties have zero regret. Human-best selection counts any candidate tied for the highest mean; near-best selection allows $\epsilon=0.05$. Sets with identical scores remain in the analysis: they offer no measurable selection opportunity and all candidates satisfy human-best selection.
-
-For a deterministic policy, define
-\begin{equation}
-\mathrm{HSR}_\delta(\pi)=\frac{1}{N}\sum_p
-\mathbb{1}\{U_\pi(p)<U_{\mathrm{rand}}(p)-\delta\}.
-\label{eq:hsr}
-\end{equation}
-We use $\delta=0$ and a sensitivity margin of $0.05$. The threshold is the mean, rather than the median, because the comparator is random expected utility. We separately report selection below the candidate median.
-
-For the random policy, HSR is the \emph{probability} of a randomly selected candidate lying below the mean:
-\begin{equation}
-\mathrm{HSR}_\delta(\mathrm{rand})=\frac{1}{N}\sum_p\frac{1}{m_p}
-\sum_i\mathbb{1}\{h_{pi}<U_{\mathrm{rand}}(p)-\delta\}.
-\end{equation}
-Replacing the random draw by its expected utility inside the indicator would incorrectly make this baseline zero. The same distinction applies to human-best selection and stereotype rates. For auxiliary endpoints, oracle ties are averaged across all maximizing candidates to avoid an arbitrary generator preference.
-
-\subsection{Distributional and Annotation-Specific Risk}
-For country grouping $g$, define $R_g=\mathbb{E}[R_p\mid g]$, worst-group regret $R_{\max}=\max_g R_g$, and disparity $\max_g R_g-\min_g R_g$. These are contextual group summaries. A country label is not a claim that residents share a single culture or visual preference. Subgroup counts and uncertainty accompany point estimates; we do not run a separate significance test for each country.
-
-We average stereotype, explicit-missing, implicit-missing, and image-quality annotations within each image. These remain distinct outcomes. An explicit-sensitive set has a nonzero within-set range of explicit-missing rates; an implicit-sensitive set is defined analogously. The conditions can overlap. They identify sets where the corresponding annotation varies, not cases where that factor causally determines the winning candidate. Comparing their regrets is descriptive and can reflect different countries, candidate quality, or difficulty.
-
-Overall satisfaction provides a secondary utility, normalized from its 1--5 scale as $(\bar{s}_{pi}-1)/4$. We do not combine alignment and stereotypes with arbitrary weights. We also report image quality to describe whether a policy's selected images differ in technical quality, without interpreting this observational comparison as a controlled mediation analysis.
+\paragraph{Country groups.} Each prompt belongs to one of ten country contexts; we report group means of regret and gain with their random baselines, and \emph{worst-group regret}, the largest group mean. Country labels identify dataset contexts, not homogeneous cultural preferences.
 
 \section{Experimental Setup}
-\subsection{Public Data, Validation, and Frozen Splits}
+\subsection{Dataset and Frozen Splits}
 We use the independently released CulturalFrames dataset \citep{culturalframes}. Image rows are joined to annotation records by exact image identifier, with prompt, country, and generator-suffix checks. We decode every image, check repeated identifiers and encoded-image content, and require at least three valid, annotated candidates. For repeated prompt text within a country we retain the lexicographically first base identifier before splitting, preventing duplicated requests from crossing splits. Missing annotations are never imputed. The provenance manifest pins the public dataset and model revisions.
 
 \input{generated/data}
@@ -122,105 +133,321 @@ Every request interleaves a candidate label with its image. The instruction asks
 For Qwen the output schema is a JSON object with \texttt{choice} and \texttt{ranking}. The ranking must contain every supplied label exactly once, and its first label must equal the choice. Smol receives the same evaluation criteria but a choice-only JSON contract, selected during development because it could not reliably satisfy the full-ranking format. Its adapter can normalize a single explicit label in a one-field structured object; raw JSON and exact-schema validity are tracked separately from recovered decision validity. Rankings are not used by any outcome metric. These interface differences limit comparisons of formatting reliability. We record raw text, parsed output, label-to-image mapping, input tensor shapes, model revision, elapsed time, and request hashes. Unit tests verify regret extrema, the analytic random expectation, tie behavior, annotation aggregation, and identity preservation under permutation.
 
 \subsection{Candidate Order and Invalid Outputs}
-Each prompt receives three distinct cyclic presentations: its canonical identifier order and two deterministic rotations. The instruction, images, and decoding settings remain fixed. Thus disagreement measures sensitivity to these presentation changes rather than sampled decoding variation or prompt paraphrases. Three rotations do not exhaust all orders, especially for four candidates.
+Each prompt receives three distinct cyclic presentations: its canonical identifier order and two deterministic rotations. Canonical order sorts candidate identifiers, which usually places the same generator first; the rotations break this link, so generator effects are assessed over all three orders. The instruction, images, and decoding settings remain fixed. Thus disagreement measures sensitivity to these presentation changes rather than sampled decoding variation or prompt paraphrases. Three rotations do not exhaust all orders, especially for four candidates.
 
 The original-order decision is the primary direct policy. No main-run prompt edits are permitted. An unresolved parse failure produces an abstention and remains in the output log. Qwen uses strict schema validation; Smol uses its predeclared single-label normalization, with every recovery flagged. A runtime exception permits one retry with identical inputs; invalid text is not repeatedly sampled until valid. Utility and regret are conditional on valid decisions, with coverage relative to the full frozen split reported alongside them. We compare gain to random on the same acted-on prompts. We never assign failed requests a favorable candidate or silently remove their denominator.
 
-\subsection{Consistency-Based Selective Control}
-For prompt $p$, map three choices back to candidate identities and let
-\begin{equation}
-q_p=\frac{\max_i\#\{k:\pi_k(p)=i\}}{3}.
-\end{equation}
-Unanimity gives $q_p=1$, two matching choices give $2/3$, and three different choices give $1/3$. We also compute normalized choice entropy
-\begin{equation}
-H_p=-\frac{\sum_i f_{pi}\log f_{pi}}{\log m_p},
-\end{equation}
-where $f_{pi}$ is the observed frequency of candidate $i$. These are order-consistency statistics, not calibrated estimates of correctness.
+\subsection{Selection with Abstention}
+The gate thresholds $\tau\in\{1/3,2/3,1\}$ and the cross-model rule were declared before main inference. A gate acts only when all three order calls parse; ties in the majority are broken by canonical identifier order, so the action never depends on human ratings. Abstention leaves a request unresolved: we do not assume a human fallback or a zero-risk outcome, and we report coverage next to every selective estimate. Because Smol is a weaker judge (Section~\ref{sec:results}), cross-model results are conditional on that pairing.
 
-The selective policy returns the majority candidate only when $q_p\geq\tau$, for predeclared thresholds $\tau\in\{1/3,2/3,1\}$. Ties use canonical image-identifier order, and all three calls must parse successfully. This specifies the action independently of human ratings. Cross-model selection requires agreement between the judges' original-order choices and otherwise abstains.
-
-Coverage is the number of accepted prompts divided by the frozen sample size. Selective regret is mean regret on accepted prompts. We also compute the random baseline on that same subset, because a lower selective risk can reflect retaining easier pools. Abstention does not imply a successful human handoff or a zero-risk output. A complete deployed-system utility would require measuring the costs and outcomes of the unresolved cases.
-
-\subsection{Uncertainty and Reporting}
-We use 10,000 nonparametric prompt-level bootstrap resamples with seed 20261002 for means and paired gains. Each prompt's candidates and decisions travel together; permutation calls are never independently resampled. Binary deterministic-policy HSR uses Wilson intervals. Random-policy HSR averages fractional within-prompt probabilities and uses a bootstrap interval. Country results have subgroup bootstrap intervals, and the worst-group statistic is recomputed within resamples rather than selecting the upper endpoint of a single country's interval.
-
-Intervals describe variation in the sampled prompt sets conditional on the released annotation means. They do not account for recruitment bias or uncertainty about unobserved cultural preferences. Selective estimates describe different supports, so lower regret at reduced coverage alone does not establish policy dominance. No threshold, sensitive-set definition, or outcome reference is changed after observing main outputs.
+\subsection{Statistical Analysis}
+The unit of analysis is a prompt with its candidate pool; the three order calls for a prompt are never resampled independently. We report 95\% intervals from 10,000 prompt-level bootstrap resamples (seed 20261002) for means and paired differences, and Wilson intervals for a single policy's BMR. Intervals condition on the released annotation means. Secondary cultural-error intervals are pointwise, and we additionally report Bonferroni-adjusted intervals across the three error types. Analyses of presentation position, of the prompts that gates reject, and all ablations in Section~\ref{sec:ablations} were added after main inference and are labeled exploratory. Appendix~\ref{app:stats} gives further estimation details.
 
 \section{Results}
-\input{generated/results}
+\label{sec:results}
 
 \begin{table*}[t]
 \centering
-\small
+\footnotesize
+\setlength{\tabcolsep}{4pt}
 \input{generated/table_main}
-\caption{Policy-level outcomes on the frozen main split. Utility, regret, and HSR are defined from prompt-alignment annotations. Coverage includes invalid-output abstentions. Selective rows evaluate accepted prompts; paired gains and matched-subset random comparisons are reported in the text. An oracle is retrospective.}
+\caption{Selection outcomes on the 300 main prompts (95\% prompt-level bootstrap intervals). Cov.: share of prompts on which the policy acts. Align.: mean prompt-alignment rating of returned images. Gain over random is paired with exact random choice on the same prompts. BMR: share of returned images rated below the pool mean. Best: share of best-rated returns, ties included. Worst: highest country-group mean regret. Gated policies are evaluated on the prompts they keep. CLIP is a content-only similarity scorer (Section~\ref{sec:clip}).}
 \label{tab:main}
 \end{table*}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/main_regret.pdf}
-\caption{Mean selection regret and 95\% prompt-level bootstrap intervals. Direct policies use original-order choices. Conditional selective policies are analyzed separately in Figure~\ref{fig:coverage}.}
-\label{fig:main}
-\end{figure}
+\includegraphics[width=\textwidth]{figures/results_main.pdf}
+\caption{Main results (95\% prompt-level bootstrap intervals). (a) Selection regret; lower is better. (b) Gain over random choice on the prompts each gate keeps and on those it rejects. Order unanimity keeps prompts where Qwen beats random and rejects prompts where it falls below random; agreement between the two judges does the reverse. (c) Share of choices by presentation slot; dashed marks show the rate expected under uniform choice given the pool sizes.}
+\label{fig:results}
+\end{figure*}
+
+\subsection{Direct Selection}
+\input{generated/results_direct}
+
+\subsection{Presentation Position}
+\input{generated/results_position}
+
+\subsection{Agreement Gates: What They Keep and Reject}
+\input{generated/results_gates}
+
+\subsection{Comparison with a Content-Only Selector}
+\label{sec:clip}
+\input{generated/baselines_text}
+
+\subsection{Is the Slot Preference an Artifact?}
+\label{sec:ablations}
+\input{generated/ablations}
+
+\subsection{Cultural-Error Outcomes}
+\input{generated/results_cultural}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/country_regret.pdf}
-\caption{Country-group regret with 95\% bootstrap intervals. Groups are contextual dataset labels. Equal main-split allocations permit descriptive comparisons, while interval width limits conclusions about small differences.}
-\label{fig:country}
+\includegraphics[width=\columnwidth]{figures/cultural_deltas.pdf}
+\caption{Cultural-error ratings of Qwen's choices minus random choice on the same pools; negative values mean fewer errors. Dark bars: pointwise 95\% intervals. Light bars: Bonferroni-adjusted intervals across the three error types. Qwen reduces missing expectations and slightly raises stereotype ratings; the stereotype difference does not survive the adjustment.}
+\label{fig:cultural}
 \end{figure}
 
-\begin{table}[t]
-\centering
-\small
-\input{generated/table_decomposition}
-\caption{Qwen original-order selection on overlapping annotation-sensitive conditions. A condition means that its annotation rate varies across candidates. It does not isolate a causal effect of explicit, implicit, or stereotype information.}
-\label{tab:decomposition}
-\end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/coverage_risk.pdf}
-\caption{Consistency-policy operating points. Each point uses the majority choice and a predeclared agreement threshold; the random comparator is evaluated on the identical accepted subset. Only observed thresholds are connected. No calibrated risk guarantee or measured human fallback is implied.}
-\label{fig:coverage}
-\end{figure}
+\subsection{Country Groups}
+\input{generated/results_country}
 
 \section{Discussion}
-\input{generated/discussion_results}
-\paragraph{What selected outcomes add.}
-Correlation between automatic scores and human ratings does not by itself determine the utility of a selector. Selection depends on within-pool ordering near the top, on the separation between candidates, and on whether mistakes occur where alternatives differ substantially. A judge can make many errors with little regret in nearly tied pools, or fewer errors with large regret in heterogeneous pools. Reporting both regret and human-best selection makes this distinction visible.
+\paragraph{Evaluate the action, not the score.}
+A judge that ranks images plausibly can still return a poor image when it must act. Comparing the returned image with the best available one and with random choice on the same pool makes the value of the decision visible, and it exposes failures that score correlation hides: here, a strong dependence on where an image appears.
 
-\paragraph{Average gain and local shortfalls.}
-An average utility improvement, if observed, would support using the policy under this reference and candidate distribution. It would not eliminate below-baseline selections or explain subgroup disparities. Conversely, an interval spanning zero would leave the sign of average gain unresolved; it would not establish equivalence. Country-level differences are descriptive signals for subsequent investigation, not a ranking of cultures or proof of systematic discrimination in a live service.
+\paragraph{Agreement rules need their own audit.}
+Agreement can retain stable mistakes, and any reduction in regret must be compared with random choice on the kept prompts, and with the judge on the rejected ones. Position preference explains why the two rules we studied diverge. Unanimity across rotations demands the same image from different slots, so it filters out position-driven choices; two judges with similar slot preferences can agree for reasons unrelated to content. Order averaging, by voting across rotations, recovers part of the lost value without abstaining. Abstention still leaves a practical question: who handles the rejected request, at what cost, and with what outcome.
 
-\paragraph{When an evaluator can act.}
-The policy perspective suggests that validation should match the authority a system grants a judge. A selector needs outcome-based comparisons against alternatives actually available at the decision point. A verifier in a sequential agent additionally needs transition-level evidence, which this experiment does not supply. Candidate-order invariance is a useful diagnostic of whether irrelevant presentation choices affect that authority, but invariance alone cannot certify cultural knowledge.
-
-\paragraph{Interpreting abstention.}
-Agreement can reduce coverage and conditional regret, leave regret unchanged, or select stable mistakes. A risk--coverage plot must therefore show the observed direction rather than assume that a stricter threshold improves safety. Evaluating a baseline on the same subset distinguishes easier-case filtering from useful selection within that subset. Even a favorable curve leaves the handling of rejected requests unresolved, and tighter worst-group estimates may require additional data rather than stricter filtering.
+\paragraph{Alignment and cultural errors are different targets.}
+Both the VLM judge and the CLIP scorer reduce missing cultural expectations while slightly raising stereotype ratings. A selector tuned or validated on prompt alignment should therefore be audited separately on stereotype outcomes, and composite scores would hide this trade-off.
 
 \section{Limitations and Ethics}
 CulturalFrames covers a limited set of countries, domains, prompts, and generators. Country labels compress substantial within-country diversity. Candidate images are existing outputs from a small generator pool, so the results depend on its visual styles and available alternatives. Hiding generator names does not remove recognizable stylistic signatures. Our local input resolution can obscure fine details and is part of the evaluated configuration.
 
 Human annotation means are imperfect references. Different annotators can disagree, small rating panels create ties and noise, and selecting a maximum can exploit annotation noise. The oracle should be interpreted accordingly. Primary bootstrap intervals condition on these means; they are not estimates of uncertainty over all possible human evaluations. Prompts can share semantic templates even after exact-text deduplication, so unmodeled dependence may also narrow intervals. Prompt alignment reflects ordinary request satisfaction and cannot isolate culture-specific value by itself. Missing-expectation and stereotype endpoints provide additional descriptions without an arbitrary composite.
 
-The setting simulates selecting a returned image; it measures neither observed user harm nor live sequential editing. We do not treat independent generations as temporal trajectories or claim a feedback-amplification result. Two open judges do not represent all proprietary frontier models, quantizations, prompts, or compute budgets. Agreement statistics are not epistemic confidence, and selective risk is not overall system risk when abstained cases remain unresolved.
+The setting simulates selecting a returned image; it measures neither observed user harm nor live sequential editing. We do not treat independent generations as temporal trajectories or claim a feedback-amplification result. Two small open judges (4B and 2.2B parameters) do not represent larger or proprietary models, quantizations, prompts, or compute budgets; stronger judges may show weaker position preference. With 30 prompts per country, country-group intervals are wide, and RQ2 is underpowered to detect moderate group differences. Position, complement-set, content-baseline, and ablation analyses were added after main inference and are exploratory. The CLIP comparison uses a single similarity model. Agreement statistics are not epistemic confidence, and selective risk is not overall system risk when abstained cases remain unresolved.
 
-This is secondary analysis of an independently released public benchmark, with no new participant recruitment or collection of personal data. Derived artifacts retain aggregate scores and candidate identifiers, not annotator identifiers, demographics, or free-text comments. The public dataset card does not declare a dataset license; public availability does not establish redistribution permission. We provide newly written code, manifests, and derived outputs while excluding source images and raw human records from the repository and manuscript. Applicable institutional requirements for secondary analysis remain an author responsibility.
+This is secondary analysis of an independently released public benchmark, with no new participant recruitment or collection of personal data. Derived artifacts retain aggregate scores and candidate identifiers, not annotator identifiers, demographics, or free-text comments. The public dataset card does not declare a dataset license; public availability does not establish redistribution permission. We provide newly written code, manifests, and derived outputs; source images and raw human records are not redistributed. Figures~\ref{fig:hero}, \ref{fig:teaser}, and~\ref{fig:gallery} reproduce dataset images with attribution for illustration. Applicable institutional requirements for secondary analysis remain an author responsibility.
+
+\paragraph{AI assistance.}
+AI coding and writing assistants (OpenAI Codex and Anthropic Claude) assisted with code development, manuscript drafting and revision, figure code, and draft review. All empirical results are computed from released annotations and recorded local judge outputs; writing assistance does not supply experimental observations. Authors remain responsible for verifying the analysis, references, and final manuscript.
 
 \paragraph{Statement of Contributions.}
-This paper presents a new system-level formulation and empirical audit of VLM-guided image selection, using an independently released public benchmark, newly written selection and analysis code, policy-level outcome measures, abstention analyses, and subgroup evaluations. It is not an extension of a previously published version of this study. No private data, code, unpublished annotations, or experimental results from earlier author work are reused.
+This paper contributes (i) a matched-baseline, order-rotated audit protocol for VLM selectors that act on fixed candidate pools; (ii) evidence that two small open judges' choices are strongly shaped by presentation position, with post-hoc ablations of the output format and label identity; (iii) an audit of agreement gates on both the prompts they keep and the prompts they reject, compared with a content-only baseline; and (iv) a deterministic artifact with an offline browser for every recorded decision. The paper has no earlier published version; all experiments, analyses, and text are new.
 
 \section{Conclusion}
-Evaluating a judge's decisions requires tracing them to the content selected from its available alternatives. The proposed audit makes that consequence measurable with existing public human annotations, exact random baselines, prompt-level uncertainty, and selective-risk reporting. Its deployment scope is candidate selection. Reliable cultural oversight in broader systems requires additional evidence about the actions, users, and unresolved cases those systems actually encounter.
+\input{generated/conclusion_result}
+These findings concern a single choice from a fixed candidate pool. Evaluating a deployed selector also requires evidence about its users, later actions, and outcomes when it abstains.
 
 \bibliography{refs}
 
 \appendix
 \section{Reproduction Protocol}
 \input{generated/reproduction}
-\subsection{Judge Instruction}
+
+In the artifact, the key \texttt{hsr} stores the below-mean rate (BMR) reported here. The pipeline is deterministic given the recorded outputs: \texttt{make analyze} recomputes every table, figure, and number in this paper from the frozen judge logs, and \texttt{make paper} regenerates the manuscript text fragments. Figures and prose never contain hand-entered estimates; each value is read from the analysis outputs at build time, and a checksum manifest covers the annotations, manifests, judge logs, and analysis code.
+
+\section{Additional Result Figures and Tables}
+\label{app:figs}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/country_bars.pdf}
+\caption{Country-group regret with 95\% bootstrap intervals (30 prompts per group). Random regret shows each group's room for improvement. Country groups are dataset contexts, not homogeneous cultural preferences.}
+\label{fig:country}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/coverage_bars.pdf}
+\caption{Regret at each agreement gate next to random choice on the identical kept prompts (95\% bootstrap intervals). ``Majority'' votes over the three orders and always acts.}
+\label{fig:coverage}
+\end{figure}
+
+\begin{table*}[t]
+\centering
+\input{generated/table_decomposition}
+\caption{Qwen's choices on pools where a given error rating differs across candidates. Selected and Random are mean error rates; the difference is paired (95\% CI). Conditions overlap and do not isolate causal effects.}
+\label{tab:decomposition}
+\end{table*}
+
+\section{Dataset Composition}
+Table~\ref{tab:dataset} describes the frozen main split by country. \emph{Ties} are pools with identical alignment scores (zero regret under every policy); \emph{Mean range} is the average spread between the best and worst candidate, an upper bound on the regret a judge can incur. Table~\ref{tab:generators} reports each generator's representation and mean rating.
+
+\begin{table*}[t]
+\centering
+\input{generated/appendix_dataset}
+\caption{Main split by country (30 prompts each). Mean align. and Stereo. average candidate-level human ratings.}
+\label{tab:dataset}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\input{generated/appendix_generators}
+\caption{Generators in the main split. Uniform is the share expected if a judge chose uniformly at random given pool sizes; Qwen and Smol are choice shares pooled over all three orders, which decouples generator from presentation slot.}
+\label{tab:generators}
+\end{table*}
+
+\section{Additional Qualitative Examples}
+\label{app:gallery}
+Figure~\ref{fig:teaser} uses a fixed rule applied without viewing images: among three-candidate pools where Qwen's original-order choice is below the pool mean and some candidate exceeds the mean by at least 0.25, take the largest-regret prompt per country, then the four countries with the largest regret (ties broken by name). Figure~\ref{fig:gallery} shows one pool per country, chosen as the first four-candidate prompt in the frozen manifest. Unlike Figure~\ref{fig:teaser}, this sample is not filtered on outcomes. Both judges' original-order choices are marked.
+
+\begin{figure*}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{figures/gallery_appendix.pdf}
+\caption{Unfiltered examples: the first four-candidate prompt per country in the frozen manifest, with candidates in original presentation order. Numbers are mean human prompt-alignment ratings. Blue (Q) and orange (S) frames mark the Qwen and Smol original-order choices; green checks mark the highest-rated candidates. Images from CulturalFrames \citep{culturalframes}.}
+\label{fig:gallery}
+\end{figure*}
+
+Three further galleries use fixed selection rules documented in the artifact. Figure~\ref{fig:gallery-orders} shows prompts on which Qwen picks slot A in every order, so the returned image changes with order alone. Figure~\ref{fig:gallery-clip} contrasts Qwen with the CLIP scorer where they disagree most, in both directions. Figure~\ref{fig:gallery-stereo} shows prompts where Qwen returns the most stereotyped image in the pool although an equally or better aligned image with a lower stereotype rate was available.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/gallery_orders.pdf}
+\caption{Order flips. Prompts where Qwen picks slot A in all three orders and returns at least two different images; the five with the widest rating range among its picks. The last column is the best-rated candidate. Images from CulturalFrames \citep{culturalframes}.}
+\label{fig:gallery-orders}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/gallery_clip.pdf}
+\caption{Content scorer versus judge. Prompts where CLIP's choice (C, purple) and Qwen's original-order choice (Q, blue) differ most in rating: left, CLIP's choice is rated higher; right, Qwen's is. Checks mark the best-rated candidates.}
+\label{fig:gallery-clip}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/gallery_stereotype.pdf}
+\caption{Stereotype trade-off. Prompts where Qwen's choice (red) has the highest stereotype rate in its pool and another candidate with equal or higher alignment has a lower rate (checks). Labels give mean alignment (A) and the share of annotators flagging a stereotype (S).}
+\label{fig:gallery-stereo}
+\end{figure*}
+
+\begin{table*}[p]
+\centering
+\input{generated/appendix_policies}
+\captionof{table}{All policies. Cov.: share of 300 prompts acted on (\%). BMR, Rand.\ BMR, and Best in \%. ``Qwen, not unanimous'' and ``Qwen, judges disagree'' apply Qwen's original-order choice to the prompts that the respective gates reject (exploratory).}\label{tab:policies}
+\vspace{1.2em}
+\input{generated/appendix_sensitivity}
+\captionof{table}{Sensitivity to outcome definitions (rates in \%).}\label{tab:sensitivity}
+\vspace{1.2em}
+\input{generated/appendix_outcomes}
+\captionof{table}{Selected minus matched random for secondary outcomes, with pointwise 95\% bootstrap intervals. For error ratings, negative values mean fewer errors; for quality and overall gain, positive values are better.}\label{tab:outcomes}
+\end{table*}
+
+\begin{table*}[p]
+\centering
+\input{generated/appendix_country}
+\captionof{table}{Country-group results (30 prompts each). Rand., Qwen, Smol: mean regret. Gains are paired with random on the same prompts. BMR in \%. Intervals are pointwise.}\label{tab:countries}
+\vspace{1.2em}
+\input{generated/appendix_category}
+\captionof{table}{Category results for Qwen's original-order choices (descriptive).}\label{tab:categories}
+\vspace{1.2em}
+\input{generated/appendix_validity}
+\captionof{table}{Output validity over all planned calls. Hours is total recorded inference time.}\label{tab:validity}
+\end{table*}
+
+\section{Complete Policy Results}
+Table~\ref{tab:policies} lists every policy, including majority and two-of-three rules for both judges and the complements of each agreement gate. Gains are paired with exact random selection on the same prompts; BMR is compared with the random event probability on those prompts. Table~\ref{tab:sensitivity} reports alternative definitions: median regret, a 0.05 margin for below-mean selection, near-best selection, selection below the candidate median, and regret measured with overall satisfaction instead of prompt alignment. Conclusions are unchanged under these alternatives.
+
+
+
+
+
+\section{Secondary Outcomes}
+Table~\ref{tab:outcomes} reports paired differences from matched random selection for each cultural-error rating and image quality, together with the overall-satisfaction gain. For Qwen, the last row gives Bonferroni-adjusted intervals across the three cultural-error outcomes. Qwen's choices reduce missing explicit and implicit expectations under this adjustment; the stereotype increase does not survive it.
+
+
+
+\section{Country and Category Results}
+Table~\ref{tab:countries} expands Figure~\ref{fig:country}. The last column reports how many prompts per country pass the unanimity gate and their regret; the gate represents all countries, but acceptance ranges widely across groups. Table~\ref{tab:categories} reports the declared category analysis.
+
+
+
+
+
+\section{Content-Only Baseline and Annotation Robustness}
+Table~\ref{tab:baselines} compares the CLIP selector with the judges; Table~\ref{tab:robustness} repeats the Qwen analysis on prompts split by annotator agreement and on prompts with a unique best candidate. Annotator disagreement is the mean, over candidates with at least two ratings, of the variance of individual alignment ratings; the split is at its median.
+
+\begin{table*}[t]
+\centering
+\input{generated/appendix_baselines}
+\caption{Content-only CLIP selector (argmax prompt--image similarity, position-invariant by construction) versus the judges, original order. BMR, Rand.\ BMR, and Best in \%. $\Delta$Stereotype is selected minus matched random.}
+\label{tab:baselines}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\input{generated/appendix_robustness}
+\caption{Robustness to annotation consensus (exploratory). Rand.\ regret is random choice on the same prompts.}
+\label{tab:robustness}
+\end{table*}
+
+\section{Presentation Position}
+Table~\ref{tab:position} separates slot preference by pool size. Qwen favors slot A in both pool sizes. Smol favors slot B for three-image pools and slots A and B for four-image pools, and rarely chooses later slots. Because the three rotations present each candidate in different slots, a judge that followed position alone would never be unanimous; this is why unanimity filters position-driven choices (Section~\ref{sec:results}).
+
+\begin{table*}[t]
+\centering
+\input{generated/appendix_position}
+\caption{Choice share by presentation slot and pool size (\%), over all recorded orders.}
+\label{tab:position}
+\end{table*}
+
+\section{Output Validity}
+Table~\ref{tab:validity} summarizes parsing outcomes. Qwen satisfied the strict two-field schema on every call. Smol rarely produced valid JSON; its choices were recovered by the predeclared single-label normalization described below, and every recovery is flagged in the logs.
+
+
+
+\section{Design Choices and Anticipated Questions}
+\paragraph{Why small open-weight judges?} Open weights allow a frozen, fully logged, and reproducible protocol, including exact revisions and input tensors. The finding that matters for practice is methodological: whatever judge is used, its agreement rules need matched baselines and an audit of the prompts they reject. Larger judges may show weaker position preference; the protocol applies unchanged.
+\paragraph{Why prompt alignment as the primary outcome?} It is the rating most directly tied to whether a returned image satisfies the request, and it is available for every candidate. Cultural-error ratings are reported separately rather than folded into a composite, because the results show they can move in different directions.
+\paragraph{Is the unanimity result just easy prompts?} No. Random regret on the unanimously accepted prompts is higher than on the full split (Table~\ref{tab:policies}), so the gate does not select pools with less room for error, and the paired gain on those prompts is large.
+\paragraph{Why not debias position directly?} Order averaging or position-balanced prompting would change the frozen policy after observing results. We report the bias and leave debiased selectors to future work, where they can be evaluated with the same audit.
+\paragraph{What happens to abstained requests?} We do not model a human fallback. Coverage is reported alongside every selective estimate so that the cost of abstention remains visible.
+
+\section{Interactive Audit Browser}
+\label{app:browser}
+To make every decision inspectable, the artifact includes an offline browser built only from the recorded judge logs and released ratings (Figures~\ref{fig:browser-overview}--\ref{fig:browser-detail3}). The overview reproduces the headline estimates, slot preference, country regret, and the kept-versus-rejected gains of each gate. The prompt explorer filters pools by country, category, and outcome (for example, below-mean choices or prompts where the orders disagree). The detail view shows each pool under all three orders with both judges' choices, the per-candidate ratings, and whether each gate would act. The browser runs locally, needs no network access, and does not redistribute source images.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/browser_overview.jpg}
+\caption{Audit browser, overview. Headline estimates, presentation-slot preference, country-group regret, kept-versus-rejected gains for each gate, and gain over random for every policy, all computed from the recorded outputs.}
+\label{fig:browser-overview}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/browser_detail.jpg}
+\caption{Audit browser, detail view for the prompt in Figure~\ref{fig:hero}. Left: the three presentation orders with each judge's choice (Q, S) and the best-rated image (check). Right: per-candidate human ratings, selection metrics for the original order, and choices by order. Images from CulturalFrames \citep{culturalframes}.}
+\label{fig:browser-detail}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/browser_explore_below.jpg}
+\caption{Audit browser, prompt explorer filtered to Qwen's below-mean choices and sorted by regret. Each entry shows the pool with both judges' original-order choices (Q, S), the best-rated image (star), and the ratings.}
+\label{fig:browser-below}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/browser_explore_unanimous.jpg}
+\caption{Audit browser, prompt explorer filtered to prompts on which Qwen picks the same image in all three orders (the unanimity gate keeps these).}
+\label{fig:browser-unanimous}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/browser_detail_2.jpg}
+\caption{Audit browser, detail view for the four-image pool with the largest Qwen regret (selected by rule). Both judges return the lowest-rated image, so the cross-model gate would act on this prompt.}
+\label{fig:browser-detail2}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/browser_detail_3.jpg}
+\caption{Audit browser, detail view for a prompt where the two judges agree on a poorly rated image (next-largest regret among cross-model agreements).}
+\label{fig:browser-detail3}
+\end{figure*}
+
+\section{Estimation Details}
+\label{app:stats}
+We use 10,000 nonparametric prompt-level bootstrap resamples with seed 20261002 for means and paired gains. Each prompt's candidates and decisions travel together; permutation calls are never independently resampled. Binary deterministic-policy BMR uses Wilson intervals. Random-policy BMR averages fractional within-prompt probabilities and uses a bootstrap interval. Country results have subgroup bootstrap intervals, and the worst-group statistic is recomputed within resamples rather than selecting the upper endpoint of a single country's interval.
+
+The pooled prompt bootstrap approximates sampling from the balanced source mixture; it does not hold country counts fixed in every replicate. Worst-group resampling is stratified within represented countries, but its percentile interval is descriptive and need not be well calibrated when group means are tied or nearly tied. An interval for the group with the largest observed mean is not simultaneous or selection-adjusted.
+
+All intervals condition on the released annotation means. They do not account for annotation uncertainty or recruitment bias. Estimates after abstention weight accepted prompts equally, so country weights can differ from the balanced source split. We report group coverage and compare random selection on the same accepted prompts. The original endpoints, acceptance thresholds, and sensitive-set definitions remain fixed throughout the main run.
+
+Intervals for the secondary cultural-rating outcomes are pointwise, without adjustment for multiple comparisons. We interpret them as descriptive evidence about the released ratings, not confirmatory evidence of cultural harm across populations.
+
+
+\paragraph{Random-choice below-mean probability.} For random choice the below-mean event is a probability, $\frac{1}{m_p}\sum_i \mathbb{1}\{h_{pi}<\bar h_p\}$, averaged over the prompts in $A_\pi$. Replacing it with the indicator of the expected utility would make it identically zero. A sensitivity margin $\delta=0.05$ replaces $\bar h_p$ by $\bar h_p-\delta$ (Table~\ref{tab:sensitivity}).
+\paragraph{Order-consistency entropy.} We also record the normalized entropy of the three choices, $H_p=-\sum_i f_{pi}\log f_{pi}/\log m_p$, where $f_{pi}$ is the share of orders choosing $x_{pi}$. With three calls it can reach one for three candidates but at most $\log 3/\log 4$ for four, so it is not comparable across pool sizes; it plays no role in the gates.
+\paragraph{Worst-group regret.} For country group $g$, $R_g$ is the mean regret over acted-on prompts in $g$; worst-group regret is $\max_g R_g$ and disparity is $\max_g R_g-\min_g R_g$. Groups with no accepted prompts are reported as zero coverage, not zero risk.
+
+\section{Judge Instruction}
 The shared instruction reads:
 \begin{quote}
 You are evaluating candidate images for a generative image system. Select the ONE image that should be returned to the user.
@@ -233,8 +460,8 @@ The candidate labels are supplied next to each image. Return JSON only, with cho
 \end{quote}
 The user prompt follows this instruction, then each label and image are interleaved. A final text segment states the allowed labels and requires the two JSON keys, without specifying a candidate as an example answer. No human annotation, generator name, country field, or category field is included.
 
-\subsection{Invalid Output and Reproducibility}
+\section{Invalid Output and Reproducibility}
 Qwen's strict parser accepts exactly the two requested fields, a complete permutation of supplied labels, and a choice equal to the first ranking entry. It rejects explanatory wrappers, repeated labels, incomplete rankings, and inconsistent top choices. Smol requests exactly one \texttt{choice} key. Its adapter also accepts a bare supplied label or a one-field JSON or Python-literal dictionary using a declared alias (\texttt{image}, \texttt{selected}, \texttt{selected\_image}, or \texttt{candidate}), with a value consisting solely of a supplied label, optionally preceded by ``Candidate''. Every alias, bare label, or non-JSON literal is marked as a recovery. Multiple fields, multiple labels, absent candidates, explanatory prose, and ambiguous values are rejected. The adapter never invents a ranking or consults human scores. Its output instruction replaces the ranking request with a choice-only contract while retaining the evaluation criteria. Raw output is retained for every attempt. Exceptions receive one identical retry; unresolved parse failures produce abstentions. Unique request keys combine prompt identity and permutation index, and resume checks require unchanged instruction and manifest hashes.
 
-All public source revisions, model cards, candidate identities, frozen orders, environment versions, and derived tables are saved. Exact source-image bytes are retained locally; aspect-preserving resizing occurs only at inference. No private prior-study assets are accessed by the pipeline. Floating-point greedy decoding is deterministic within the recorded runtime configuration but need not yield identical choices across hardware or library implementations.
+All public source revisions, model cards, candidate identities, frozen orders, environment versions, and derived tables are saved. Exact source-image bytes are retained locally; aspect-preserving resizing occurs only at inference. The pipeline accesses only public sources. Floating-point greedy decoding is deterministic within the recorded runtime configuration but need not yield identical choices across hardware or library implementations.
 \end{document}

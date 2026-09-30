@@ -1,0 +1,32 @@
+{
+  "split": "main",
+  "n_manifest": 300,
+  "validation": {
+    "qwen": {
+      "calls": 900,
+      "valid": 900,
+      "invalid": 0,
+      "strict_schema_valid": 900,
+      "recovered": 0,
+      "json_invalid": 0,
+      "runtime_failed": 0,
+      "parse_failed": 0,
+      "seconds": 4147.301174215032,
+      "unattempted": 0
+    },
+    "smol": {
+      "calls": 900,
+      "valid": 886,
+      "invalid": 14,
+      "strict_schema_valid": 0,
+      "recovered": 886,
+      "json_invalid": 880,
+      "runtime_failed": 0,
+      "parse_failed": 14,
+      "seconds": 974.8482237459757,
+      "unattempted": 0
+    }
+  },
+  "complete_primary": true,
+  "complete_secondary": true
+}

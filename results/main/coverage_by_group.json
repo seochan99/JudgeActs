@@ -1,0 +1,1562 @@
+[
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 28,
+    "manifest_n": 30,
+    "coverage": 0.9333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Qwen unanimous",
+    "accepted_n": 16,
+    "manifest_n": 30,
+    "coverage": 0.5333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Smol",
+    "accepted_n": 29,
+    "manifest_n": 30,
+    "coverage": 0.9666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Smol majority",
+    "accepted_n": 29,
+    "manifest_n": 30,
+    "coverage": 0.9666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 10,
+    "manifest_n": 30,
+    "coverage": 0.3333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 25,
+    "manifest_n": 30,
+    "coverage": 0.8333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Cross-model",
+    "accepted_n": 5,
+    "manifest_n": 30,
+    "coverage": 0.16666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 14,
+    "manifest_n": 30,
+    "coverage": 0.4666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Brazil",
+    "policy": "Smol unanimous",
+    "accepted_n": 2,
+    "manifest_n": 30,
+    "coverage": 0.06666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 25,
+    "manifest_n": 30,
+    "coverage": 0.8333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Qwen unanimous",
+    "accepted_n": 17,
+    "manifest_n": 30,
+    "coverage": 0.5666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Smol",
+    "accepted_n": 29,
+    "manifest_n": 30,
+    "coverage": 0.9666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Smol majority",
+    "accepted_n": 29,
+    "manifest_n": 30,
+    "coverage": 0.9666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 10,
+    "manifest_n": 30,
+    "coverage": 0.3333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 26,
+    "manifest_n": 30,
+    "coverage": 0.8666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Cross-model",
+    "accepted_n": 4,
+    "manifest_n": 30,
+    "coverage": 0.13333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 13,
+    "manifest_n": 30,
+    "coverage": 0.43333333333333335
+  },
+  {
+    "axis": "country",
+    "group": "Canada",
+    "policy": "Smol unanimous",
+    "accepted_n": 0,
+    "manifest_n": 30,
+    "coverage": 0.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 27,
+    "manifest_n": 30,
+    "coverage": 0.9
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Qwen unanimous",
+    "accepted_n": 16,
+    "manifest_n": 30,
+    "coverage": 0.5333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Smol majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 13,
+    "manifest_n": 30,
+    "coverage": 0.43333333333333335
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 27,
+    "manifest_n": 30,
+    "coverage": 0.9
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Cross-model",
+    "accepted_n": 3,
+    "manifest_n": 30,
+    "coverage": 0.1
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 14,
+    "manifest_n": 30,
+    "coverage": 0.4666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Chile",
+    "policy": "Smol unanimous",
+    "accepted_n": 0,
+    "manifest_n": 30,
+    "coverage": 0.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 19,
+    "manifest_n": 30,
+    "coverage": 0.6333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Qwen unanimous",
+    "accepted_n": 4,
+    "manifest_n": 30,
+    "coverage": 0.13333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Smol majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 15,
+    "manifest_n": 30,
+    "coverage": 0.5
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 23,
+    "manifest_n": 30,
+    "coverage": 0.7666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Cross-model",
+    "accepted_n": 7,
+    "manifest_n": 30,
+    "coverage": 0.23333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 26,
+    "manifest_n": 30,
+    "coverage": 0.8666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "China",
+    "policy": "Smol unanimous",
+    "accepted_n": 0,
+    "manifest_n": 30,
+    "coverage": 0.0
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 23,
+    "manifest_n": 30,
+    "coverage": 0.7666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Qwen unanimous",
+    "accepted_n": 13,
+    "manifest_n": 30,
+    "coverage": 0.43333333333333335
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Smol majority",
+    "accepted_n": 25,
+    "manifest_n": 30,
+    "coverage": 0.8333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 9,
+    "manifest_n": 30,
+    "coverage": 0.3
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 23,
+    "manifest_n": 30,
+    "coverage": 0.7666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Cross-model",
+    "accepted_n": 7,
+    "manifest_n": 30,
+    "coverage": 0.23333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 17,
+    "manifest_n": 30,
+    "coverage": 0.5666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Germany",
+    "policy": "Smol unanimous",
+    "accepted_n": 0,
+    "manifest_n": 30,
+    "coverage": 0.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 22,
+    "manifest_n": 30,
+    "coverage": 0.7333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Qwen unanimous",
+    "accepted_n": 9,
+    "manifest_n": 30,
+    "coverage": 0.3
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Smol majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 17,
+    "manifest_n": 30,
+    "coverage": 0.5666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 22,
+    "manifest_n": 30,
+    "coverage": 0.7333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Cross-model",
+    "accepted_n": 8,
+    "manifest_n": 30,
+    "coverage": 0.26666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 21,
+    "manifest_n": 30,
+    "coverage": 0.7
+  },
+  {
+    "axis": "country",
+    "group": "India",
+    "policy": "Smol unanimous",
+    "accepted_n": 2,
+    "manifest_n": 30,
+    "coverage": 0.06666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 29,
+    "manifest_n": 30,
+    "coverage": 0.9666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Qwen unanimous",
+    "accepted_n": 14,
+    "manifest_n": 30,
+    "coverage": 0.4666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Smol majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 13,
+    "manifest_n": 30,
+    "coverage": 0.43333333333333335
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 23,
+    "manifest_n": 30,
+    "coverage": 0.7666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Cross-model",
+    "accepted_n": 7,
+    "manifest_n": 30,
+    "coverage": 0.23333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 16,
+    "manifest_n": 30,
+    "coverage": 0.5333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Iran",
+    "policy": "Smol unanimous",
+    "accepted_n": 0,
+    "manifest_n": 30,
+    "coverage": 0.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 20,
+    "manifest_n": 30,
+    "coverage": 0.6666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Qwen unanimous",
+    "accepted_n": 9,
+    "manifest_n": 30,
+    "coverage": 0.3
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Smol majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 15,
+    "manifest_n": 30,
+    "coverage": 0.5
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 22,
+    "manifest_n": 30,
+    "coverage": 0.7333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Cross-model",
+    "accepted_n": 8,
+    "manifest_n": 30,
+    "coverage": 0.26666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 21,
+    "manifest_n": 30,
+    "coverage": 0.7
+  },
+  {
+    "axis": "country",
+    "group": "Japan",
+    "policy": "Smol unanimous",
+    "accepted_n": 2,
+    "manifest_n": 30,
+    "coverage": 0.06666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 24,
+    "manifest_n": 30,
+    "coverage": 0.8
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Qwen unanimous",
+    "accepted_n": 15,
+    "manifest_n": 30,
+    "coverage": 0.5
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Smol",
+    "accepted_n": 29,
+    "manifest_n": 30,
+    "coverage": 0.9666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Smol majority",
+    "accepted_n": 28,
+    "manifest_n": 30,
+    "coverage": 0.9333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 14,
+    "manifest_n": 30,
+    "coverage": 0.4666666666666667
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 25,
+    "manifest_n": 30,
+    "coverage": 0.8333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Cross-model",
+    "accepted_n": 5,
+    "manifest_n": 30,
+    "coverage": 0.16666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 15,
+    "manifest_n": 30,
+    "coverage": 0.5
+  },
+  {
+    "axis": "country",
+    "group": "Poland",
+    "policy": "Smol unanimous",
+    "accepted_n": 0,
+    "manifest_n": 30,
+    "coverage": 0.0
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Random",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Oracle",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Qwen",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Qwen majority",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 25,
+    "manifest_n": 30,
+    "coverage": 0.8333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Qwen unanimous",
+    "accepted_n": 8,
+    "manifest_n": 30,
+    "coverage": 0.26666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Smol",
+    "accepted_n": 30,
+    "manifest_n": 30,
+    "coverage": 1.0
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Smol majority",
+    "accepted_n": 28,
+    "manifest_n": 30,
+    "coverage": 0.9333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 15,
+    "manifest_n": 30,
+    "coverage": 0.5
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 25,
+    "manifest_n": 30,
+    "coverage": 0.8333333333333334
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Cross-model",
+    "accepted_n": 5,
+    "manifest_n": 30,
+    "coverage": 0.16666666666666666
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 22,
+    "manifest_n": 30,
+    "coverage": 0.7333333333333333
+  },
+  {
+    "axis": "country",
+    "group": "South_Africa",
+    "policy": "Smol unanimous",
+    "accepted_n": 1,
+    "manifest_n": 30,
+    "coverage": 0.03333333333333333
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Random",
+    "accepted_n": 103,
+    "manifest_n": 103,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Oracle",
+    "accepted_n": 103,
+    "manifest_n": 103,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Qwen",
+    "accepted_n": 103,
+    "manifest_n": 103,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Qwen majority",
+    "accepted_n": 103,
+    "manifest_n": 103,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 84,
+    "manifest_n": 103,
+    "coverage": 0.8155339805825242
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Qwen unanimous",
+    "accepted_n": 45,
+    "manifest_n": 103,
+    "coverage": 0.4368932038834951
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Smol",
+    "accepted_n": 102,
+    "manifest_n": 103,
+    "coverage": 0.9902912621359223
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Smol majority",
+    "accepted_n": 100,
+    "manifest_n": 103,
+    "coverage": 0.970873786407767
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 48,
+    "manifest_n": 103,
+    "coverage": 0.46601941747572817
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 87,
+    "manifest_n": 103,
+    "coverage": 0.8446601941747572
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Cross-model",
+    "accepted_n": 16,
+    "manifest_n": 103,
+    "coverage": 0.1553398058252427
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 58,
+    "manifest_n": 103,
+    "coverage": 0.5631067961165048
+  },
+  {
+    "axis": "category",
+    "group": "dates-of-significance",
+    "policy": "Smol unanimous",
+    "accepted_n": 2,
+    "manifest_n": 103,
+    "coverage": 0.019417475728155338
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Random",
+    "accepted_n": 79,
+    "manifest_n": 79,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Oracle",
+    "accepted_n": 79,
+    "manifest_n": 79,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Qwen",
+    "accepted_n": 79,
+    "manifest_n": 79,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Qwen majority",
+    "accepted_n": 79,
+    "manifest_n": 79,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 60,
+    "manifest_n": 79,
+    "coverage": 0.759493670886076
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Qwen unanimous",
+    "accepted_n": 29,
+    "manifest_n": 79,
+    "coverage": 0.3670886075949367
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Smol",
+    "accepted_n": 79,
+    "manifest_n": 79,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Smol majority",
+    "accepted_n": 77,
+    "manifest_n": 79,
+    "coverage": 0.9746835443037974
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 42,
+    "manifest_n": 79,
+    "coverage": 0.5316455696202531
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 63,
+    "manifest_n": 79,
+    "coverage": 0.7974683544303798
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Cross-model",
+    "accepted_n": 16,
+    "manifest_n": 79,
+    "coverage": 0.20253164556962025
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 50,
+    "manifest_n": 79,
+    "coverage": 0.6329113924050633
+  },
+  {
+    "axis": "category",
+    "group": "etiquette",
+    "policy": "Smol unanimous",
+    "accepted_n": 2,
+    "manifest_n": 79,
+    "coverage": 0.02531645569620253
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Random",
+    "accepted_n": 37,
+    "manifest_n": 37,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Oracle",
+    "accepted_n": 37,
+    "manifest_n": 37,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Qwen",
+    "accepted_n": 37,
+    "manifest_n": 37,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Qwen majority",
+    "accepted_n": 37,
+    "manifest_n": 37,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 34,
+    "manifest_n": 37,
+    "coverage": 0.918918918918919
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Qwen unanimous",
+    "accepted_n": 18,
+    "manifest_n": 37,
+    "coverage": 0.4864864864864865
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Smol",
+    "accepted_n": 36,
+    "manifest_n": 37,
+    "coverage": 0.972972972972973
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Smol majority",
+    "accepted_n": 36,
+    "manifest_n": 37,
+    "coverage": 0.972972972972973
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 11,
+    "manifest_n": 37,
+    "coverage": 0.2972972972972973
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 32,
+    "manifest_n": 37,
+    "coverage": 0.8648648648648649
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Cross-model",
+    "accepted_n": 5,
+    "manifest_n": 37,
+    "coverage": 0.13513513513513514
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 19,
+    "manifest_n": 37,
+    "coverage": 0.5135135135135135
+  },
+  {
+    "axis": "category",
+    "group": "family",
+    "policy": "Smol unanimous",
+    "accepted_n": 1,
+    "manifest_n": 37,
+    "coverage": 0.02702702702702703
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Random",
+    "accepted_n": 45,
+    "manifest_n": 45,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Oracle",
+    "accepted_n": 45,
+    "manifest_n": 45,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Qwen",
+    "accepted_n": 45,
+    "manifest_n": 45,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Qwen majority",
+    "accepted_n": 45,
+    "manifest_n": 45,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 35,
+    "manifest_n": 45,
+    "coverage": 0.7777777777777778
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Qwen unanimous",
+    "accepted_n": 15,
+    "manifest_n": 45,
+    "coverage": 0.3333333333333333
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Smol",
+    "accepted_n": 45,
+    "manifest_n": 45,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Smol majority",
+    "accepted_n": 42,
+    "manifest_n": 45,
+    "coverage": 0.9333333333333333
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 13,
+    "manifest_n": 45,
+    "coverage": 0.28888888888888886
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 35,
+    "manifest_n": 45,
+    "coverage": 0.7777777777777778
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Cross-model",
+    "accepted_n": 10,
+    "manifest_n": 45,
+    "coverage": 0.2222222222222222
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 30,
+    "manifest_n": 45,
+    "coverage": 0.6666666666666666
+  },
+  {
+    "axis": "category",
+    "group": "greetings",
+    "policy": "Smol unanimous",
+    "accepted_n": 1,
+    "manifest_n": 45,
+    "coverage": 0.022222222222222223
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Random",
+    "accepted_n": 36,
+    "manifest_n": 36,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Oracle",
+    "accepted_n": 36,
+    "manifest_n": 36,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Qwen",
+    "accepted_n": 36,
+    "manifest_n": 36,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Qwen majority",
+    "accepted_n": 36,
+    "manifest_n": 36,
+    "coverage": 1.0
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Qwen agree 2/3",
+    "accepted_n": 29,
+    "manifest_n": 36,
+    "coverage": 0.8055555555555556
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Qwen unanimous",
+    "accepted_n": 14,
+    "manifest_n": 36,
+    "coverage": 0.3888888888888889
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Smol",
+    "accepted_n": 35,
+    "manifest_n": 36,
+    "coverage": 0.9722222222222222
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Smol majority",
+    "accepted_n": 34,
+    "manifest_n": 36,
+    "coverage": 0.9444444444444444
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Smol agree 2/3",
+    "accepted_n": 17,
+    "manifest_n": 36,
+    "coverage": 0.4722222222222222
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Qwen, judges disagree",
+    "accepted_n": 24,
+    "manifest_n": 36,
+    "coverage": 0.6666666666666666
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Cross-model",
+    "accepted_n": 12,
+    "manifest_n": 36,
+    "coverage": 0.3333333333333333
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Qwen, not unanimous",
+    "accepted_n": 22,
+    "manifest_n": 36,
+    "coverage": 0.6111111111111112
+  },
+  {
+    "axis": "category",
+    "group": "religion",
+    "policy": "Smol unanimous",
+    "accepted_n": 1,
+    "manifest_n": 36,
+    "coverage": 0.027777777777777776
+  }
+]

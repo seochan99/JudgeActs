@@ -1,0 +1,19 @@
+{
+  "model": {
+    "id": "HuggingFaceTB/SmolVLM2-2.2B-Instruct",
+    "revision": "482adb537c021c86670beed01cd58990d01e72e4",
+    "license": "apache-2.0"
+  },
+  "split": "dev",
+  "runner_sha256": "be88a086795172d042cd9a524c51631586a88c9bc16f4959b319fb1b2be23ef6",
+  "parser_sha256": "1c766a59965dc784c772f8228cbc130fbf4894945f847be4c058764f77cec409",
+  "prompt_sha256": "9aba1ccdeab479e7652ded156a080aa524ae8e14482a12c9bb291a2ccb783741",
+  "split_sha256": "f70d84b47d833b6844c53de01b8bade308c8371fccc297086f720b2509676e6a",
+  "image_size": 448,
+  "max_tokens": 64,
+  "dtype": "bfloat16",
+  "backend": "transformers-mps",
+  "output_schema": "choice_only",
+  "torch": "2.14.0",
+  "do_sample": false
+}

@@ -1,0 +1,31 @@
+{
+  "prompt_id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23",
+  "prompt": "Chilean family lunch, children eagerly finishing homemade pastel de choclo",
+  "rule": "3-candidate main set; Qwen chooses slot A in all 3 orders with 3 distinct images; widest alignment range",
+  "orders": [
+    {
+      "mapping": {
+        "A": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_SD35",
+        "B": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_flux",
+        "C": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_gpt-image"
+      },
+      "selected_id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_SD35"
+    },
+    {
+      "mapping": {
+        "A": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_flux",
+        "B": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_gpt-image",
+        "C": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_SD35"
+      },
+      "selected_id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_flux"
+    },
+    {
+      "mapping": {
+        "A": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_gpt-image",
+        "B": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_SD35",
+        "C": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_flux"
+      },
+      "selected_id": "7c51b0579f2a01ed23dbf4a6a21134431808d94f57d4ab74f5e93d3a275d2a23_gpt-image"
+    }
+  ]
+}

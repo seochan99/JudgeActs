@@ -16,7 +16,7 @@ def random_metrics(scores):
     rows = [candidate_metrics(scores, i) for i in range(len(scores))]
     return {key:float(np.mean([r[key] for r in rows])) for key in rows[0]}
 
-def bootstrap_mean(values, resamples=10000, seed=20261002):
+def bootstrap_mean(values, resamples=10000, seed=20261002, alpha=.05):
     values = np.asarray(values, dtype=float)
     if not len(values):
         return [None, None]
@@ -25,7 +25,7 @@ def bootstrap_mean(values, resamples=10000, seed=20261002):
     for start in range(0,resamples,250):
         ix = rng.integers(len(values), size=(min(250,resamples-start),len(values)))
         means.extend(values[ix].mean(axis=1))
-    return np.quantile(means,[.025,.975]).tolist()
+    return np.quantile(means,[alpha/2,1-alpha/2]).tolist()
 
 def wilson(successes, n):
     if n == 0:

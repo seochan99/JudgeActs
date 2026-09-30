@@ -1,0 +1,19 @@
+{
+  "pages_total": 17,
+  "references_start_page": 8,
+  "appendix_start_page": 9,
+  "main_pages_upper_bound": 8,
+  "author_metadata_empty": true,
+  "font_embedding_ok": true,
+  "unresolved_references": false,
+  "overfull_boxes": false,
+  "forbidden_packages": [],
+  "contributions_present": true,
+  "identifying_urls_present": false,
+  "draft_banner_present": false,
+  "em_dash_present": false,
+  "em_dash_source_files": [],
+  "placeholder_tokens": [],
+  "pdf_technical_checks_pass": true,
+  "empirical_content_complete": true
+}

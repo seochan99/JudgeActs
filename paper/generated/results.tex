@@ -1,1 +1,53 @@
-The frozen main experiment has not completed. No main-run utility, regret, harmful steering rate, subgroup comparison, or mitigation effect is claimed in this working draft. The generation scripts will populate this section, both tables, and the three empirical figures from recorded outputs after the complete primary run.
+\subsection{Direct Selection}
+
+Qwen makes valid original-order selections for 300/300 prompts (Table~\ref{tab:main}, Figure~\ref{fig:results}a). On these same prompts, mean alignment is 0.770 for Qwen, 0.730 for random selection, and 0.929 for the annotation oracle. The paired gain is 0.039 (95\% CI [0.016, 0.062]). The gain interval lies above zero. Mean regret is 0.160 (95\% CI [0.136, 0.184]); median regret is 0.000. Qwen selects an annotation-best candidate in 51.0\% of valid decisions and is within 0.05 of the best score in 51.7\%.
+
+Below-mean selection (BMR) occurs in 36.3\% of valid Qwen choices (95\% Wilson interval [31.1\%, 41.9\%]), compared with random's exact event probability 43.1\% on the same prompts. With margin $\delta=0.05$, the rates are 30.7\% and 37.0\%, respectively. Qwen selects below the candidate median in 28.7\% of valid decisions. The paired below-mean difference from random is -0.067 (95\% CI [-0.118, -0.016]).
+
+Smol resolves 297/300 original-order choices. On its valid prompts, mean alignment is 0.659, compared with matched random alignment 0.732. Its paired gain is -0.073 (95\% CI [-0.093, -0.052]), regret is 0.270 (95\% CI [0.243, 0.298]), and BMR is 60.3\%, compared with matched random BMR 43.0\%. Different valid subsets, image resolutions, and output contracts preclude attributing this contrast solely to model capability.
+
+\subsection{Country Groups}
+
+Figure~\ref{fig:country} reports country-group regret. The largest observed Qwen mean is 0.275 in Japan, with 30/30 valid choices and pointwise 95\% CI [0.171, 0.387]. Matched random regret in that group is 0.266; Qwen's paired alignment gain is -0.009 (95\% CI [-0.093, 0.073]). Larger regret can reflect a greater selection opportunity in the pool, not just poorer judging.
+
+The maximum-minus-minimum group disparity is 0.175. The descriptive bootstrap interval for the maximum across represented groups is [0.206, 0.385]. The interval for the named group is pointwise, not selection-adjusted; neither estimate ranks cultural preferences. The artifact includes group coverage, matched baselines, and the declared category analyses.
+
+\subsection{Missing Expectations and Stereotypes}
+
+For the explicit-sensitive condition (Table~\ref{tab:decomposition}), 276 valid selections have alignment regret 0.169 and BMR 37.3\%. Across 276 annotation-complete comparisons, the condition's mean error-rating rate is 0.280 for selected images and 0.341 for random selection. Their paired difference is -0.060 (95\% CI [-0.092, -0.029]).
+
+For the implicit-sensitive condition (Table~\ref{tab:decomposition}), 248 valid selections have alignment regret 0.168 and BMR 37.9\%. Across 248 annotation-complete comparisons, the condition's mean error-rating rate is 0.207 for selected images and 0.248 for random selection. Their paired difference is -0.041 (95\% CI [-0.068, -0.012]).
+
+For the stereotype-sensitive condition (Table~\ref{tab:decomposition}), 194 valid selections have alignment regret 0.169 and BMR 37.1\%. Across 194 annotation-complete comparisons, the condition's mean error-rating rate is 0.227 for selected images and 0.191 for random selection. Their paired difference is 0.036 (95\% CI [0.004, 0.068]).
+
+These annotation-sensitive conditions overlap and do not isolate causal effects.
+
+Figure~\ref{fig:cultural} summarizes these paired differences. Across all 300 annotation-complete Qwen comparisons, the selected stereotype rating rate is 0.148, compared with matched random rate 0.125. The paired difference is 0.023 (95\% CI [0.002, 0.045], pointwise). This paired comparison was added after main inference; with a Bonferroni adjustment over the three cultural-error outcomes, its interval is [-0.002, 0.051] and includes zero, so we treat it as exploratory. Rates average released ratings, not unanimous image-level labels. Using normalized overall satisfaction instead of alignment, Qwen's gain is 0.023 (95\% CI [0.000, 0.046]) and regret is 0.178. The full artifact also reports missing-expectation and image-quality outcomes for every policy.
+
+\subsection{Order Consistency and Abstention}
+
+All three Qwen choices resolve for 300/300 prompts. Within those prompts, the selected image changes across orders in 59.7\% of sets. Mean normalized choice entropy is 0.364. Figure~\ref{fig:coverage} shows the observed agreement gates and random selection on their identical accepted subsets.
+
+Unanimity retains 121/300 prompts (40.3\% coverage), with regret 0.074 (95\% CI [0.050, 0.100]) and BMR 16.5\%. On the retained prompts, random regret is 0.215; the paired alignment gain is 0.141 (95\% CI [0.110, 0.173]). The original-order choice and unanimous choice are identical on this subset. The gate filters prompts; it does not revise their selections.
+
+The complement matters as much as the accepted set (Figure~\ref{fig:results}b). On the 179 prompts that unanimity rejects, Qwen's original-order choice has regret 0.218 and paired gain -0.030 (95\% CI [-0.057, -0.002]), below random. Order consistency therefore separates prompts on which the judge adds value from prompts on which it does worse than chance. These complement analyses are exploratory.
+
+Original-order cross-model agreement retains 59/300 prompts (19.7\%), with regret 0.249 (95\% CI [0.187, 0.316]) and BMR 54.2\%. Its paired gain over matched random selection is -0.060 (95\% CI [-0.111, -0.011]). On the 241 prompts where the judges disagree or Smol is unresolved, Qwen's gain is 0.064 (95\% CI [0.039, 0.087]). Cross-model agreement thus retains the prompts on which Qwen performs worst; it is conditional on this weak secondary judge.
+
+Qwen unanimous represents 10/10 country groups; omitted groups: none. Its largest represented-group mean regret is 0.115. Subgroup acceptance counts are retained in the artifact.
+
+Cross-model represents 10/10 country groups; omitted groups: none. Its largest represented-group mean regret is 0.490. Subgroup acceptance counts are retained in the artifact.
+
+\subsection{Presentation Position}
+
+Both judges prefer early presentation slots (Figure~\ref{fig:results}c). Across 900 valid calls, Qwen selects slot A in 48.8\%, compared with 27.8\% under uniform choice given the pool sizes ($\chi^2_{3}=219$, $p<10^{-10}$). Smol places 93.3\% of its 886 resolved choices in slots A or B. Because each prompt is shown in three cyclic orders, a judge that follows position alone would select three different images, whereas unanimity requires the same image in three different slots. This offers one account of both the order sensitivity and the value of the unanimity gate. Cross-model agreement, in contrast, can arise when both judges favor the same early slot, which the order-invariant gate does not reward. Figure~\ref{fig:hero} shows a recorded prompt on which Qwen selects slot A in all three orders, so its returned image and its alignment rating vary with presentation alone. The slot analysis uses the recorded outputs and was added after main inference.
+
+Position preference does not mean the judge ignores content. Because the canonical order sorts identifiers, one generator occupies slot A in most original-order pools, so original-order generator shares confound slot and content. Pooling all three rotations removes most of this link: Qwen then selects the highest-rated generator in 57.9\% of calls, against 27.2\% under uniform choice (Appendix Table~\ref{tab:generators}). The judge therefore mixes a content signal with a strong slot preference; order unanimity isolates prompts on which the content signal dominates.
+
+\subsection{Output Validity}
+
+Qwen records all 900 planned calls: 900 selections resolve, 0 fail parsing, and 0 fail inference.
+
+Smol records all 900 planned calls: 886 selections resolve, 14 fail parsing, and 0 fail inference.
+
+Smol has 0 exact-schema outputs and 886 resolved outputs requiring the frozen label recovery. 880 outputs are not valid JSON. Recovered choices are not counted as JSON compliance.

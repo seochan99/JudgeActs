@@ -1,0 +1,1261 @@
+{
+  "teaser": {
+    "figure": "paper/figures/teaser.pdf",
+    "size_in": [
+      7.0,
+      2.99
+    ],
+    "rule": "Among main prompts with 3 candidates (excluding prompt_id prefix 7c51b057), keep those where Qwen's permutation-0 pick has utility below the pool mean and the pool has a candidate with utility >= mean + 0.25. Per country keep the prompt with the largest regret (max utility - chosen utility; ties -> first in manifest order); take the 4 countries with the largest regret (ties -> country name). Selection uses only data/derived/main.jsonl and runs/qwen_main.jsonl; images were not viewed during selection. Candidates shown in permutation-0 presented order.",
+    "eligible_per_country": [
+      {
+        "country": "Iran",
+        "prompt_id": "001633c1aad134e480bc7b18403b458fe1afb2ecb43d6e87bda5bf4e7f2f0b99",
+        "regret": 0.75
+      },
+      {
+        "country": "Poland",
+        "prompt_id": "11e6e030f43994dac0606bd8524dd2bb686a244c99c1fded4b801946dd5a2101",
+        "regret": 0.6666666666666667
+      },
+      {
+        "country": "China",
+        "prompt_id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570",
+        "regret": 0.5833333333333334
+      },
+      {
+        "country": "Brazil",
+        "prompt_id": "10b28efba265828fe0fce7b56105c9e403f46a6e5fb5353d354b652e73e0aaa3",
+        "regret": 0.5
+      },
+      {
+        "country": "Japan",
+        "prompt_id": "ec157499a1865f1d9f14052ded1aec16c89dffb9c23d3d6034904eaf6857a90d",
+        "regret": 0.5
+      },
+      {
+        "country": "South_Africa",
+        "prompt_id": "649a9d3c3e1d0b46670da37d7bb49d781e6203ec121d1dd1f93944bb3a109209",
+        "regret": 0.5
+      },
+      {
+        "country": "India",
+        "prompt_id": "223f73fb90bfc9f6c67408730790633f22911ff7024cd9cbb97d9a3988e20f44",
+        "regret": 0.375
+      }
+    ],
+    "selected": [
+      {
+        "country": "Iran",
+        "prompt_id": "001633c1aad134e480bc7b18403b458fe1afb2ecb43d6e87bda5bf4e7f2f0b99",
+        "prompt": "Iranian family gathering with multiple generations in a garden",
+        "category": "family",
+        "pool_mean": 0.5,
+        "qwen_pick": "001633c1aad134e480bc7b18403b458fe1afb2ecb43d6e87bda5bf4e7f2f0b99_SD35",
+        "qwen_pick_utility": 0.0,
+        "max_utility": 0.75,
+        "regret": 0.75,
+        "candidates_in_presented_order": [
+          {
+            "id": "001633c1aad134e480bc7b18403b458fe1afb2ecb43d6e87bda5bf4e7f2f0b99_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.0,
+            "qwen_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "001633c1aad134e480bc7b18403b458fe1afb2ecb43d6e87bda5bf4e7f2f0b99_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.75,
+            "qwen_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "001633c1aad134e480bc7b18403b458fe1afb2ecb43d6e87bda5bf4e7f2f0b99_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.75,
+            "qwen_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "Poland",
+        "prompt_id": "11e6e030f43994dac0606bd8524dd2bb686a244c99c1fded4b801946dd5a2101",
+        "prompt": "Polish family sharing opłatek wafer during Christmas dinner",
+        "category": "religion",
+        "pool_mean": 0.5,
+        "qwen_pick": "11e6e030f43994dac0606bd8524dd2bb686a244c99c1fded4b801946dd5a2101_SD35",
+        "qwen_pick_utility": 0.3333333333333333,
+        "max_utility": 1.0,
+        "regret": 0.6666666666666667,
+        "candidates_in_presented_order": [
+          {
+            "id": "11e6e030f43994dac0606bd8524dd2bb686a244c99c1fded4b801946dd5a2101_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.3333333333333333,
+            "qwen_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "11e6e030f43994dac0606bd8524dd2bb686a244c99c1fded4b801946dd5a2101_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.16666666666666666,
+            "qwen_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "11e6e030f43994dac0606bd8524dd2bb686a244c99c1fded4b801946dd5a2101_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "China",
+        "prompt_id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570",
+        "prompt": "Children lighting colorful lanterns during Mid-Autumn Festival",
+        "category": "dates-of-significance",
+        "pool_mean": 0.4166666666666667,
+        "qwen_pick": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_SD35",
+        "qwen_pick_utility": 0.16666666666666666,
+        "max_utility": 0.75,
+        "regret": 0.5833333333333334,
+        "candidates_in_presented_order": [
+          {
+            "id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.16666666666666666,
+            "qwen_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "qwen_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.75,
+            "qwen_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "Brazil",
+        "prompt_id": "10b28efba265828fe0fce7b56105c9e403f46a6e5fb5353d354b652e73e0aaa3",
+        "prompt": "Three generations sharing a cozy Brazilian urban apartment",
+        "category": "family",
+        "pool_mean": 0.611111111111111,
+        "qwen_pick": "10b28efba265828fe0fce7b56105c9e403f46a6e5fb5353d354b652e73e0aaa3_SD35",
+        "qwen_pick_utility": 0.5,
+        "max_utility": 1.0,
+        "regret": 0.5,
+        "candidates_in_presented_order": [
+          {
+            "id": "10b28efba265828fe0fce7b56105c9e403f46a6e5fb5353d354b652e73e0aaa3_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.5,
+            "qwen_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "10b28efba265828fe0fce7b56105c9e403f46a6e5fb5353d354b652e73e0aaa3_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "qwen_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "10b28efba265828fe0fce7b56105c9e403f46a6e5fb5353d354b652e73e0aaa3_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "annotation_best": true
+          }
+        ]
+      }
+    ]
+  },
+  "gallery_appendix": {
+    "figure": "paper/figures/gallery_appendix.pdf",
+    "size_in": [
+      7.0,
+      8.41
+    ],
+    "rule": "Per country (alphabetical), the first prompt in data/derived/main.jsonl order with 4 candidates (fallback 3). Representative, unfiltered sample: chosen by manifest position only, not by judge outcome or image content. Picks are permutation-0 (original order) selections from runs/qwen_main.jsonl and runs/smol_main.jsonl.",
+    "rows": [
+      {
+        "country": "Brazil",
+        "prompt_id": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71",
+        "prompt": "Brazilian social gathering, person saying goodbye to each attendee",
+        "category": "greetings",
+        "n_candidates": 4,
+        "pool_mean": 0.8333333333333333,
+        "qwen_pick": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71_SD35",
+        "smol_pick": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71_SD35",
+        "candidates_in_presented_order": [
+          {
+            "id": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 1.0,
+            "qwen_pick": true,
+            "smol_pick": true,
+            "annotation_best": true
+          },
+          {
+            "id": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "b10acf33f4e9b02c1049d8d92c32e1ec04a14e641e4bd8a928b5846e4d7d9c71_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "Canada",
+        "prompt_id": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d",
+        "prompt": "Quebec home with wine bottles prepared for dinner party",
+        "category": "etiquette",
+        "n_candidates": 4,
+        "pool_mean": 0.7291666666666666,
+        "qwen_pick": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d_imagegen3",
+        "smol_pick": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d_SD35",
+        "candidates_in_presented_order": [
+          {
+            "id": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.6666666666666666,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.6666666666666666,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.8333333333333334,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "42673cd30ebaf2cf21a24af0c2f20d5eccf59b605cce3707a4dc1a9bcbc0604d_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.75,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": false
+          }
+        ]
+      },
+      {
+        "country": "Chile",
+        "prompt_id": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116",
+        "prompt": "Families gather for midnight fireworks over Santiago skyline.",
+        "category": "dates-of-significance",
+        "n_candidates": 4,
+        "pool_mean": 0.8333333333333334,
+        "qwen_pick": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116_imagegen3",
+        "smol_pick": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116_flux",
+        "candidates_in_presented_order": [
+          {
+            "id": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.8333333333333334,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "bcce28b782aa8c6b31fdfdb1fbebb2ab1a700ecafb2bd32bd1f2dcc2eea8a116_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "China",
+        "prompt_id": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4",
+        "prompt": "Chinese friends exchanging warm smiles at a bustling street market",
+        "category": "greetings",
+        "n_candidates": 4,
+        "pool_mean": 0.9583333333333334,
+        "qwen_pick": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4_SD35",
+        "smol_pick": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4_flux",
+        "candidates_in_presented_order": [
+          {
+            "id": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 1.0,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.8333333333333334,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "68118e2ec41a3839efc9e7b17dca7ae89fe35136c8db3c0a62f7967c49291ea4_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "Germany",
+        "prompt_id": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564",
+        "prompt": "Priest blessing herbs in German countryside church",
+        "category": "religion",
+        "n_candidates": 4,
+        "pool_mean": 0.75,
+        "qwen_pick": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564_imagegen3",
+        "smol_pick": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564_SD35",
+        "candidates_in_presented_order": [
+          {
+            "id": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "4e67d791a422e1b7ccaf31aaee7200a82afda2753e03d9bd3bffd52fcff31564_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.5,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": false
+          }
+        ]
+      },
+      {
+        "country": "India",
+        "prompt_id": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f",
+        "prompt": "Indian family celebrating Diwali with overseas relatives",
+        "category": "family",
+        "n_candidates": 4,
+        "pool_mean": 0.625,
+        "qwen_pick": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f_gpt-image",
+        "smol_pick": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f_SD35",
+        "candidates_in_presented_order": [
+          {
+            "id": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.6666666666666666,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": true
+          },
+          {
+            "id": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.6666666666666666,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.6666666666666666,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "bbebf68e0b5c71d9a27e2c5de4359649f73d785d877551d325a0dde113b4110f_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          }
+        ]
+      },
+      {
+        "country": "Iran",
+        "prompt_id": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461",
+        "prompt": "Iranian family picnicking in a park, sharing food with nearby strangers",
+        "category": "etiquette",
+        "n_candidates": 4,
+        "pool_mean": 0.3333333333333333,
+        "qwen_pick": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461_SD35",
+        "smol_pick": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461_flux",
+        "candidates_in_presented_order": [
+          {
+            "id": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.0,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "428d28a683bf9a7409fe3318cae437cca481d489823dab8f560fb1ffcacb5461_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "Japan",
+        "prompt_id": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b",
+        "prompt": "Japanese family seated around low table, sharing traditional meal",
+        "category": "etiquette",
+        "n_candidates": 4,
+        "pool_mean": 0.59375,
+        "qwen_pick": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b_SD35",
+        "smol_pick": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b_flux",
+        "candidates_in_presented_order": [
+          {
+            "id": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.375,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.5,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "aa35ea3f22d84157b212d7a984bc9592ac5fc6ff69110951ea6dfed0fdf2132b_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          }
+        ]
+      },
+      {
+        "country": "Poland",
+        "prompt_id": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749",
+        "prompt": "Polish family dinner, guest politely declines more bigos, host serves anyway.",
+        "category": "etiquette",
+        "n_candidates": 4,
+        "pool_mean": 0.4791666666666667,
+        "qwen_pick": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749_gpt-image",
+        "smol_pick": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749_flux",
+        "candidates_in_presented_order": [
+          {
+            "id": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.16666666666666666,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "d444647f32a77c90c071cf434842f4d861e7a705cc606cac597e2d4dfa8e9749_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.75,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": false
+          }
+        ]
+      },
+      {
+        "country": "South_Africa",
+        "prompt_id": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2",
+        "prompt": "Friends enjoying a braai feast with springbok and ostrich steaks in South Africa.",
+        "category": "etiquette",
+        "n_candidates": 4,
+        "pool_mean": 0.8333333333333333,
+        "qwen_pick": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2_SD35",
+        "smol_pick": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2_flux",
+        "candidates_in_presented_order": [
+          {
+            "id": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.6666666666666666,
+            "qwen_pick": true,
+            "smol_pick": false,
+            "annotation_best": false
+          },
+          {
+            "id": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.6666666666666666,
+            "qwen_pick": false,
+            "smol_pick": true,
+            "annotation_best": false
+          },
+          {
+            "id": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          },
+          {
+            "id": "fe4741c1a07609da0f679d03499e150ed56c6a5189d35cf91a06c7c82a7a4fc2_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "qwen_pick": false,
+            "smol_pick": false,
+            "annotation_best": true
+          }
+        ]
+      }
+    ]
+  },
+  "gallery_orders": {
+    "figure": "paper/figures/gallery_orders.pdf",
+    "size_in": [
+      7.0,
+      4.47
+    ],
+    "rule": "Main prompts with 3 or 4 candidates (excluding prompt_id prefix 7c51b057) where Qwen (runs/qwen_main.jsonl) parses and selects presentation slot A under all three orders (permutations 0-2) and the three picks contain >= 2 distinct images. Rank by the range (max - min) of utility among the three picks, descending (ties -> prompt_id); take 5. 'Best available' = highest-utility candidate (ties -> smallest id). Images were not viewed during selection.",
+    "n_eligible": 41,
+    "rows": [
+      {
+        "country": "India",
+        "prompt_id": "4dbaba73628b0ca557125c693354f07d3791179088b78d5f3914194b9e5d5a88",
+        "prompt": "Dalit artisans crafting pottery at an Indian village workshop",
+        "n_candidates": 4,
+        "utility_range_of_picks": 0.6666666666666667,
+        "qwen_picks_by_order": [
+          {
+            "permutation": 0,
+            "slot": "A",
+            "selected_id": "4dbaba73628b0ca557125c693354f07d3791179088b78d5f3914194b9e5d5a88_SD35",
+            "utility": 1.0
+          },
+          {
+            "permutation": 1,
+            "slot": "A",
+            "selected_id": "4dbaba73628b0ca557125c693354f07d3791179088b78d5f3914194b9e5d5a88_gpt-image",
+            "utility": 0.6666666666666666
+          },
+          {
+            "permutation": 2,
+            "slot": "A",
+            "selected_id": "4dbaba73628b0ca557125c693354f07d3791179088b78d5f3914194b9e5d5a88_flux",
+            "utility": 0.3333333333333333
+          }
+        ],
+        "best_available": {
+          "id": "4dbaba73628b0ca557125c693354f07d3791179088b78d5f3914194b9e5d5a88_SD35",
+          "utility": 1.0
+        }
+      },
+      {
+        "country": "Japan",
+        "prompt_id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0",
+        "prompt": "Traditional Japanese tea ceremony in autumn garden",
+        "n_candidates": 4,
+        "utility_range_of_picks": 0.6666666666666667,
+        "qwen_picks_by_order": [
+          {
+            "permutation": 0,
+            "slot": "A",
+            "selected_id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_SD35",
+            "utility": 0.3333333333333333
+          },
+          {
+            "permutation": 1,
+            "slot": "A",
+            "selected_id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_flux",
+            "utility": 0.16666666666666666
+          },
+          {
+            "permutation": 2,
+            "slot": "A",
+            "selected_id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_gpt-image",
+            "utility": 0.8333333333333334
+          }
+        ],
+        "best_available": {
+          "id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_imagegen3",
+          "utility": 1.0
+        }
+      },
+      {
+        "country": "Poland",
+        "prompt_id": "0067e8fa6e9dba3bc88f82c87635eb08a1f524412033f315802a628314ee3bcc",
+        "prompt": "Polish townspeople in Corpus Christi procession",
+        "n_candidates": 4,
+        "utility_range_of_picks": 0.5,
+        "qwen_picks_by_order": [
+          {
+            "permutation": 0,
+            "slot": "A",
+            "selected_id": "0067e8fa6e9dba3bc88f82c87635eb08a1f524412033f315802a628314ee3bcc_SD35",
+            "utility": 0.5
+          },
+          {
+            "permutation": 1,
+            "slot": "A",
+            "selected_id": "0067e8fa6e9dba3bc88f82c87635eb08a1f524412033f315802a628314ee3bcc_gpt-image",
+            "utility": 1.0
+          },
+          {
+            "permutation": 2,
+            "slot": "A",
+            "selected_id": "0067e8fa6e9dba3bc88f82c87635eb08a1f524412033f315802a628314ee3bcc_flux",
+            "utility": 0.75
+          }
+        ],
+        "best_available": {
+          "id": "0067e8fa6e9dba3bc88f82c87635eb08a1f524412033f315802a628314ee3bcc_gpt-image",
+          "utility": 1.0
+        }
+      },
+      {
+        "country": "China",
+        "prompt_id": "18172183679032d37ed2e12da93cd7479529e08dd563b05a7b6ee785f4b02fef",
+        "prompt": "Families sharing mooncakes under the full moon in China",
+        "n_candidates": 4,
+        "utility_range_of_picks": 0.5,
+        "qwen_picks_by_order": [
+          {
+            "permutation": 0,
+            "slot": "A",
+            "selected_id": "18172183679032d37ed2e12da93cd7479529e08dd563b05a7b6ee785f4b02fef_SD35",
+            "utility": 0.5
+          },
+          {
+            "permutation": 1,
+            "slot": "A",
+            "selected_id": "18172183679032d37ed2e12da93cd7479529e08dd563b05a7b6ee785f4b02fef_gpt-image",
+            "utility": 1.0
+          },
+          {
+            "permutation": 2,
+            "slot": "A",
+            "selected_id": "18172183679032d37ed2e12da93cd7479529e08dd563b05a7b6ee785f4b02fef_flux",
+            "utility": 0.5
+          }
+        ],
+        "best_available": {
+          "id": "18172183679032d37ed2e12da93cd7479529e08dd563b05a7b6ee785f4b02fef_gpt-image",
+          "utility": 1.0
+        }
+      },
+      {
+        "country": "India",
+        "prompt_id": "48a99604128fe81b1b36b2af0275a5f9c674caf9cfd4330e8c9967a3a870bacf",
+        "prompt": "Elderly Indian couple greeting guests with Namaste at home entrance.",
+        "n_candidates": 4,
+        "utility_range_of_picks": 0.5,
+        "qwen_picks_by_order": [
+          {
+            "permutation": 0,
+            "slot": "A",
+            "selected_id": "48a99604128fe81b1b36b2af0275a5f9c674caf9cfd4330e8c9967a3a870bacf_SD35",
+            "utility": 0.5
+          },
+          {
+            "permutation": 1,
+            "slot": "A",
+            "selected_id": "48a99604128fe81b1b36b2af0275a5f9c674caf9cfd4330e8c9967a3a870bacf_imagegen3",
+            "utility": 1.0
+          },
+          {
+            "permutation": 2,
+            "slot": "A",
+            "selected_id": "48a99604128fe81b1b36b2af0275a5f9c674caf9cfd4330e8c9967a3a870bacf_flux",
+            "utility": 0.8333333333333334
+          }
+        ],
+        "best_available": {
+          "id": "48a99604128fe81b1b36b2af0275a5f9c674caf9cfd4330e8c9967a3a870bacf_imagegen3",
+          "utility": 1.0
+        }
+      }
+    ]
+  },
+  "gallery_clip": {
+    "figure": "paper/figures/gallery_clip.pdf",
+    "size_in": [
+      7.0,
+      3.72
+    ],
+    "rule": "CLIP pick = analysis.content_baselines.select (argmax of results/main/clip_scores.json cosine score; ties -> canonical sorted id). Among prompts where the CLIP pick differs from Qwen's permutation-0 pick, take the 3 with the largest utility(CLIP) - utility(Qwen) > 0 and the 3 with the largest utility(Qwen) - utility(CLIP) > 0 (ties -> prompt_id). Candidates shown in permutation-0 presented order. Images were not viewed during selection.",
+    "n_disagreements": 153,
+    "rows": [
+      {
+        "country": "Japan",
+        "prompt_id": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048",
+        "prompt": "Japanese host guiding guests to their seats in a tatami room.",
+        "clip_pick": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048_imagegen3",
+        "qwen_pick": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048_SD35",
+        "utility_clip_minus_qwen": 0.8333333333333334,
+        "candidates_in_presented_order": [
+          {
+            "id": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.0,
+            "stereotype": 0.5,
+            "annotation_best": false,
+            "qwen_pick": true,
+            "clip_pick": false
+          },
+          {
+            "id": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.16666666666666666,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.5,
+            "stereotype": 0.6666666666666666,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "c89b4939f1c408fef772d7a8fb848828198c12c121632de0e6c58a3ae1202048_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "clip_pick": true
+          }
+        ]
+      },
+      {
+        "country": "Japan",
+        "prompt_id": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d",
+        "prompt": "Shintō priest performing purification ritual at a rural shrine",
+        "clip_pick": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d_imagegen3",
+        "qwen_pick": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d_SD35",
+        "utility_clip_minus_qwen": 0.6666666666666666,
+        "candidates_in_presented_order": [
+          {
+            "id": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.0,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": false,
+            "qwen_pick": true,
+            "clip_pick": false
+          },
+          {
+            "id": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "f0ae00d6f0a2e377872ec8c79e58d4067f623280341ae3df6a4e99f1bc84270d_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.6666666666666666,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": true
+          }
+        ]
+      },
+      {
+        "country": "China",
+        "prompt_id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570",
+        "prompt": "Children lighting colorful lanterns during Mid-Autumn Festival",
+        "clip_pick": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_gpt-image",
+        "qwen_pick": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_SD35",
+        "utility_clip_minus_qwen": 0.5833333333333334,
+        "candidates_in_presented_order": [
+          {
+            "id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.16666666666666666,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": false,
+            "qwen_pick": true,
+            "clip_pick": false
+          },
+          {
+            "id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "4b94a5344f6f92959aea05e5e7dc294d0195061b9abdf48228d20fee2d2ad570_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.75,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "clip_pick": true
+          }
+        ]
+      },
+      {
+        "country": "Iran",
+        "prompt_id": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c",
+        "prompt": "Iranian family dinner with guests politely refusing more food",
+        "clip_pick": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c_SD35",
+        "qwen_pick": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c_gpt-image",
+        "utility_clip_minus_qwen": -1.0,
+        "candidates_in_presented_order": [
+          {
+            "id": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.0,
+            "stereotype": 0.6666666666666666,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": true
+          },
+          {
+            "id": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.75,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": true,
+            "qwen_pick": true,
+            "clip_pick": false
+          },
+          {
+            "id": "a9835ecb5e5bd0c097256454f2d8c8368e27831a2c61bb91306dfb706817c21c_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 0.75,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          }
+        ]
+      },
+      {
+        "country": "Chile",
+        "prompt_id": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085",
+        "prompt": "Chilean workers' parade with flags and banners",
+        "clip_pick": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085_SD35",
+        "qwen_pick": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085_gpt-image",
+        "utility_clip_minus_qwen": -0.8333333333333334,
+        "candidates_in_presented_order": [
+          {
+            "id": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.16666666666666666,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": true
+          },
+          {
+            "id": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": true,
+            "qwen_pick": true,
+            "clip_pick": false
+          },
+          {
+            "id": "fd0cfc776e75b57973c1d2d7538a64b73f16a86ccf5537647230d5d7df68f085_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "clip_pick": false
+          }
+        ]
+      },
+      {
+        "country": "India",
+        "prompt_id": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb",
+        "prompt": "Vibrant Durga Puja pandal decorations in India",
+        "clip_pick": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb_SD35",
+        "qwen_pick": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb_imagegen3",
+        "utility_clip_minus_qwen": -0.6666666666666667,
+        "candidates_in_presented_order": [
+          {
+            "id": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.3333333333333333,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": true
+          },
+          {
+            "id": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "clip_pick": false
+          },
+          {
+            "id": "57f30506a22c965bbd6e91adfb94eadf47bdd527044ffd1453277b679eeb28eb_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": true,
+            "clip_pick": false
+          }
+        ]
+      }
+    ]
+  },
+  "gallery_stereotype": {
+    "figure": "paper/figures/gallery_stereotype.pdf",
+    "size_in": [
+      7.0,
+      2.42
+    ],
+    "rule": "Prompts where Qwen's permutation-0 pick has the highest stereotype rate in the pool (ties allowed) and stereotype > 0, and at least one other candidate has utility >= the pick's utility and strictly lower stereotype ('dominating alternative'). Stereotype gap = pick's stereotype - lowest stereotype among dominating alternatives; take the 4 largest (ties -> prompt_id). Images were not viewed during selection.",
+    "n_eligible": 64,
+    "rows": [
+      {
+        "country": "Chile",
+        "prompt_id": "85bf901aaa8003e7f117f830810dfcbcafee3b426723357b7f30eaaf9033c00f",
+        "prompt": "Chilean family chatting around a dinner table with traditional dishes",
+        "qwen_pick": "85bf901aaa8003e7f117f830810dfcbcafee3b426723357b7f30eaaf9033c00f_imagegen3",
+        "stereotype_gap": 1.0,
+        "candidates_in_presented_order": [
+          {
+            "id": "85bf901aaa8003e7f117f830810dfcbcafee3b426723357b7f30eaaf9033c00f_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.5,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "dominating_alternative": false
+          },
+          {
+            "id": "85bf901aaa8003e7f117f830810dfcbcafee3b426723357b7f30eaaf9033c00f_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "dominating_alternative": false
+          },
+          {
+            "id": "85bf901aaa8003e7f117f830810dfcbcafee3b426723357b7f30eaaf9033c00f_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          },
+          {
+            "id": "85bf901aaa8003e7f117f830810dfcbcafee3b426723357b7f30eaaf9033c00f_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "stereotype": 1.0,
+            "annotation_best": true,
+            "qwen_pick": true,
+            "dominating_alternative": false
+          }
+        ]
+      },
+      {
+        "country": "Japan",
+        "prompt_id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0",
+        "prompt": "Traditional Japanese tea ceremony in autumn garden",
+        "qwen_pick": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_SD35",
+        "stereotype_gap": 1.0,
+        "candidates_in_presented_order": [
+          {
+            "id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.3333333333333333,
+            "stereotype": 1.0,
+            "annotation_best": false,
+            "qwen_pick": true,
+            "dominating_alternative": false
+          },
+          {
+            "id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.16666666666666666,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "dominating_alternative": false
+          },
+          {
+            "id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          },
+          {
+            "id": "c8fbb75453be42882d0fd05d1381e8191cbacb7c684cd2986fa589a4739861f0_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          }
+        ]
+      },
+      {
+        "country": "Iran",
+        "prompt_id": "dccbcb782e2b7d21b3a5e7c8514b85528340c21f959758025336aed867b25df1",
+        "prompt": "Iranian family enjoying tea in a cozy Persian carpeted room",
+        "qwen_pick": "dccbcb782e2b7d21b3a5e7c8514b85528340c21f959758025336aed867b25df1_SD35",
+        "stereotype_gap": 1.0,
+        "candidates_in_presented_order": [
+          {
+            "id": "dccbcb782e2b7d21b3a5e7c8514b85528340c21f959758025336aed867b25df1_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.3333333333333333,
+            "stereotype": 1.0,
+            "annotation_best": false,
+            "qwen_pick": true,
+            "dominating_alternative": false
+          },
+          {
+            "id": "dccbcb782e2b7d21b3a5e7c8514b85528340c21f959758025336aed867b25df1_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 1.0,
+            "stereotype": 0.3333333333333333,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          },
+          {
+            "id": "dccbcb782e2b7d21b3a5e7c8514b85528340c21f959758025336aed867b25df1_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 1.0,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          },
+          {
+            "id": "dccbcb782e2b7d21b3a5e7c8514b85528340c21f959758025336aed867b25df1_imagegen3",
+            "source_model": "Imagen3",
+            "utility": 1.0,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          }
+        ]
+      },
+      {
+        "country": "Japan",
+        "prompt_id": "ec157499a1865f1d9f14052ded1aec16c89dffb9c23d3d6034904eaf6857a90d",
+        "prompt": "Japanese family enjoying festival food under Tanabata lanterns",
+        "qwen_pick": "ec157499a1865f1d9f14052ded1aec16c89dffb9c23d3d6034904eaf6857a90d_SD35",
+        "stereotype_gap": 1.0,
+        "candidates_in_presented_order": [
+          {
+            "id": "ec157499a1865f1d9f14052ded1aec16c89dffb9c23d3d6034904eaf6857a90d_SD35",
+            "source_model": "SD-3.5-Large",
+            "utility": 0.3333333333333333,
+            "stereotype": 1.0,
+            "annotation_best": false,
+            "qwen_pick": true,
+            "dominating_alternative": false
+          },
+          {
+            "id": "ec157499a1865f1d9f14052ded1aec16c89dffb9c23d3d6034904eaf6857a90d_flux",
+            "source_model": "Flux.1-Dev",
+            "utility": 0.3333333333333333,
+            "stereotype": 0.0,
+            "annotation_best": false,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          },
+          {
+            "id": "ec157499a1865f1d9f14052ded1aec16c89dffb9c23d3d6034904eaf6857a90d_gpt-image",
+            "source_model": "GPT-Image",
+            "utility": 0.8333333333333334,
+            "stereotype": 0.0,
+            "annotation_best": true,
+            "qwen_pick": false,
+            "dominating_alternative": true
+          }
+        ]
+      }
+    ]
+  }
+}

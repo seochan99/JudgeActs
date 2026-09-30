@@ -1,23 +1,37 @@
-This project uses only independently released public datasets and public model weights.
+# JudgeActs
 
-# When the Judge Acts
+**When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts**
+Huichan Seo · Independent Researcher
 
-Independent IASEAI'27 submission project. Public CulturalFrames images and annotations, public Qwen3-VL-4B-Instruct and SmolVLM2-2.2B-Instruct weights, newly written code and analyses. No previous laboratory repositories, private datasets, annotations, prompts, or experimental outputs are inputs to this project.
+[Project page](https://seochan99.github.io/JudgeActs/) · Paper (coming soon)
 
-Seed: `20261002`. Independent unit: prompt candidate set. Primary utility: mean public human prompt-alignment score. Results are generated from recorded inference outputs; no synthetic empirical results are permitted.
+When a vision-language model (VLM) picks which generated image a user receives, its choice is an action, not a score. This repository audits such choices on 300 culturally situated prompts from CulturalFrames. Each returned image is compared with released human ratings the judge never sees, and with exact random choice on the same candidate pool, under three rotations of candidate order.
 
-The public dataset card does not declare a dataset license. Public availability is recorded separately from permission to redistribute. Raw images and annotator demographics are excluded from git and the manuscript figures. Confirm terms with the dataset maintainers before redistribution.
+Main findings, all regenerated from the recorded outputs in this repository:
 
-Project artifacts:
+- A 4B-parameter judge (Qwen3-VL-4B) beats random choice only slightly (gain 0.039, 95% CI [0.016, 0.062]) and less than a CLIP similarity scorer (0.069).
+- It picks the first-listed image in 48.8% of calls (27.8% expected) and changes its choice under reordering on 59.7% of prompts.
+- Requiring agreement across orders keeps 40.3% of prompts, on which the judge beats random by 0.141, and rejects prompts on which it falls below random. Agreement with a weaker second judge does the reverse.
+- Both selectors reduce missing cultural expectations but slightly raise stereotype ratings.
 
-- `paper/main.pdf`: anonymous AAAI 2027 manuscript.
-- `paper/main.tex`: complete editable source; generated empirical text is in `paper/generated`.
-- `paper/figures`: four vector PDF figures and PNG previews.
-- `data/manifests`: frozen development, main, and reserve prompt IDs and presentation orders.
-- `results/main`: prompt-level CSVs, country/decomposition estimates, bootstrap intervals, and output validity.
-- `provenance`: public revisions, source cards, protocol decisions, checksums, and pinned environment.
+## Repository layout
 
-Reproduce:
+| Path | Contents |
+| --- | --- |
+| `src/` | Data preparation, frozen split construction, judge runners, validation, packaging |
+| `analysis/` | Metrics, bootstrap analysis, figures, manuscript text generation |
+| `configs/`, `prompts/` | Frozen protocol configuration and judge instructions |
+| `data/manifests/`, `data/derived/` | Frozen prompt IDs, presentation orders, aggregated ratings (no images) |
+| `runs/` | Recorded judge outputs for every call, including raw text |
+| `results/main/` | Prompt-level metrics and every reported estimate |
+| `paper/` | LaTeX source; numbers in `paper/generated/` are produced by the analysis code |
+| `tools/audit_browser/` | Offline browser for inspecting every recorded decision |
+| `provenance/` | Source revisions, model and dataset cards, protocol decisions, checksums |
+| `tests/` | Unit tests for metrics and manuscript generation |
+
+The experimental split and both judge interfaces were frozen in separate commits before main inference; see the commit history.
+
+## Reproduce
 
 ```sh
 uv sync
@@ -27,13 +41,35 @@ uv run python -m src.fetch smol
 uv run python -m src.prepare
 uv run python -m src.run_judge --model qwen --split main --permutations 3
 uv run python -m src.run_smol --split main --permutations 3
-uv run python -m src.validate --split main
 uv run python -m analysis.analyze --split main
 uv run python -m analysis.render_paper
 uv run python -m src.check_paper
-uv run python -m src.finalize
 ```
 
-The working PDF explicitly labels an incomplete primary experiment. Empirical figures and text remain pending until the 900-call Qwen main run finishes. Never interpret development metrics or blank empirical panels as main results.
+The recorded outputs in `runs/` let you rerun every analysis without inference. Seed: `20261002`.
 
-OpenReview account approval and portal connection were confirmed by the user. October 2 is the internal submission target; the supplied official guide states October 5, 2026 AOE. The final author list, track choice, financial disclosures, attendance commitment, and actual upload remain the authors' submission tasks.
+To browse decisions locally:
+
+```sh
+uv run python tools/audit_browser/export.py
+cd tools/audit_browser && python -m http.server 8765
+```
+
+## Data and images
+
+This project uses the public CulturalFrames release and public model weights. The CulturalFrames dataset card does not declare a license, so source images and raw annotation records are not redistributed here. Figures reproduce a small number of dataset images with attribution for illustration. Please cite CulturalFrames if you use this work.
+
+## Citation
+
+```bibtex
+@misc{seo2026judgeacts,
+  title  = {When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts},
+  author = {Seo, Huichan},
+  year   = {2026},
+  note   = {Preprint}
+}
+```
+
+## License
+
+Code is released under the MIT License. Dataset images and annotations remain subject to their original terms.

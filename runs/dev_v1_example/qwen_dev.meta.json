@@ -1,0 +1,16 @@
+{
+  "model": {
+    "id": "Qwen/Qwen3-VL-4B-Instruct",
+    "revision": "ebb281ec70b05090aa6165b016eac8ec08e71b17",
+    "license": "apache-2.0"
+  },
+  "split": "dev",
+  "prompt_sha256": "96dfe792dd1eceb9e2c01956247d00ec2a72554b88a5b710b6dac6d50a1bd49a",
+  "split_sha256": "f70d84b47d833b6844c53de01b8bade308c8371fccc297086f720b2509676e6a",
+  "image_size": 448,
+  "max_tokens": 64,
+  "dtype": "bfloat16",
+  "backend": "transformers-mps",
+  "torch": "2.14.0",
+  "do_sample": false
+}

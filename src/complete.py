@@ -21,7 +21,7 @@ def main():
     run('src.validate','--split','main')
     run('analysis.analyze','--split','main')
     run('analysis.render_paper')
-    run('src.check_paper')
+    run('src.check_paper','--require-complete')
     run('src.finalize')
 
 if __name__=='__main__':main()

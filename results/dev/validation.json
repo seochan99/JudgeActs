@@ -1,0 +1,18 @@
+{
+  "split": "dev",
+  "prompt_sets": 30,
+  "checks": [
+    {
+      "model": "qwen",
+      "calls": 90,
+      "valid": 90,
+      "complete_3_orders": true
+    },
+    {
+      "model": "smol",
+      "calls": 90,
+      "valid": 86,
+      "complete_3_orders": true
+    }
+  ]
+}

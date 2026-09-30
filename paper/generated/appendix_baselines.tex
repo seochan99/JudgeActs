@@ -1,0 +1,38 @@
+% CLIP openai/clip-vit-large-patch14@32bd64288804d66eefd0ccbe215aa642df71cc41; agreement Qwen 49.0\%, Smol 13.1\%, chance 27.8\%; paired CLIP$-$Qwen gain 0.030 [0.005, 0.055].
+
+\footnotesize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrllrrrl}
+\toprule
+Selector & $n$ & Regret [95\% CI] & Gain [95\% CI] & BMR & Rand. BMR & Best & $\Delta$Stereotype [95\% CI]\\
+\midrule
+Random & 300 & 0.199 [0.186, 0.213] & 0.000 [0.000, 0.000] & 43.1 & 43.1 & 41.9 & --\\
+CLIP & 300 & 0.130 [0.109, 0.153] & 0.069 [0.047, 0.090] & 28.0 & 43.1 & 55.7 & 0.026 [0.006, 0.046]\\
+Qwen & 300 & 0.160 [0.136, 0.184] & 0.039 [0.016, 0.062] & 36.3 & 43.1 & 51.0 & 0.023 [0.002, 0.045]\\
+Smol & 297 & 0.270 [0.243, 0.298] & $-$0.073 [$-$0.093, $-$0.052] & 60.3 & 43.0 & 29.0 & $-$0.012 [$-$0.032, 0.009]\\
+Oracle & 300 & 0.000 [0.000, 0.000] & 0.199 [0.186, 0.213] & 0.0 & 43.1 & 100.0 & $-$0.020 [$-$0.034, $-$0.006]\\
+\bottomrule
+\end{tabular*}
+
+\vspace{4pt}
+
+\footnotesize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llll}
+\toprule
+Selector & $\Delta$Stereotype & $\Delta$Miss. explicit & $\Delta$Miss. implicit\\
+\midrule
+CLIP & 0.026 [0.006, 0.046] & $-$0.113 [$-$0.141, $-$0.083] & 0.003 [$-$0.022, 0.028]\\
+Qwen & 0.023 [0.002, 0.045] & $-$0.056 [$-$0.084, $-$0.026] & $-$0.034 [$-$0.057, $-$0.009]\\
+\bottomrule
+\end{tabular*}
+
+\vspace{4pt}
+
+\footnotesize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrlr}
+\toprule
+Prompts & $n$ & Qwen gain [95\% CI] & Qwen regret\\
+\midrule
+Qwen agrees with CLIP & 147 & 0.099 [0.067, 0.130] & 0.111\\
+Qwen disagrees with CLIP & 153 & $-$0.018 [$-$0.047, 0.011] & 0.206\\
+\bottomrule
+\end{tabular*}

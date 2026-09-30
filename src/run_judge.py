@@ -10,7 +10,7 @@ from PIL import Image
 from transformers import AutoProcessor, AutoModelForImageTextToText
 from .common import ROOT, digest, load_jsonl, orders, strict_parse, save_json
 
-def messages_for(group, order, instruction, size):
+def messages_for(group, order, instruction, size, choice_only=False):
     by_id = {c['id']:c for c in group['candidates']}
     content = [{'type':'text', 'text':instruction+'\n\nUser prompt:\n'+group['prompt']}]
     images = []
@@ -20,7 +20,8 @@ def messages_for(group, order, instruction, size):
         images.append(im)
         content.extend([{'type':'text','text':f'Candidate {label}:'}, {'type':'image','image':im}])
     labels = list('ABCD'[:len(order)])
-    content.append({'type':'text','text':f'Return {{"choice":"{labels[0]}","ranking":{json.dumps(labels)}}} with your chosen label and complete ranking.'})
+    contract = ('Return compact JSON only, with exactly one key choice containing your selected label.' if choice_only else 'Return exactly two JSON keys: choice (your selected label) and ranking (all labels ordered from best to worst). The first ranking label must equal choice. Rank by the images, not their presentation order.')
+    content.append({'type':'text','text':f'Allowed candidate labels: {", ".join(labels)}. '+contract})
     return [{'role':'user','content':content}], images
 
 def main():
@@ -40,10 +41,15 @@ def main():
     if args.limit:
         groups = groups[:args.limit]
     instruction = (ROOT/'prompts/judge_primary.txt').read_text()
+    if args.model == 'smol':
+        instruction = instruction[:instruction.index('The candidate labels')] + 'The candidate labels are supplied next to each image. Return compact JSON only, with exactly one key choice containing your selected label. Do not explain your decision.\n'
     sources = json.loads((ROOT/'provenance/sources.json').read_text())
     metadata = {'model':sources['models'][args.model], 'split':args.split,
+                'runner_sha256':digest(Path(__file__).read_text()),
+                'parser_sha256':digest((ROOT/'src/common.py').read_text()),
                 'prompt_sha256':digest(instruction), 'split_sha256':digest((ROOT/f'data/manifests/{args.split}.json').read_text()),
                 'image_size':args.image_size, 'max_tokens':args.max_tokens, 'dtype':'bfloat16', 'backend':'transformers-mps',
+                'output_schema':'choice_only' if args.model=='smol' else 'choice_and_ranking',
                 'torch':torch.__version__, 'do_sample':False}
     meta_path = out.with_suffix('.meta.json')
     if meta_path.exists():
@@ -64,7 +70,8 @@ def main():
             record = {'prompt_id':group['prompt_id'],'model':args.model,'permutation':k,
                       'mapping':dict(zip('ABCD', order)), 'parse_ok':False,
                       'utc':datetime.now(timezone.utc).isoformat(), 'attempts':[]}
-            messages, images = messages_for(group, order, instruction, args.image_size)
+            messages, images = messages_for(group, order, instruction, args.image_size, choice_only=args.model=='smol')
+            record['image_count'] = len(images)
             tick = time.monotonic()
             for attempt in range(2):
                 try:
@@ -85,7 +92,12 @@ def main():
                     record['raw_output'] = raw
                     record['raw_output_sha256'] = digest(raw)
                     try:
-                        parsed = strict_parse(raw, list(record['mapping']))
+                        if args.model == 'smol':
+                            parsed = json.loads(raw.strip())
+                            if not isinstance(parsed,dict) or set(parsed)!={'choice'} or parsed['choice'] not in record['mapping']:
+                                raise ValueError('expected one valid choice key')
+                        else:
+                            parsed = strict_parse(raw, list(record['mapping']))
                         record.update({'parse_ok':True,'parsed':parsed, 'selected_id':record['mapping'][parsed['choice']]})
                     except (ValueError, TypeError) as exc:
                         record['parse_error'] = str(exc)

@@ -1,0 +1,53 @@
+{
+  "annotation_records": 3577,
+  "annotation_count": 10412,
+  "rows": 3637,
+  "missing_annotation_rows": 60,
+  "broken_rows": [],
+  "join_mismatches": [],
+  "duplicate_ids": [],
+  "eligible_before_prompt_deduplication": 963,
+  "excluded_duplicate_prompt_ids": [
+    "91c1596fed760ae09dbae72644c7ce552181483c93df3bae87c4bac60df3d314",
+    "a53388e3b17d1f012764ab31e99d0899808a44c8e179ab487595f8d7e9ff8ead"
+  ],
+  "eligible_prompts": 961,
+  "country_counts": {
+    "Iran": 94,
+    "Poland": 94,
+    "India": 107,
+    "Japan": 105,
+    "China": 103,
+    "Germany": 88,
+    "Canada": 92,
+    "South_Africa": 86,
+    "Chile": 96,
+    "Brazil": 96
+  },
+  "candidate_count_distribution": {
+    "3": 313,
+    "4": 648
+  },
+  "annotation_missing_rate": 0.016497113005224086,
+  "duplicate_image_content": [
+    [
+      "5d394f12bb8459a013bec83d84444348f667175b4077e3559d50a77ebd329d03_flux",
+      "a53388e3b17d1f012764ab31e99d0899808a44c8e179ab487595f8d7e9ff8ead_flux"
+    ],
+    [
+      "5d394f12bb8459a013bec83d84444348f667175b4077e3559d50a77ebd329d03_SD35",
+      "a53388e3b17d1f012764ab31e99d0899808a44c8e179ab487595f8d7e9ff8ead_SD35"
+    ],
+    [
+      "91c1596fed760ae09dbae72644c7ce552181483c93df3bae87c4bac60df3d314_flux",
+      "8daa4014c06559aea1cef0f0736875b3d02d47abddb9e87fa36574ac8e73c83d_flux"
+    ],
+    [
+      "91c1596fed760ae09dbae72644c7ce552181483c93df3bae87c4bac60df3d314_SD35",
+      "8daa4014c06559aea1cef0f0736875b3d02d47abddb9e87fa36574ac8e73c83d_SD35"
+    ]
+  ],
+  "unjoined_annotation_ids": [],
+  "constant_utility_sets": 41,
+  "unique_prompt_texts": 961
+}

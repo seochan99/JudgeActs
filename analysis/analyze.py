@@ -36,12 +36,20 @@ def build_rows(groups, paths):
                 for axis in ['stereotype','missing_explicit','missing_implicit','image_quality','overall']:
                     vals=[c[axis] for c in cs]
                     row[axis]=float(np.mean(vals)) if all(v is not None for v in vals) else np.nan
+                ov=[c['overall'] for c in cs]
+                if all(v is not None for v in ov):
+                    row['overall_regret']=max(ov)-float(np.mean(ov))
+                    row['overall_gain']=0.0
             else:
                 i=ids.index(selected)
                 row.update(candidate_metrics(scores,i))
                 row['selected_id']=selected
                 for axis in ['stereotype','missing_explicit','missing_implicit','image_quality','overall']:
                     row[axis]=cs[i][axis]
+                ov=[c['overall'] for c in cs]
+                if all(v is not None for v in ov):
+                    row['overall_regret']=max(ov)-ov[i]
+                    row['overall_gain']=ov[i]-float(np.mean(ov))
             records.append(row)
         add('Random')
         # Ties are handled symmetrically for auxiliary outcomes, rather than arbitrarily choosing a source model.
@@ -50,6 +58,10 @@ def build_rows(groups, paths):
         for axis in ['stereotype','missing_explicit','missing_implicit','image_quality','overall']:
             vals=[cs[i][axis] for i in best_ix]
             records[-1][axis]=float(np.mean(vals)) if all(v is not None for v in vals) else np.nan
+        if all(c['overall'] is not None for c in cs):
+            ov=[c['overall'] for c in cs]
+            records[-1]['overall_regret']=max(ov)-records[-1]['overall']
+            records[-1]['overall_gain']=records[-1]['overall']-float(np.mean(ov))
         primary = {}
         for name, run in by_run.items():
             rs=[run.get((g['prompt_id'], k)) for k in range(3)]
@@ -73,7 +85,7 @@ def summarize(df, total):
     rows=[]
     for policy, sub in df.groupby('policy',sort=False):
         row={'policy':policy,'n':len(sub),'coverage':len(sub)/total}
-        for key in ['utility','regret','gain','human_best','near_best','bottom_half','stereotype','missing_explicit','missing_implicit','image_quality','overall']:
+        for key in ['utility','regret','gain','human_best','near_best','bottom_half','stereotype','missing_explicit','missing_implicit','image_quality','overall','overall_regret','overall_gain']:
             vals=sub[key].dropna().to_numpy()
             row[key]=float(np.mean(vals)) if len(vals) else None
             row[key+'_ci']=bootstrap_mean(vals)

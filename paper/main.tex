@@ -119,7 +119,7 @@ The primary judge is Qwen3-VL-4B-Instruct \citep{qwenmodel}; SmolVLM2-2.2B-Instr
 
 Every request interleaves a candidate label with its image. The instruction asks for explicit prompt satisfaction, implicit contextual consistency, avoidance of unsupported stereotypes, and visual integrity. It warns against rewarding cultural symbols merely for their number or recognizability. Only the original prompt supplies cultural context. Source model names, category labels, country metadata, and human annotations do not enter the request.
 
-The output schema is a JSON object with \texttt{choice} and \texttt{ranking}. The ranking must contain every supplied label exactly once, and its first label must equal the choice. We record raw text, parsed output, label-to-image mapping, input tensor shapes, model revision, elapsed time, and request hashes. Unit tests verify regret extrema, the analytic random expectation, tie behavior, annotation aggregation, and identity preservation under permutation.
+For Qwen the output schema is a JSON object with \texttt{choice} and \texttt{ranking}. The ranking must contain every supplied label exactly once, and its first label must equal the choice. Smol receives the same evaluation criteria but a choice-only JSON contract, selected during development because it could not reliably satisfy the full-ranking format. Rankings are not used by any outcome metric. This model-specific interface difference limits comparisons of formatting reliability. We record raw text, parsed output, label-to-image mapping, input tensor shapes, model revision, elapsed time, and request hashes. Unit tests verify regret extrema, the analytic random expectation, tie behavior, annotation aggregation, and identity preservation under permutation.
 
 \subsection{Candidate Order and Invalid Outputs}
 Each prompt receives three distinct cyclic presentations: its canonical identifier order and two deterministic rotations. The instruction, images, and decoding settings remain fixed. Thus disagreement measures sensitivity to these presentation changes rather than sampled decoding variation or prompt paraphrases. Three rotations do not exhaust all orders, especially for four candidates.
@@ -215,7 +215,6 @@ This paper presents a new system-level formulation and empirical audit of VLM-gu
 Evaluating a judge's decisions requires tracing them to the content selected from its available alternatives. The proposed audit makes that consequence measurable with existing public human annotations, exact random baselines, prompt-level uncertainty, and selective-risk reporting. Its deployment scope is candidate selection. Reliable cultural oversight in broader systems requires additional evidence about the actions, users, and unresolved cases those systems actually encounter.
 
 \bibliography{refs}
-\bibliographystyle{aaai2027}
 
 \appendix
 \section{Reproduction Protocol}
@@ -231,10 +230,10 @@ Do not prefer an image merely because it contains more cultural symbols. Do not 
 
 The candidate labels are supplied next to each image. Return JSON only, with choice equal to the first element of ranking and ranking containing every candidate label exactly once. Do not explain your decision.
 \end{quote}
-The user prompt follows this instruction, then each label and image are interleaved. A final text segment illustrates the JSON schema with the actual supplied labels. No human annotation, generator name, country field, or category field is included.
+The user prompt follows this instruction, then each label and image are interleaved. A final text segment states the allowed labels and requires the two JSON keys, without specifying a candidate as an example answer. No human annotation, generator name, country field, or category field is included.
 
 \subsection{Invalid Output and Reproducibility}
-The strict parser accepts exactly the two requested fields, a complete permutation of supplied labels, and a choice equal to the first ranking entry. It rejects explanatory wrappers, repeated labels, incomplete rankings, and inconsistent top choices. Raw output is retained for every attempt. Exceptions receive one identical retry; parse failures produce abstentions. Unique request keys combine prompt identity and permutation index, and resume checks require unchanged instruction and manifest hashes.
+Qwen's strict parser accepts exactly the two requested fields, a complete permutation of supplied labels, and a choice equal to the first ranking entry. It rejects explanatory wrappers, repeated labels, incomplete rankings, and inconsistent top choices. Smol's parser accepts exactly one \texttt{choice} key containing a supplied label. Its output instruction replaces the ranking request with this choice-only contract while retaining the evaluation criteria. Raw output is retained for every attempt. Exceptions receive one identical retry; parse failures produce abstentions. Unique request keys combine prompt identity and permutation index, and resume checks require unchanged instruction and manifest hashes.
 
 All public source revisions, model cards, candidate identities, frozen orders, environment versions, and derived tables are saved. Exact source-image bytes are retained locally; aspect-preserving resizing occurs only at inference. No private prior-study assets are accessed by the pipeline. Floating-point greedy decoding is deterministic within the recorded runtime configuration but need not yield identical choices across hardware or library implementations.
 \end{document}

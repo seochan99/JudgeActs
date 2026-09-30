@@ -85,6 +85,14 @@ def summarize(df, total):
         group_means=sub.groupby('country')['regret'].mean()
         row['worst_group_regret']=float(group_means.max())
         row['disparity']=float(group_means.max()-group_means.min())
+        # Recompute the maximum in every stratified bootstrap replicate.
+        rng=np.random.default_rng(20261002)
+        sample_means=[]
+        for country, country_sub in sub.groupby('country'):
+            values=country_sub['regret'].to_numpy()
+            sample_means.append(values[rng.integers(len(values),size=(10000,len(values)))].mean(axis=1))
+        maxima=np.max(np.stack(sample_means),axis=0)
+        row['worst_group_regret_ci']=np.quantile(maxima,[.025,.975]).tolist()
         row['countries_covered']=len(group_means)
         row['missing_countries']=sorted(set(df['country'])-set(group_means.index))
         rows.append(row)

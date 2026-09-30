@@ -108,7 +108,7 @@ Overall satisfaction provides a secondary utility, normalized from its 1--5 scal
 
 \section{Experimental Setup}
 \subsection{Public Data, Validation, and Frozen Splits}
-We use the independently released CulturalFrames dataset \citep{culturalframes}. Image rows are joined to annotation records by exact image identifier, with prompt, country, and generator-suffix checks. We decode every image, check repeated identifiers and encoded-image content, and require at least three valid, annotated candidates. Missing annotations are never imputed. The provenance manifest pins the public dataset and model revisions.
+We use the independently released CulturalFrames dataset \citep{culturalframes}. Image rows are joined to annotation records by exact image identifier, with prompt, country, and generator-suffix checks. We decode every image, check repeated identifiers and encoded-image content, and require at least three valid, annotated candidates. For repeated prompt text within a country we retain the lexicographically first base identifier before splitting, preventing duplicated requests from crossing splits. Missing annotations are never imputed. The provenance manifest pins the public dataset and model revisions.
 
 \input{generated/data}
 

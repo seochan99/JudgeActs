@@ -98,6 +98,18 @@ def build():
         eligible.append({'prompt_id': pid, 'prompt': candidates[0]['prompt'], 'country': candidates[0]['country'],
                          'category': candidates[0]['category'],
                          'candidates': [{k:v for k,v in c.items() if k not in ['prompt','country','category']} for c in candidates]})
+    audit['eligible_before_prompt_deduplication'] = len(eligible)
+    seen_prompts = set()
+    deduplicated = []
+    audit['excluded_duplicate_prompt_ids'] = []
+    for g in eligible:
+        key = (g['country'], g['prompt'])
+        if key in seen_prompts:
+            audit['excluded_duplicate_prompt_ids'].append(g['prompt_id'])
+            continue
+        seen_prompts.add(key)
+        deduplicated.append(g)
+    eligible = deduplicated
     audit.update({'eligible_prompts': len(eligible), 'country_counts': dict(Counter(g['country'] for g in eligible)),
                   'candidate_count_distribution': dict(Counter(len(g['candidates']) for g in eligible)),
                   'annotation_missing_rate': audit['missing_annotation_rows']/audit['rows'],

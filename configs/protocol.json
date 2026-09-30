@@ -4,6 +4,7 @@
   "human_utility": "mean_prompt_alignment",
   "overall_normalization": "(mean_overall_score-1)/4",
   "min_candidates": 3,
+  "duplicate_prompt_rule": "within country, retain lexicographically first base ID before splitting",
   "dev_per_country": 3,
   "main_size": 300,
   "permutations": 3,

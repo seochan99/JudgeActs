@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts</title>
+<meta name="description" content="An audit of vision-language models used as image selectors on 300 culturally situated prompts, compared against held-out human ratings and exact random choice under three candidate orders.">
+<meta name="author" content="Huichan Seo">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts">
+<meta property="og:description" content="Auditing what a VLM judge actually returns: matched random baselines, presentation-order effects, and what agreement gates keep and reject.">
+<meta property="og:url" content="https://seochan99.github.io/JudgeActs/">
+<meta property="og:image" content="https://seochan99.github.io/JudgeActs/static/images/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="513">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="When the Judge Acts">
+<meta name="twitter:description" content="Auditing VLM-guided image selection on culturally situated prompts.">
+<meta name="twitter:image" content="https://seochan99.github.io/JudgeActs/static/images/og.jpg">
+
+<meta name="citation_title" content="When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts">
+<meta name="citation_author" content="Seo, Huichan">
+<meta name="citation_publication_date" content="2026">
+<meta name="citation_pdf_url" content="https://seochan99.github.io/JudgeActs/paper.pdf">
+
+<link rel="canonical" href="https://seochan99.github.io/JudgeActs/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <p class="kicker">JudgeActs</p>
+  <h1>When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts</h1>
+  <p class="byline"><span class="author">Huichan Seo</span><span class="affil">Independent Researcher</span></p>
+  <nav class="links" aria-label="Paper resources">
+    <a href="paper.pdf">Paper (PDF)</a>
+    <a href="#" class="disabled" aria-disabled="true" title="arXiv version coming soon">arXiv <span class="note">coming soon</span></a>
+    <a href="https://github.com/seochan99/JudgeActs">Code</a>
+    <a href="#bibtex">BibTeX</a>
+  </nav>
+</header>
+
+<main>
+
+<section class="lead">
+  <figure class="lead-fig">
+    <img src="static/images/hero_column.jpg" width="999" height="1050" alt="One culturally situated prompt shown to the judge in three candidate orders. The judge picks the image in slot A every time, so the returned image is rated 0.00, 0.50 or 0.83 depending only on order.">
+    <figcaption><b>Figure 1.</b> Same request, same images, three orders. Qwen3-VL-4B picks slot A every time, so the image it returns is rated 0.00, 0.50, or 0.83 by humans depending only on presentation order.</figcaption>
+  </figure>
+  <div class="lead-text">
+    <h2 class="tldr-label">In one sentence</h2>
+    <p class="tldr">When a vision-language model chooses which generated image a user receives, it should be audited on what it returns, against random choice on the same pool; doing so shows that a small judge's choices are driven largely by presentation order, and that an order-agreement gate, not agreement with a second judge, is what identifies the choices worth trusting.</p>
+    <dl class="keyfigs">
+      <div><dt>48.8%</dt><dd>of Qwen's 900 calls pick slot A, where uniform choice would give 27.8%</dd></div>
+      <div><dt>59.7%</dt><dd>of prompts get a different image when the candidates are reordered</dd></div>
+      <div><dt>+0.141</dt><dd>gain over random on the 40.3% of prompts where all three orders agree</dd></div>
+    </dl>
+  </div>
+</section>
+
+<figure class="wide">
+  <a href="static/images/teaser.jpg"><img src="static/images/teaser.jpg" width="1800" height="769" loading="lazy" alt="Four CulturalFrames prompts from Iran, Poland, China and Brazil. In each, Qwen's pick is rated below the pool mean while a clearly better candidate is available."></a>
+  <figcaption><b>Figure 2.</b> VLM judges can return below-average images when a clearly better candidate exists. Each group is one CulturalFrames prompt; numbers are mean human prompt-alignment ratings. Red: Qwen3-VL-4B's original-order choice, below the pool mean. Green: highest-rated candidate. Examples follow a fixed selection rule applied without viewing images; they illustrate the failure mode, not its frequency.</figcaption>
+</figure>
+
+<section id="abstract">
+  <h2>Abstract</h2>
+  <p>Vision-language models (VLMs) increasingly act as selectors: given several generated images, they decide which one a user receives. Such judges are usually validated by how well their scores agree with human ratings, which says little about the images they actually return. We audit VLM selection as an action. On 300 culturally situated prompts, we compare each returned image with released human ratings the judge never sees and with exact random choice on the same pool, under three rotations of candidate order. We make three contributions. (1) A matched-baseline audit protocol for selectors, released with a deterministic artifact. (2) Evidence that presentation strongly shapes small judges: a 4B-parameter judge picks the first-listed image in 48.8% of calls (27.8% expected), changes its choice under reordering on 59.7% of prompts, and beats random only slightly (gain 0.039, 95% CI [0.016, 0.062]), less than a CLIP similarity scorer (0.069). (3) An audit of agreement gates on what they keep and what they reject: requiring agreement across orders keeps 40.3% of prompts, on which the judge beats random by 0.141, whereas agreement with a weaker second judge keeps below-random choices. Both selectors reduce missing cultural expectations but slightly raise stereotype ratings, so cultural errors must be audited separately from alignment.</p>
+</section>
+
+<section id="findings">
+  <h2>Three findings</h2>
+
+  <div class="finding">
+    <span class="num">1</span>
+    <div>
+      <h3>Audit the action against a matched baseline</h3>
+      <p>Every returned image is scored with released human ratings that the judge never sees, and compared with exact random choice on the <em>same</em> candidate pool. The primary judge, Qwen3-VL-4B, beats random only slightly: its paired gain in prompt alignment is 0.039 (95% CI [0.016, 0.062]), with regret 0.160 against 0.199 for random. A content-only CLIP similarity scorer, which cannot see presentation order, does better at 0.069 (95% CI [0.047, 0.090]). The secondary judge, SmolVLM2-2.2B, falls below random (gain &minus;0.073).</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="num">2</span>
+    <div>
+      <h3>Presentation strongly shapes small judges</h3>
+      <p>Across 900 valid calls, Qwen picks the image in slot A 48.8% of the time, against 27.8% expected under uniform choice given the pool sizes (&chi;&sup2;<sub>3</sub>&nbsp;=&nbsp;219). Showing each pool in three cyclic orders, the returned image changes on 59.7% of prompts. The judge still carries a content signal, but it is mixed with a strong slot preference.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="num">3</span>
+    <div>
+      <h3>Audit agreement gates on what they keep and what they reject</h3>
+      <p>Requiring the same image in all three orders keeps 121 of 300 prompts (40.3%). On those, Qwen beats random by 0.141 (95% CI [0.110, 0.173]); on the 179 it rejects, Qwen falls below random (&minus;0.030, CI [&minus;0.057, &minus;0.002]). Agreement with the weaker second judge does the reverse: the 59 prompts it keeps have gain &minus;0.060 (CI [&minus;0.111, &minus;0.011]), while the 241 it rejects have +0.064. Both judges favour early slots, so they can agree for the wrong reason.</p>
+      <p class="aside">On cultural errors, Qwen's choices reduce missing explicit expectations relative to random (&minus;0.056) but slightly raise stereotype ratings: +0.023 (pointwise 95% CI [0.002, 0.045]). This stereotype comparison was added after main inference and its Bonferroni-adjusted interval, [&minus;0.002, 0.051], includes zero, so we treat it as exploratory.</p>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <h2>Method</h2>
+  <p>Candidate pools are frozen from CulturalFrames: 300 prompts across 10 countries and 5 categories, each with three or four images from four generators. Each judge sees only the prompt and the images, in three cyclic orders, and returns one choice per order. Agreement gates then decide whether to act or abstain. Only after selection are the released human ratings joined by image identifier and compared with exact random choice on the same pools.</p>
+  <figure class="wide">
+    <a href="static/images/framework.png"><img src="static/images/framework.png" width="1800" height="699" loading="lazy" alt="Three-panel diagram: frozen candidate pools, the selection policy with cyclic orders and agreement gates, and the retrospective audit against withheld human ratings."></a>
+    <figcaption><b>Figure 3.</b> Audit protocol. (a) Frozen candidate pools from CulturalFrames. (b) Selection: each judge sees only the prompt and the images, in three cyclic orders; agreement gates decide whether to act or abstain. (c) Retrospective audit: released human ratings, never shown to the judge, are joined after selection and compared with exact random selection on the same pools.</figcaption>
+  </figure>
+</section>
+
+<section id="results">
+  <h2>Results</h2>
+  <figure class="wide">
+    <a href="static/images/results_main.png"><img src="static/images/results_main.png" width="1851" height="695" loading="lazy" alt="Bar charts of selection regret, gain over random for prompts kept versus rejected by each gate, and share of picks by presentation slot."></a>
+    <figcaption><b>Figure 4.</b> Main results (95% prompt-level bootstrap intervals). (a) Selection regret; lower is better. (b) Gain over random choice on the prompts each gate keeps and on those it rejects. Order unanimity keeps prompts where Qwen beats random and rejects prompts where it falls below random; agreement between the two judges does the reverse. (c) Share of choices by presentation slot; dashed marks show the rate expected under uniform choice.</figcaption>
+  </figure>
+
+  <div class="pair">
+    <figure>
+      <a href="static/images/cultural_deltas.png"><img src="static/images/cultural_deltas.png" width="1004" height="519" loading="lazy" alt="Paired differences in cultural-error ratings between Qwen's choices and random choice."></a>
+      <figcaption><b>Figure 5.</b> Cultural-error ratings of Qwen's choices minus random choice on the same pools; negative values mean fewer errors. Dark bars: pointwise 95% intervals. Light bars: Bonferroni-adjusted intervals across the three error types. The stereotype difference does not survive the adjustment.</figcaption>
+    </figure>
+    <div class="table-wrap">
+      <table>
+        <caption><b>Table 1.</b> Gain over matched random choice in prompt alignment (95% CI).</caption>
+        <thead><tr><th>Policy</th><th class="r">Prompts</th><th class="r">Gain</th></tr></thead>
+        <tbody>
+          <tr><td>CLIP (content only)</td><td class="r">300</td><td class="r">+0.069 <span class="ci">[0.047, 0.090]</span></td></tr>
+          <tr><td>Qwen, original order</td><td class="r">300</td><td class="r">+0.039 <span class="ci">[0.016, 0.062]</span></td></tr>
+          <tr><td>Qwen, order majority</td><td class="r">300</td><td class="r">+0.065 <span class="ci">[0.043, 0.086]</span></td></tr>
+          <tr><td>Qwen, 3/3 orders agree</td><td class="r">121</td><td class="r">+0.141 <span class="ci">[0.110, 0.173]</span></td></tr>
+          <tr class="sub"><td>rejected by that gate</td><td class="r">179</td><td class="r">&minus;0.030 <span class="ci">[&minus;0.057, &minus;0.002]</span></td></tr>
+          <tr><td>Qwen and Smol agree</td><td class="r">59</td><td class="r">&minus;0.060 <span class="ci">[&minus;0.111, &minus;0.011]</span></td></tr>
+          <tr class="sub"><td>rejected by that gate</td><td class="r">241</td><td class="r">+0.064 <span class="ci">[0.039, 0.087]</span></td></tr>
+          <tr><td>Smol, original order</td><td class="r">297</td><td class="r">&minus;0.073 <span class="ci">[&minus;0.093, &minus;0.052]</span></td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">Rows marked &ldquo;rejected&rdquo; apply Qwen's original-order choice to the prompts a gate declines; these complement analyses, and CLIP, are exploratory.</p>
+    </div>
+  </div>
+
+  <figure class="wide">
+    <a href="static/images/country_bars.png"><img src="static/images/country_bars.png" width="1754" height="527" loading="lazy" alt="Country-group selection regret for random, Qwen and Smol across ten countries."></a>
+    <figcaption><b>Figure 6.</b> Country-group regret with 95% bootstrap intervals (30 prompts per group). Random regret shows each group's room for improvement. Country groups are dataset contexts, not homogeneous cultural preferences.</figcaption>
+  </figure>
+</section>
+
+<section id="examples">
+  <h2>Examples</h2>
+  <p>Each gallery is chosen by a fixed rule over the recorded outputs, not by looking at the images. Numbers are mean human prompt-alignment ratings (0&ndash;1).</p>
+  <figure class="wide narrow">
+    <a href="static/images/gallery_orders.jpg"><img src="static/images/gallery_orders.jpg" width="1418" height="1139" loading="lazy" alt="Five prompts where Qwen picks slot A in all three orders and returns at least two different images."></a>
+    <figcaption><b>Figure 7.</b> Order flips. Prompts where Qwen picks slot A in all three orders and returns at least two different images; the five with the widest rating range among its picks. The last column is the best-rated candidate.</figcaption>
+  </figure>
+  <figure class="wide">
+    <a href="static/images/gallery_clip.jpg"><img src="static/images/gallery_clip.jpg" width="1765" height="954" loading="lazy" alt="Prompts where CLIP's choice and Qwen's choice differ most in human rating."></a>
+    <figcaption><b>Figure 8.</b> Content scorer versus judge. Prompts where CLIP's choice (C) and Qwen's original-order choice (Q) differ most in rating: left, CLIP's choice is rated higher; right, Qwen's is. Checks mark the best-rated candidates.</figcaption>
+  </figure>
+  <figure class="wide">
+    <a href="static/images/gallery_stereotype.jpg"><img src="static/images/gallery_stereotype.jpg" width="1757" height="619" loading="lazy" alt="Prompts where Qwen's choice has the highest stereotype rate in its pool although an equally aligned alternative has a lower rate."></a>
+    <figcaption><b>Figure 9.</b> Stereotype trade-off. Prompts where Qwen's choice has the highest stereotype rate in its pool and another candidate with equal or higher alignment has a lower rate (checks). Labels give mean alignment (A) and the share of annotators flagging a stereotype (S).</figcaption>
+  </figure>
+</section>
+
+<section id="browser">
+  <h2>Audit browser</h2>
+  <p>The released artifact includes a static browser over every recorded decision: headline estimates, per-prompt pools with both judges' choices in each order, and a filterable prompt explorer. All views are computed from the recorded outputs.</p>
+  <figure class="wide shot">
+    <a href="static/images/browser_overview.jpg"><img src="static/images/browser_overview.jpg" width="1800" height="1125" loading="lazy" alt="Audit browser overview page with headline estimates and summary charts."></a>
+    <figcaption><b>Figure 10.</b> Overview: headline estimates, presentation-slot preference, country-group regret, kept-versus-rejected gains for each gate, and gain over random for every policy.</figcaption>
+  </figure>
+  <div class="pair shots">
+    <figure class="shot">
+      <a href="static/images/browser_detail.jpg"><img src="static/images/browser_detail.jpg" width="1800" height="1125" loading="lazy" alt="Audit browser detail view for a single prompt."></a>
+      <figcaption><b>Figure 11.</b> Detail view for the prompt in Figure 1: the three presentation orders with each judge's choice, per-candidate human ratings, and choices by order.</figcaption>
+    </figure>
+    <figure class="shot">
+      <a href="static/images/browser_explore_below.jpg"><img src="static/images/browser_explore_below.jpg" width="1800" height="1125" loading="lazy" alt="Audit browser prompt explorer filtered to below-mean choices."></a>
+      <figcaption><b>Figure 12.</b> Prompt explorer filtered to Qwen's below-mean choices and sorted by regret.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="notes">
+  <h2>Limitations and data use</h2>
+  <p>The audit covers two small open judges, 300 prompts, and one set of released human ratings; country groups are dataset contexts, not homogeneous cultural preferences, and several comparisons (CLIP, gate complements, the stereotype difference) were added after main inference and are exploratory. All images and ratings come from CulturalFrames (Nayak et&nbsp;al., <a href="https://aclanthology.org/2025.findings-emnlp.1141/">Findings of EMNLP 2025</a>). Images appear here only to illustrate the analysis and are not redistributed beyond that; please obtain the data from its original release.</p>
+</section>
+
+<section id="bibtex">
+  <h2>BibTeX</h2>
+  <pre><code>@misc{seo2026judgeacts,
+  title  = {When the Judge Acts: Auditing VLM-Guided Image Selection
+            on Culturally Situated Prompts},
+  author = {Seo, Huichan},
+  year   = {2026},
+  note   = {Preprint}
+}</code></pre>
+</section>
+
+</main>
+
+<footer><p>&copy; 2026 Huichan Seo</p></footer>
+
+</body>
+</html>

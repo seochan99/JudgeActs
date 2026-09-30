@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>When the Judge Acts: Auditing VLM Image Selection</title>
-<meta name="description" content="A 4B VLM judge picks the first-listed image in 49% of calls and flips on 60% of prompts when images are reordered. An audit on 300 culturally situated prompts.">
+<meta name="description" content="We audit VLM judges by the images they choose. On 300 culturally situated prompts, a 4B judge barely beats random choice and changes its pick on 60% of prompts when the images are reordered.">
 <meta name="author" content="Huichan Seo">
-<meta name="keywords" content="VLM-as-a-judge, vision-language models, image selection, position bias, order sensitivity, agreement gates, selective prediction, cultural alignment, text-to-image, CulturalFrames, audit">
+<meta name="keywords" content="VLM-as-a-judge, vision-language models, image selection, position bias, order sensitivity, self-consistency, agreement filters, selective prediction, cultural alignment, text-to-image, CulturalFrames, audit">
 <meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://seochan99.github.io/JudgeActs/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="JudgeActs">
 <meta property="og:title" content="When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts">
-<meta property="og:description" content="Same images, different order, different answer. A 4B judge picks slot A in 49% of calls; only order agreement identifies choices worth trusting.">
+<meta property="og:description" content="Same images, different order, different answer. A 4B VLM judge barely beats random choice, favors the first image shown, and changes its pick on 60% of prompts when the images are reordered. Choices that survive reordering are the ones worth trusting.">
 <meta property="og:url" content="https://seochan99.github.io/JudgeActs/">
 <meta property="og:image" content="https://seochan99.github.io/JudgeActs/static/images/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="Three generated images of a Chilean family lunch. The judge always picks slot A, so the returned image is rated 0.00, 0.50 or 0.83 depending only on order.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="When the Judge Acts: Auditing VLM Image Selection">
-<meta name="twitter:description" content="Same images, different order, different answer. An audit of VLM judges on 300 culturally situated prompts.">
+<meta name="twitter:description" content="Same images, different order, different answer. We audit VLM judges by the images they choose, on 300 culturally situated prompts.">
 <meta name="twitter:image" content="https://seochan99.github.io/JudgeActs/static/images/og.jpg">
 <meta name="twitter:image:alt" content="Three generated images; the judge always picks slot A, so the returned image depends on order.">
 
@@ -42,7 +42,7 @@
       "@id": "https://seochan99.github.io/JudgeActs/#article",
       "headline": "When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts",
       "name": "When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts",
-      "description": "An audit of vision-language models used as image selectors on 300 culturally situated prompts, comparing returned images with held-out human ratings and exact random choice under three candidate orders.",
+      "description": "Vision-language models are increasingly used as judges that pick the best of several generated images. We audit them as decision-makers: on 300 culturally situated prompts, a 4B judge improves only marginally on random choice, shows strong position bias, and changes its choice on 60% of prompts when the candidates are reordered; decisions that survive reordering are much better than random.",
       "author": {"@type": "Person", "name": "Huichan Seo", "affiliation": {"@type": "Organization", "name": "Independent Researcher"}},
       "datePublished": "2026",
       "inLanguage": "en",
@@ -50,7 +50,7 @@
       "image": "https://seochan99.github.io/JudgeActs/static/images/og.jpg",
       "encoding": {"@type": "MediaObject", "contentUrl": "https://seochan99.github.io/JudgeActs/paper.pdf", "encodingFormat": "application/pdf"},
       "about": ["Vision-language models as judges", "Image selection", "Position bias", "Cultural alignment of text-to-image models", "Selective prediction"],
-      "keywords": "VLM-as-a-judge, image selection, position bias, order sensitivity, agreement gates, cultural alignment, text-to-image, audit",
+      "keywords": "VLM-as-a-judge, image selection, position bias, order sensitivity, self-consistency, cultural alignment, text-to-image, audit",
       "sameAs": ["https://github.com/seochan99/JudgeActs", "https://huggingface.co/datasets/seochan99/JudgeActs"],
       "isBasedOn": {"@id": "https://huggingface.co/datasets/seochan99/JudgeActs"}
     },
@@ -87,10 +87,10 @@
     <a class="brand" href="#top">JudgeActs</a>
     <div class="topnav-links">
       <a href="#demo">Demo</a>
-      <a href="#method">Method</a>
       <a href="#findings">Findings</a>
-      <a href="#position">Position</a>
-      <a href="#gates">Gates</a>
+      <a href="#method">Method</a>
+      <a href="#position">Position bias</a>
+      <a href="#filters">Filters</a>
       <a href="#results">Results</a>
       <a href="#examples">Examples</a>
       <a href="#bibtex">BibTeX</a>
@@ -155,19 +155,32 @@
     </div>
   </div>
 
-  <p class="demo-note">Qwen3-VL-4B picks slot A in every order. Nothing changed but the order, and the image it returns goes from rated 0.00 to 0.83, where 0.44 is what random choice would give on average. Across 300 prompts, reordering changes the returned image on <b>59.7%</b>.</p>
+  <p class="demo-note">Qwen3-VL-4B takes slot A in every order, so the order alone decides whether the user gets an image rated 0.00 or 0.83; random choice averages 0.44. Across all 300 prompts, reordering changes the returned image on <b>59.7%</b>.</p>
+</section>
 
-  <div class="lead-grid">
-    <div>
-      <h2 class="label">In one sentence</h2>
-      <p class="tldr">When a vision-language model chooses which generated image a user receives, audit what it returns against random choice on the same pool. Doing so shows that a small judge&rsquo;s choices are driven largely by presentation order, and that agreement across orders, not agreement with a second judge, identifies the choices worth trusting.</p>
-    </div>
-    <dl class="keyfigs">
-      <div><dt>48.8%</dt><dd>of Qwen&rsquo;s 900 calls pick slot A; uniform choice would give 27.8%</dd></div>
-      <div><dt>59.7%</dt><dd>of prompts get a different image when the candidates are reordered</dd></div>
-      <div><dt>+0.141</dt><dd>gain over random on the 40.3% of prompts where all three orders agree</dd></div>
-    </dl>
-  </div>
+<!-- ============ Findings ============ -->
+<section id="findings" class="findings" aria-labelledby="findings-h">
+  <h2 id="findings-h" class="label">Three findings</h2>
+  <ol class="frow">
+    <li class="reveal">
+      <p class="fk">+0.039</p>
+      <h3>Barely better than random</h3>
+      <p>Gain in human rating (0&ndash;1 scale) when Qwen3-VL-4B picks, over random choice from the same images. A CLIP similarity baseline, blind to order, reaches +0.069.</p>
+      <a href="#results">Results</a>
+    </li>
+    <li class="reveal">
+      <p class="fk">48.8%</p>
+      <h3>Strong position bias</h3>
+      <p>of Qwen&rsquo;s 900 calls pick the first image shown, against 27.8% if it chose uniformly. SmolVLM2-2.2B rarely looks past the second image.</p>
+      <a href="#position">Position bias</a>
+    </li>
+    <li class="reveal">
+      <p class="fk">+0.141</p>
+      <h3>Self-consistency is the signal</h3>
+      <p>gain on the 40.3% of prompts where all three orders agree. Agreeing with a second, weaker judge instead keeps below-random picks (&minus;0.060).</p>
+      <a href="#filters">Agreement filters</a>
+    </li>
+  </ol>
 </section>
 
 <!-- ============ Abstract ============ -->
@@ -177,77 +190,93 @@
 </section>
 
 <!-- ============ Method ============ -->
-<section id="method">
-  <h2>How the audit works</h2>
-  <ol class="steps">
-    <li class="step reveal">
-      <svg class="step-art" viewBox="0 0 180 72" role="img" aria-label="A frozen pool of three candidate images">
-        <rect x="18" y="14" width="40" height="40" class="art-img"/><rect x="70" y="14" width="40" height="40" class="art-img"/><rect x="122" y="14" width="40" height="40" class="art-img"/>
+<section id="method" aria-labelledby="method-h">
+  <h2 id="method-h">How the audit works</h2>
+  <p class="sec-lead">The judge never sees a human rating. We record what it picks, and only afterwards compare that pick with the ratings and with random choice from the same images.</p>
+  <figure class="flow-fig" id="flow-fig">
+    <div class="flow-head">
+      <div class="flow-controls" role="group" aria-label="Protocol step">
+        <button type="button" class="seg" data-step="1" aria-pressed="false" aria-label="Step 1">1</button><button type="button" class="seg" data-step="2" aria-pressed="false" aria-label="Step 2">2</button><button type="button" class="seg" data-step="3" aria-pressed="false" aria-label="Step 3">3</button><button type="button" class="seg" data-step="4" aria-pressed="false" aria-label="Step 4">4</button><button type="button" class="seg" data-step="5" aria-pressed="false" aria-label="Step 5">5</button><button type="button" class="seg" data-step="6" aria-pressed="false" aria-label="Step 6">6</button><button type="button" class="seg is-on" data-step="all" aria-pressed="true">All</button>
+        <button type="button" class="play" id="flow-play" aria-pressed="false" hidden>Play</button>
+      </div>
+      <p class="flow-cap" id="flow-cap" aria-live="polite"><span class="flow-n" id="flow-n"></span><span id="flow-txt">Selection never sees the ratings; the audit never changes a selection.</span></p>
+    </div>
+    <div class="flow-wrap" id="flow-wrap">
+      <div class="flow" id="flow">
+        <div class="panel" data-panel="a">
+          <h3 class="panel-h"><span class="pl">(a)</span> Frozen candidate pools</h3>
+          <div class="part" data-s="1">
+            <h4><span class="sn">1</span>Prompts and images</h4>
+            <p class="node strong">CulturalFrames <span class="sub">300 prompts</span></p>
+            <div class="facet"><h4>10 countries</h4><p>Brazil, Canada, Chile, China, Germany, India, Iran, Japan, Poland, South Africa</p></div>
+            <div class="facet"><h4>5 categories</h4><p>Dates of significance, Etiquette, Family, Greetings, Religion</p></div>
+            <div class="facet"><h4>4 generators</h4><p>SD-3.5-Large, Flux.1-Dev, GPT-Image, Imagen3</p></div>
+            <div class="pool"><span class="stack" aria-hidden="true"><i></i><i></i><i></i></span><span>3&ndash;4 candidate images per prompt</span></div>
+          </div>
+          <div class="part" data-s="5">
+            <p class="node withheld" id="flow-withheld">human ratings withheld</p>
+          </div>
+        </div>
+        <div class="panel" data-panel="b">
+          <h3 class="panel-h"><span class="pl">(b)</span> Selection policy</h3>
+          <div class="part" data-s="2">
+            <h4><span class="sn">2</span>Cyclic orders</h4>
+            <div class="orders"><span class="ord"><span>A</span><span>B</span><span>C</span></span><span class="ord"><span>B</span><span>C</span><span>A</span></span><span class="ord"><span>C</span><span>A</span><span>B</span></span></div>
+          </div>
+          <div class="down" aria-hidden="true"></div>
+          <div class="part" data-s="3">
+            <h4><span class="sn">3</span>Judges</h4>
+            <div class="row"><span class="node q">Qwen3-VL-4B</span><span class="node s">SmolVLM2-2.2B</span></div>
+            <div class="down short" aria-hidden="true"></div>
+            <div class="row"><span class="node">one pick per order</span></div>
+          </div>
+          <div class="down" aria-hidden="true"></div>
+          <div class="part" data-s="4">
+            <h4><span class="sn">4</span>Agreement filters</h4>
+            <div class="row"><span class="node">3/3 orders</span><span class="node">&ge;2/3 orders</span><span class="node">both judges</span></div>
+            <div class="fork" aria-hidden="true"><span></span><span></span></div>
+            <div class="row split"><span class="outcome"><span class="fl">agree</span><span class="node act">act</span></span><span class="outcome"><span class="fl">otherwise</span><span class="node abstain">abstain</span></span></div>
+          </div>
+        </div>
+        <div class="panel" data-panel="c">
+          <h3 class="panel-h"><span class="pl">(c)</span> Retrospective audit</h3>
+          <div class="part" data-s="5">
+            <h4><span class="sn">5</span>Join ratings</h4>
+            <div class="row"><span class="node strong" id="flow-join">join human ratings by image ID</span></div>
+          </div>
+          <div class="part" data-s="6">
+            <h4><span class="sn">6</span>Outcomes</h4>
+            <div class="row"><span class="node">selection regret</span><span class="node">gain over random</span><span class="node">below-mean rate</span></div>
+            <h4>Cultural errors</h4>
+            <div class="row"><span class="node">stereotype</span><span class="node">missing explicit</span><span class="node">missing implicit</span></div>
+            <h4>Diagnostics</h4>
+            <div class="row"><span class="node">country groups</span><span class="node">slot bias</span><span class="node">matched-subset baselines</span></div>
+          </div>
+        </div>
+      </div>
+      <svg class="flow-line part" data-s="5" id="flow-line" aria-hidden="true" focusable="false">
+        <defs>
+          <marker id="fl-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker>
+          <mask id="fl-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="4000" height="4000"><path class="fl-m" d="" fill="none" stroke="#fff" stroke-width="14"/></mask>
+        </defs>
+        <g mask="url(#fl-mask)"><path class="fl-p" d="" marker-end="url(#fl-arrow)"/></g>
+        <text class="fl-t" text-anchor="middle">ratings withheld from the judge, joined only in the audit</text>
       </svg>
-      <span class="step-n">1</span>
-      <h3>Freeze the pools</h3>
-      <p>300 CulturalFrames prompts from 10 countries and 5 categories, each with three or four images from four generators.</p>
-    </li>
-    <li class="step reveal">
-      <svg class="step-art" viewBox="0 0 180 72" role="img" aria-label="The same three images shown in three rotated orders, with the first slot framed">
-        <g class="art-rot">
-          <rect x="30" y="4" width="18" height="18" class="art-img a"/><rect x="54" y="4" width="18" height="18" class="art-img b"/><rect x="78" y="4" width="18" height="18" class="art-img c"/>
-          <rect x="30" y="27" width="18" height="18" class="art-img b"/><rect x="54" y="27" width="18" height="18" class="art-img c"/><rect x="78" y="27" width="18" height="18" class="art-img a"/>
-          <rect x="30" y="50" width="18" height="18" class="art-img c"/><rect x="54" y="50" width="18" height="18" class="art-img a"/><rect x="78" y="50" width="18" height="18" class="art-img b"/>
-          <rect x="27" y="1" width="24" height="70" class="art-frame"/>
-        </g>
-        <text x="110" y="17" class="art-t">order 1</text><text x="110" y="40" class="art-t">order 2</text><text x="110" y="63" class="art-t">order 3</text>
-      </svg>
-      <span class="step-n">2</span>
-      <h3>Judge in three orders</h3>
-      <p>Each judge sees only the prompt and the images, in three cyclic orders, and returns one choice per order. Agreement gates decide whether to act or abstain.</p>
-    </li>
-    <li class="step reveal">
-      <svg class="step-art" viewBox="0 0 180 72" role="img" aria-label="Human ratings joined to each image after selection and compared with the pool mean, which is random choice">
-        <rect x="18" y="8" width="40" height="40" class="art-img a"/><rect x="70" y="8" width="40" height="40" class="art-img b"/><rect x="122" y="8" width="40" height="40" class="art-img c"/>
-        <text x="38" y="64" class="art-n">0.00</text><text x="90" y="64" class="art-n">0.50</text><text x="142" y="64" class="art-n">0.83</text>
-      </svg>
-      <span class="step-n">3</span>
-      <h3>Join human ratings afterwards</h3>
-      <p>Released human ratings, never shown to the judge, are joined by image id and compared with exact random choice on the same pool.</p>
-    </li>
-  </ol>
-  <figure class="wide">
-    <a href="static/images/framework.png"><img src="static/images/framework.png" width="1800" height="699" loading="lazy" decoding="async" alt="Three-panel protocol diagram: (a) frozen candidate pools from CulturalFrames, (b) the selection policy with three cyclic orders and agreement gates, (c) the retrospective audit that joins withheld human ratings and compares with random choice on the same pool."></a>
-    <figcaption><b>Figure 1.</b> Audit protocol. (a) Frozen candidate pools from CulturalFrames. (b) Selection: each judge sees only the prompt and the images, in three cyclic orders; agreement gates decide whether to act or abstain. (c) Retrospective audit: human ratings are joined after selection and compared with exact random selection on the same pools.</figcaption>
+    </div>
+    <figcaption><b>Figure 1.</b> Audit protocol. (a) Frozen candidate pools from CulturalFrames. (b) Selection: each judge sees only the prompt and the images, in three cyclic orders; agreement filters decide whether to act or abstain. (c) Retrospective audit: human ratings are joined after selection and compared with exact random choice on the same pools. <a href="static/images/framework.png">Static version</a></figcaption>
   </figure>
-</section>
-
-<!-- ============ Findings ============ -->
-<section id="findings">
-  <h2>Three findings</h2>
-  <div class="finding">
-    <span class="num">1</span>
-    <div>
-      <h3>Audit the action against a matched baseline</h3>
-      <p>Qwen3-VL-4B beats random choice on the same pool only slightly: a paired gain in prompt alignment of 0.039 (95% CI [0.016, 0.062]). A content-only CLIP scorer, which cannot see order, does better at 0.069 [0.047, 0.090]. SmolVLM2-2.2B falls below random (&minus;0.073). <a href="#results">Results</a></p>
-    </div>
-  </div>
-  <div class="finding">
-    <span class="num">2</span>
-    <div>
-      <h3>Presentation strongly shapes small judges</h3>
-      <p>Qwen picks slot A in 48.8% of 900 calls against 27.8% under uniform choice (&chi;&sup2;<sub>3</sub>&nbsp;=&nbsp;219), and the returned image changes under reordering on 59.7% of prompts. The judge still carries a content signal, mixed with a strong slot preference. <a href="#position">Position</a></p>
-    </div>
-  </div>
-  <div class="finding">
-    <span class="num">3</span>
-    <div>
-      <h3>Audit gates on what they keep and what they reject</h3>
-      <p>Requiring the same image in all three orders keeps 40.3% of prompts, where Qwen beats random by 0.141; the rest fall below random. Agreement with the weaker second judge does the reverse, because both judges favour early slots and can agree for the wrong reason. <a href="#gates">Gates</a></p>
-    </div>
-  </div>
+  <noscript>
+    <figure class="wide">
+      <a href="static/images/framework.png"><img src="static/images/framework.png" width="1800" height="699" loading="lazy" decoding="async" alt="Three-panel protocol diagram: (a) frozen candidate pools from CulturalFrames, (b) the selection policy with three cyclic orders and agreement filters, (c) the retrospective audit that joins withheld human ratings and compares with random choice on the same pool."></a>
+      <figcaption><b>Figure 1.</b> Audit protocol. (a) Frozen candidate pools from CulturalFrames. (b) Selection: each judge sees only the prompt and the images, in three cyclic orders; agreement filters decide whether to act or abstain. (c) Retrospective audit: human ratings are joined after selection and compared with exact random choice on the same pools.</figcaption>
+    </figure>
+  </noscript>
 </section>
 
 <!-- ============ Position ============ -->
 <section id="position">
-  <h2>Where the judge looks</h2>
-  <p class="sec-lead">Share of choices by presentation slot. Dashes mark the rate expected if the judge chose uniformly, given the mix of three- and four-image pools.</p>
+  <h2>Position bias: where the judge looks</h2>
+  <p class="sec-lead">Share of choices by presentation slot. Dashes mark the rate expected if the judge chose uniformly, given the mix of three- and four-image pools. The ablations change the prompt format and keep the bias.</p>
   <div class="chart-controls" role="group" aria-label="Chart view">
     <button type="button" class="seg is-on" data-view="judges" aria-pressed="true">Two judges</button><button type="button" class="seg" data-view="ablations" aria-pressed="false">Qwen ablations</button>
   </div>
@@ -257,12 +286,12 @@
   </figure>
 </section>
 
-<!-- ============ Gates ============ -->
-<section id="gates">
-  <h2>What a gate keeps and rejects</h2>
-  <p class="sec-lead">A gate lets the judge act on some prompts and abstain on the rest. Each dot is one of the 300 prompts, one row per country. Judge the gate by both sides: kept prompts should beat random, and rejected ones should not.</p>
-  <div class="chart-controls" role="group" aria-label="Gate">
-    <button type="button" class="seg" data-gate="none" aria-pressed="false">No gate</button><button type="button" class="seg is-on" data-gate="unanimity" aria-pressed="true">Order unanimity</button><button type="button" class="seg" data-gate="crossmodel" aria-pressed="false">Cross-model<span class="long"> agreement</span></button>
+<!-- ============ Agreement filters ============ -->
+<section id="filters">
+  <h2>Agreement filters: what they keep and reject</h2>
+  <p class="sec-lead">An agreement filter lets the judge act only on prompts where its choices agree, and abstain on the rest. Each dot is one of the 300 prompts, one row per country. Judge a filter by both sides: kept prompts should beat random, and rejected ones should not.</p>
+  <div class="chart-controls" role="group" aria-label="Agreement filter">
+    <button type="button" class="seg" data-gate="none" aria-pressed="false">No filter</button><button type="button" class="seg is-on" data-gate="unanimity" aria-pressed="true">3/3 orders<span class="long"> agree</span></button><button type="button" class="seg" data-gate="crossmodel" aria-pressed="false">Both judges<span class="long"> agree</span></button>
   </div>
   <div class="gate">
     <div class="gate-dots">
@@ -277,7 +306,7 @@
         <div class="grow" data-row="rejected"><span class="glab">Rejected <span class="gn">(179)</span></span><div class="gtrack"><div class="gbar"></div><div class="gci"></div></div><span class="gval">&minus;0.030</span></div>
         <div class="gaxis" id="gaxis"></div>
       </div>
-      <p class="gate-text" id="gate-text">Order unanimity keeps prompts where Qwen returns the same image in all three orders. It keeps choices that beat random and rejects the ones that fall below it.</p>
+      <p class="gate-text" id="gate-text">The order filter keeps a prompt only if Qwen returns the same image in all three orders. Kept prompts beat random by +0.141; the prompts it rejects fall below random (&minus;0.030).</p>
     </div>
   </div>
 </section>
@@ -285,38 +314,33 @@
 <!-- ============ Results ============ -->
 <section id="results">
   <h2>Results</h2>
-  <figure class="wide">
-    <a href="static/images/results_main.png"><img src="static/images/results_main.png" width="1851" height="695" loading="lazy" decoding="async" alt="Three bar-chart panels: selection regret for random, Qwen, Smol, CLIP and gated policies; gain over random for prompts kept versus rejected by each gate; and share of picks by presentation slot with uniform rates dashed."></a>
-    <figcaption><b>Figure 2.</b> Main results (95% prompt-level bootstrap intervals). (a) Selection regret; lower is better. (b) Gain over random on the prompts each gate keeps and on those it rejects. (c) Share of choices by presentation slot; dashes show the uniform rate.</figcaption>
-  </figure>
 
-  <div class="pair">
-    <figure>
-      <a href="static/images/cultural_deltas.png"><img src="static/images/cultural_deltas.png" width="1004" height="519" loading="lazy" decoding="async" alt="Paired differences between Qwen's choices and random choice in three cultural-error ratings: missing explicit expectations decreases, missing implicit expectations changes little, stereotype rating rises slightly."></a>
-      <figcaption><b>Figure 3.</b> Cultural-error ratings of Qwen&rsquo;s choices minus random choice; negative is fewer errors. Qwen reduces missing explicit expectations (&minus;0.056) but slightly raises stereotype ratings (+0.023, pointwise CI [0.002, 0.045]); the Bonferroni-adjusted interval [&minus;0.002, 0.051] includes zero, so this is exploratory.</figcaption>
-    </figure>
-    <div class="table-wrap">
-      <table>
-        <caption><b>Table 1.</b> Gain over matched random choice in prompt alignment (95% CI).</caption>
-        <thead><tr><th>Policy</th><th class="r">Prompts</th><th class="r">Gain</th></tr></thead>
-        <tbody>
-          <tr><td>CLIP (content only)</td><td class="r">300</td><td class="r">+0.069 <span class="ci">[0.047, 0.090]</span></td></tr>
-          <tr><td>Qwen, original order</td><td class="r">300</td><td class="r">+0.039 <span class="ci">[0.016, 0.062]</span></td></tr>
-          <tr><td>Qwen, order majority</td><td class="r">300</td><td class="r">+0.065 <span class="ci">[0.043, 0.086]</span></td></tr>
-          <tr><td>Qwen, 3/3 orders agree</td><td class="r">121</td><td class="r">+0.141 <span class="ci">[0.110, 0.173]</span></td></tr>
-          <tr class="sub"><td>rejected by that gate</td><td class="r">179</td><td class="r">&minus;0.030 <span class="ci">[&minus;0.057, &minus;0.002]</span></td></tr>
-          <tr><td>Qwen and Smol agree</td><td class="r">59</td><td class="r">&minus;0.060 <span class="ci">[&minus;0.111, &minus;0.011]</span></td></tr>
-          <tr class="sub"><td>rejected by that gate</td><td class="r">241</td><td class="r">+0.064 <span class="ci">[0.039, 0.087]</span></td></tr>
-          <tr><td>Smol, original order</td><td class="r">297</td><td class="r">&minus;0.073 <span class="ci">[&minus;0.093, &minus;0.052]</span></td></tr>
-        </tbody>
-      </table>
-      <p class="tnote">&ldquo;Rejected&rdquo; rows apply Qwen&rsquo;s original-order choice to the prompts a gate declines. These rows and CLIP are exploratory.</p>
-    </div>
+  <div class="table-wrap results-table">
+    <table>
+      <caption><b>Table 1.</b> Gain over random choice on the same images, in human prompt-alignment rating (95% CI).</caption>
+      <thead><tr><th>Policy</th><th class="r">Prompts</th><th class="r">Gain</th></tr></thead>
+      <tbody>
+        <tr><td>CLIP (content only)</td><td class="r">300</td><td class="r">+0.069 <span class="ci">[0.047, 0.090]</span></td></tr>
+        <tr><td>Qwen, original order</td><td class="r">300</td><td class="r">+0.039 <span class="ci">[0.016, 0.062]</span></td></tr>
+        <tr><td>Qwen, order majority</td><td class="r">300</td><td class="r">+0.065 <span class="ci">[0.043, 0.086]</span></td></tr>
+        <tr><td>Qwen, filter: 3/3 orders agree</td><td class="r">121</td><td class="r">+0.141 <span class="ci">[0.110, 0.173]</span></td></tr>
+        <tr class="sub"><td>rejected by that filter</td><td class="r">179</td><td class="r">&minus;0.030 <span class="ci">[&minus;0.057, &minus;0.002]</span></td></tr>
+        <tr><td>Qwen, filter: both judges agree</td><td class="r">59</td><td class="r">&minus;0.060 <span class="ci">[&minus;0.111, &minus;0.011]</span></td></tr>
+        <tr class="sub"><td>rejected by that filter</td><td class="r">241</td><td class="r">+0.064 <span class="ci">[0.039, 0.087]</span></td></tr>
+        <tr><td>Smol, original order</td><td class="r">297</td><td class="r">&minus;0.073 <span class="ci">[&minus;0.093, &minus;0.052]</span></td></tr>
+      </tbody>
+    </table>
+    <p class="tnote">&ldquo;Rejected&rdquo; rows apply Qwen&rsquo;s original-order choice to the prompts a filter declines. These rows and CLIP are exploratory.</p>
   </div>
+
+  <figure class="wide narrow cult">
+      <a href="static/images/cultural_deltas.png"><img src="static/images/cultural_deltas.png" width="1004" height="519" loading="lazy" decoding="async" alt="Paired differences between Qwen's choices and random choice in three cultural-error ratings: missing explicit expectations decreases, missing implicit expectations changes little, stereotype rating rises slightly."></a>
+    <figcaption><b>Figure 2.</b> Cultural-error ratings of Qwen&rsquo;s choices minus random choice; negative is fewer errors. Qwen reduces missing explicit expectations (&minus;0.056) but slightly raises stereotype ratings (+0.023, pointwise CI [0.002, 0.045]); the Bonferroni-adjusted interval [&minus;0.002, 0.051] includes zero, so this is exploratory.</figcaption>
+  </figure>
 
   <figure class="wide">
     <a href="static/images/country_bars.png"><img src="static/images/country_bars.png" width="1754" height="527" loading="lazy" decoding="async" alt="Selection regret by country group for random, Qwen and Smol across ten countries, with bootstrap intervals."></a>
-    <figcaption><b>Figure 4.</b> Country-group regret with 95% bootstrap intervals (30 prompts per group). Random regret shows each group&rsquo;s room for improvement. Country groups are dataset contexts, not homogeneous cultural preferences.</figcaption>
+    <figcaption><b>Figure 3.</b> Country-group regret with 95% bootstrap intervals (30 prompts per group). Random regret shows each group&rsquo;s room for improvement. Country groups are dataset contexts, not homogeneous cultural preferences.</figcaption>
   </figure>
 </section>
 
@@ -326,23 +350,23 @@
   <p>Each gallery is chosen by a fixed rule over the recorded outputs, not by looking at the images. Numbers are mean human prompt-alignment ratings (0&ndash;1).</p>
   <figure class="wide">
     <a href="static/images/teaser.jpg"><img src="static/images/teaser.jpg" width="1800" height="797" loading="lazy" decoding="async" alt="Four CulturalFrames prompts from Iran, Poland, China and Brazil. In each, Qwen's pick, framed in red, is rated below the pool mean while a clearly better candidate, framed in green, is available."></a>
-    <figcaption><b>Figure 5.</b> VLM judges can return below-average images when a clearly better candidate exists. Red: Qwen3-VL-4B&rsquo;s original-order choice, below the pool mean. Green: highest-rated candidate. The examples illustrate the failure mode, not its frequency.</figcaption>
+    <figcaption><b>Figure 4.</b> VLM judges can return below-average images when a clearly better candidate exists. Red: Qwen3-VL-4B&rsquo;s original-order choice, below the pool mean. Green: highest-rated candidate. The examples illustrate the failure mode, not its frequency.</figcaption>
   </figure>
   <figure class="wide narrow">
     <a href="static/images/gallery_orders.jpg"><img src="static/images/gallery_orders.jpg" width="1626" height="1300" loading="lazy" decoding="async" alt="Five prompts, one per row, where Qwen picks slot A in all three orders and so returns different images; the last column shows the best-rated candidate."></a>
-    <figcaption><b>Figure 6.</b> Order flips. Prompts where Qwen picks slot A in all three orders and returns at least two different images; the five with the widest rating range among its picks. The last column is the best-rated candidate.</figcaption>
+    <figcaption><b>Figure 5.</b> Order flips. Prompts where Qwen picks slot A in all three orders and returns at least two different images; the five with the widest rating range among its picks. The last column is the best-rated candidate.</figcaption>
   </figure>
   <figure class="wide">
     <a href="static/images/gallery_clip.jpg"><img src="static/images/gallery_clip.jpg" width="1800" height="969" loading="lazy" decoding="async" alt="Prompts where CLIP's choice and Qwen's choice differ most in human rating: on the left CLIP's choice is rated higher, on the right Qwen's is."></a>
-    <figcaption><b>Figure 7.</b> Content scorer versus judge. Prompts where CLIP&rsquo;s choice (C) and Qwen&rsquo;s original-order choice (Q) differ most in rating: left, CLIP&rsquo;s is rated higher; right, Qwen&rsquo;s is. Checks mark the best-rated candidates.</figcaption>
+    <figcaption><b>Figure 6.</b> Content scorer versus judge. Prompts where CLIP&rsquo;s choice (C) and Qwen&rsquo;s original-order choice (Q) differ most in rating: left, CLIP&rsquo;s is rated higher; right, Qwen&rsquo;s is. Checks mark the best-rated candidates.</figcaption>
   </figure>
   <figure class="wide">
     <a href="static/images/gallery_stereotype.jpg"><img src="static/images/gallery_stereotype.jpg" width="1800" height="626" loading="lazy" decoding="async" alt="Prompts where Qwen's choice has the highest stereotype rate in its pool although another candidate with equal or higher alignment has a lower stereotype rate."></a>
-    <figcaption><b>Figure 8.</b> Stereotype trade-off. Qwen&rsquo;s choice has the highest stereotype rate in its pool, and another candidate with equal or higher alignment has a lower rate (checks). Labels give mean alignment (A) and the share of annotators flagging a stereotype (S).</figcaption>
+    <figcaption><b>Figure 7.</b> Stereotype trade-off. Qwen&rsquo;s choice has the highest stereotype rate in its pool, and another candidate with equal or higher alignment has a lower rate (checks). Labels give mean alignment (A) and the share of annotators flagging a stereotype (S).</figcaption>
   </figure>
   <figure class="wide narrow">
     <a href="static/images/gallery_appendix.jpg"><img src="static/images/gallery_appendix.jpg" width="1800" height="1580" loading="lazy" decoding="async" alt="Unfiltered examples: the first four-candidate prompt for each of ten countries, candidates in original order, with Qwen and Smol choices framed and the highest-rated candidates checked."></a>
-    <figcaption><b>Figure 9.</b> Unfiltered examples: the first four-candidate prompt per country, candidates in original order. Blue (Q) and orange (S) frames mark the Qwen and Smol original-order choices; green checks mark the highest-rated candidates.</figcaption>
+    <figcaption><b>Figure 8.</b> Unfiltered examples: the first four-candidate prompt per country, candidates in original order. Blue (Q) and orange (S) frames mark the Qwen and Smol original-order choices; green checks mark the highest-rated candidates.</figcaption>
   </figure>
 </section>
 
@@ -351,17 +375,17 @@
   <h2>Audit browser</h2>
   <p>The released artifact includes a static browser over every recorded decision: headline estimates, per-prompt pools with both judges&rsquo; choices in each order, and a filterable prompt explorer, all computed from the recorded outputs.</p>
   <figure class="wide shot">
-    <a href="static/images/browser_overview.jpg"><img src="static/images/browser_overview.jpg" width="1800" height="1125" loading="lazy" decoding="async" alt="Screenshot of the audit browser overview page showing headline estimates, slot preference, country-group regret and gate charts."></a>
-    <figcaption><b>Figure 10.</b> Overview: headline estimates, presentation-slot preference, country-group regret, kept-versus-rejected gains for each gate, and gain over random for every policy.</figcaption>
+    <a href="static/images/browser_overview.jpg"><img src="static/images/browser_overview.jpg" width="1800" height="1125" loading="lazy" decoding="async" alt="Screenshot of the audit browser overview page showing headline estimates, slot preference, country-group regret and agreement-filter charts."></a>
+    <figcaption><b>Figure 9.</b> Overview: headline estimates, presentation-slot preference, country-group regret, kept-versus-rejected gains for each agreement filter, and gain over random for every policy.</figcaption>
   </figure>
   <div class="pair shots">
     <figure class="shot">
       <a href="static/images/browser_detail.jpg"><img src="static/images/browser_detail.jpg" width="1800" height="1125" loading="lazy" decoding="async" alt="Screenshot of the audit browser detail view for the Chilean family lunch prompt, showing three orders with each judge's choice and per-candidate ratings."></a>
-      <figcaption><b>Figure 11.</b> Detail view for the demo prompt: the three orders with each judge&rsquo;s choice and per-candidate human ratings.</figcaption>
+      <figcaption><b>Figure 10.</b> Detail view for the demo prompt: the three orders with each judge&rsquo;s choice and per-candidate human ratings.</figcaption>
     </figure>
     <figure class="shot">
       <a href="static/images/browser_explore_below.jpg"><img src="static/images/browser_explore_below.jpg" width="1800" height="1125" loading="lazy" decoding="async" alt="Screenshot of the audit browser prompt explorer filtered to Qwen's below-mean choices and sorted by regret."></a>
-      <figcaption><b>Figure 12.</b> Prompt explorer filtered to Qwen&rsquo;s below-mean choices, sorted by regret.</figcaption>
+      <figcaption><b>Figure 11.</b> Prompt explorer filtered to Qwen&rsquo;s below-mean choices, sorted by regret.</figcaption>
     </figure>
   </div>
 </section>

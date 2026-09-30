@@ -218,7 +218,7 @@
       ablations: ''
     };
     var abl = data.variants.map(function (v) { return v.label + ' ' + pct(v.first); }).join(', ');
-    captions.ablations = 'Qwen&rsquo;s first-slot share stays far above uniform under every post-hoc variant: ' +
+    captions.ablations = 'Qwen&rsquo;s first-slot share stays far above uniform under every exploratory prompt variant: ' +
       data.variants.map(function (v) { return v.label.toLowerCase() + ' (' + v.note + ') ' + pct(v.first) + ' against ' + pct(v.first_uniform); }).join('; ') + '.' +
       (data.omitted.length ? ' <span class="chart-note">Not shown: ' + data.omitted.map(function (o) { return o.label.toLowerCase() + ' (run incomplete, ' + o.calls + ' of ' + o.expected + ' calls)'; }).join(', ') + '.</span>' : '');
 
@@ -358,9 +358,9 @@
     });
 
     var texts = {
-      none: function (g) { return 'Without a gate, Qwen acts on every prompt and beats random by ' + signed(g.kept.gain) + ' on average. The content-only CLIP scorer reaches ' + signed(data.reference.clip.gain) + '.'; },
-      unanimity: function (g) { return 'Order unanimity keeps a prompt only if Qwen returns the same image in all three orders. Kept prompts beat random by ' + signed(g.kept.gain) + '; the prompts it rejects fall below random (' + signed(g.rejected.gain) + ').'; },
-      crossmodel: function (g) { return 'Cross-model agreement keeps a prompt when Qwen and SmolVLM2 pick the same image. Both favour early slots, so they agree for the wrong reason: kept prompts fall below random (' + signed(g.kept.gain) + '), rejected ones beat it (' + signed(g.rejected.gain) + ').'; }
+      none: function (g) { return 'Without a filter, Qwen acts on every prompt and beats random by ' + signed(g.kept.gain) + ' on average. The content-only CLIP scorer reaches ' + signed(data.reference.clip.gain) + '.'; },
+      unanimity: function (g) { return 'The order filter keeps a prompt only if Qwen returns the same image in all three orders. Kept prompts beat random by ' + signed(g.kept.gain) + '; the prompts it rejects fall below random (' + signed(g.rejected.gain) + ').'; },
+      crossmodel: function (g) { return 'The two-judge filter keeps a prompt when Qwen and SmolVLM2 pick the same image. Both favour early slots, so they agree for the wrong reason: kept prompts fall below random (' + signed(g.kept.gain) + '), rejected ones beat it (' + signed(g.rejected.gain) + ').'; }
     };
 
     function setRow(row, g, total, label) {
@@ -406,6 +406,110 @@
     });
   }
 
+  /* ---------------- Protocol diagram (6 steps) ---------------- */
+  function initFlow() {
+    var fig = $('#flow-fig');
+    if (!fig) return;
+    var wrap = $('#flow-wrap'), flow = $('#flow'), controls = $('.flow-controls', fig);
+    var cap = $('#flow-txt'), num = $('#flow-n'), playBtn = $('#flow-play');
+    var line = $('#flow-line'), lp = $('.fl-p', line), lm = $('.fl-m', line), lt = $('.fl-t', line);
+    var withheld = $('#flow-withheld'), join = $('#flow-join'), panelC = $('.panel[data-panel="c"]', flow);
+    var panels = $$('.panel', flow);
+    var TEXT = {
+      1: 'Freeze 300 culturally situated prompts with 3–4 generated images each.',
+      2: 'Show each pool in three rotated orders.',
+      3: 'Ask each judge to pick one image per order.',
+      4: 'Agreement filters (gates) act only when the picks agree, and abstain otherwise.',
+      5: 'Only now join the human ratings the judge never saw.',
+      6: 'Score the returned image against random choice and the best available.',
+      all: 'Selection never sees the ratings; the audit never changes a selection.'
+    };
+    var PANEL = { 1: 'a', 2: 'b', 3: 'b', 4: 'b', 5: 'c', 6: 'c' };
+    var step = 'all', len = 0, timer = null, playing = false;
+
+    function route() {
+      var wr = wrap.getBoundingClientRect(), a = withheld.getBoundingClientRect(), jn = join.getBoundingClientRect(), pc = panelC.getBoundingClientRect();
+      if (!wr.width) return;
+      var stacked = flow.getBoundingClientRect().width - pc.width < 60;
+      var d, L = function (v) { return Math.round(v) + 0.5; };
+      if (!stacked) {
+        var x0 = a.left + a.width / 2 - wr.left, y0 = a.bottom - wr.top, yb = wr.height - 16;
+        var x1 = pc.left - wr.left + 26, y1 = pc.bottom - wr.top + 3;
+        d = 'M' + L(x0) + ' ' + L(y0) + ' V' + L(yb) + ' H' + L(x1) + ' V' + L(y1);
+        lt.setAttribute('x', (x0 + x1) / 2); lt.setAttribute('y', yb + 4); lt.style.display = '';
+      } else {
+        var sx = a.left - wr.left, sy = a.top + a.height / 2 - wr.top, jy = jn.top + jn.height / 2 - wr.top;
+        d = 'M' + L(sx) + ' ' + L(sy) + ' H6.5 V' + L(jy) + ' H' + L(jn.left - wr.left - 2);
+        lt.style.display = 'none';
+      }
+      lp.setAttribute('d', d); lm.setAttribute('d', d);
+      len = Math.ceil(lp.getTotalLength ? lp.getTotalLength() : 2000) + 12;
+      lm.style.transition = 'none';
+      lm.style.strokeDasharray = len + ' ' + len;
+      lm.style.strokeDashoffset = drawn() ? 0 : len;
+      lm.getBoundingClientRect();
+      lm.style.transition = '';
+    }
+    function drawn() { return step === 'all' || step >= 5; }
+
+    function show(s) {
+      step = s;
+      if (s === 'all') wrap.removeAttribute('data-active'); else wrap.setAttribute('data-active', s);
+      setSegs(controls, 'data-step', s);
+      num.textContent = s === 'all' ? '' : 'STEP ' + s + ' OF 6';
+      cap.textContent = TEXT[s];
+      panels.forEach(function (p) { p.classList.toggle('is-active', s !== 'all' && p.getAttribute('data-panel') === PANEL[s]); });
+      line.classList.toggle('drawn', drawn());
+      lm.style.strokeDashoffset = drawn() ? 0 : len;
+    }
+    function stop() {
+      playing = false; clearTimeout(timer); timer = null;
+      playBtn.textContent = 'Play'; playBtn.setAttribute('aria-pressed', 'false');
+    }
+    function tick() {
+      timer = setTimeout(function () {
+        if (step === 'all') { stop(); return; }
+        show(step >= 6 ? 'all' : step + 1);
+        if (step === 'all') stop(); else tick();
+      }, step === 5 ? 3200 : 2600);
+    }
+    function play(from) {
+      playing = true;
+      playBtn.textContent = 'Pause'; playBtn.setAttribute('aria-pressed', 'true');
+      show(from); clearTimeout(timer); tick();
+    }
+
+    $$('button.seg', controls).forEach(function (b) {
+      b.addEventListener('click', function () {
+        stop(); var v = b.getAttribute('data-step'); show(v === 'all' ? 'all' : +v);
+      });
+    });
+    playBtn.hidden = false;
+    playBtn.addEventListener('click', function () {
+      if (playing) { stop(); return; }
+      play(step === 'all' || step >= 6 ? 1 : step + 1);
+    });
+
+    route();
+    show('all');
+    if ('ResizeObserver' in window) new ResizeObserver(function () { route(); }).observe(wrap);
+    else window.addEventListener('resize', route);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(route);
+
+    // Walk through the six steps once, the first time the diagram is on screen.
+    if (!reduce && hasIO) {
+      var started = false;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && !started) { started = true; play(1); }
+          else if (!e.isIntersecting && playing) { clearTimeout(timer); timer = null; }
+          else if (e.isIntersecting && playing && !timer) { tick(); }
+        });
+      }, { threshold: 0.4 });
+      io.observe(wrap);
+    }
+  }
+
   /* ---------------- BibTeX copy ---------------- */
   function initCopy() {
     var btn = $('#bib-copy'), code = $('#bib-code');
@@ -423,6 +527,7 @@
     initReveal();
     initNav();
     initCopy();
+    initFlow();
     getJSON('static/data/example.json').then(initDemo).catch(function (e) { console.error(e); });
     getJSON('static/data/slots.json').then(initSlots).catch(function (e) { console.error(e); });
     getJSON('static/data/gates.json').then(initGates).catch(function (e) { console.error(e); });

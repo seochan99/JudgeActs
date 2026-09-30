@@ -18,6 +18,9 @@ def build_rows(groups, paths):
         by_run[name] = unique
         validation[name] = {'calls':len(rows),'valid':sum(r['parse_ok'] for r in rows),
                             'invalid':sum(not r['parse_ok'] for r in rows),
+                            'strict_schema_valid':sum(r.get('schema_valid',r['parse_ok']) for r in rows),
+                            'recovered':sum(r.get('recovered',False) for r in rows),
+                            'json_invalid':sum(not r.get('json_valid',True) for r in rows),
                             'seconds':sum(r['seconds'] for r in rows)}
     records = []
     order_records = []

@@ -5,6 +5,8 @@ data/raw/
 data/images/
 models/
 runs/*.jsonl
+results/dev/inspection/
+paper/preview_*.png
 *.aux
 *.log
 *.out

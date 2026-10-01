@@ -457,11 +457,8 @@ def tile(cv, arr, x, top, s, label, frame=None, icon_tr=None, icon_tl=None, fs=6
 
 
 def placeholder(cv, x, top, s, n):
-    """Intentional empty cell for pools smaller than the widest row."""
-    cv.fig.add_artist(Rectangle((x, cv.y(top + s)), s, s, transform=cv.tr, facecolor="#F2F2F2",
-                                edgecolor="#D0D0D0", lw=0.4, zorder=2))
-    cv.text(x + s / 2, top + s / 2, f"{n}-image\npool", fontsize=7, color=MUTED, style="italic",
-            ha="center", va="center", linespacing=1.1, **SERIF)
+    """Pools smaller than the widest row leave the cell empty; captions note three-image pools."""
+    return
 
 
 def cand_records(cands, **flags):

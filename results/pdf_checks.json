@@ -1,8 +1,8 @@
 {
-  "pages_total": 21,
-  "references_start_page": 8,
-  "appendix_start_page": 9,
-  "main_pages_upper_bound": 8,
+  "pages_total": 25,
+  "references_start_page": 9,
+  "appendix_start_page": 10,
+  "main_pages_upper_bound": 9,
   "author_metadata_empty": true,
   "font_embedding_ok": true,
   "unresolved_references": false,

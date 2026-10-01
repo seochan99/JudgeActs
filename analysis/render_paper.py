@@ -69,6 +69,7 @@ def main():
         write(name, content)
     subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "analysis.figures"], cwd=ROOT, check=True)
     subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "analysis.extra_text"], cwd=ROOT, check=True)
+    subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "analysis.review_text"], cwd=ROOT, check=True)
     subprocess.run(["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "main.tex"],
                    cwd=ROOT / "paper", check=True)
 

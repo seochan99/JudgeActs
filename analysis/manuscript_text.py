@@ -56,11 +56,13 @@ def completed(summary, country, decomposition, order, status, categories, positi
         "random choice from the same candidates, and we repeat every decision with the candidates reordered. "
         "A 4B-parameter judge improves only marginally on random selection"
         + (" and falls short of a simple CLIP similarity baseline" if clip and clip["gain"] > q["gain"] else "")
-        + f". Its choices show strong position bias: it picks the first image shown {ratio:.1f} times as often as chance, "
-        f"and reordering the same candidates changes its choice on {round(100 * flip)}\\% of prompts. "
+        + f". Its choices show strong position bias: it picks the first image shown in {round(100 * qa['rate'])}\\% of calls, "
+        f"where chance would give {round(100 * qa['uniform_rate'])}\\%, and reordering the same candidates changes the image "
+        f"it returns on {round(100 * flip)}\\% of prompts. "
         "Agreement across orders is nonetheless informative: decisions that survive reordering are much better than random, "
-        "whereas agreement with a second, weaker judge keeps the wrong decisions. Both the judge and the CLIP baseline "
-        "reduce missing cultural details but slightly raise stereotype ratings. We argue that judges should be "
+        "whereas agreement with a second, weaker judge keeps the wrong ones; agreement helps only when it breaks the judge's "
+        "failure mode. The judge reduces missing cultural details but slightly raises stereotype ratings, an increase "
+        "that is no longer detectable once its decisions are aggregated across orders. We argue that judges should be "
         "evaluated by what they choose, with order sensitivity reported and cultural errors measured separately from "
         "prompt alignment."
     )
@@ -195,8 +197,9 @@ def completed(summary, country, decomposition, order, status, categories, positi
         ) + (
             f"Its choices depend strongly on presentation order: it picks the first-listed image in {pct(qa['rate'])} of calls. "
             "Agreement across orders separates prompts where the judge adds value from prompts where it falls below "
-            "chance, whereas agreement with a weaker judge does not. Neither selector reduces stereotype ratings; both slightly raise them, "
-            "and for the VLM judge this increase is not robust to multiple-comparison adjustment."
+            "chance, whereas agreement with a weaker judge that shares its position bias does not: agreement is useful only "
+            "when it breaks the judge's failure mode. The judge slightly raises stereotype ratings, an increase that is not "
+            "robust to multiple-comparison adjustment and is no longer detectable when decisions are aggregated across orders."
         ),
         "table_main": "\n".join(table),
         "table_decomposition": "\n".join(decomposition_table),

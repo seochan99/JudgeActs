@@ -1,0 +1,99 @@
+% Verified 2026-10-01 against arxiv.org/abs/<id> citation meta tags (title, authors, date, arXiv id)
+% and the abstract-page Comments field (venue). All 8 requested IDs exist. Not merged into paper/refs.bib.
+% Summary lines paraphrase the arXiv abstracts.
+
+% JudgeSense: rewording a judge instruction (same request) lowers LLM-judge verdict agreement on all four
+% tasks across 25 judges, measured against each judge's own self-agreement; ordinal task least stable.
+@misc{bellibatlu2026judgesense,
+  title         = {{JudgeSense}: A Benchmark for Prompt Sensitivity in {LLM}-as-a-Judge Systems},
+  author        = {Bellibatlu, Rohith Reddy and Raff, Edward and Zhang, Wenbin},
+  year          = {2026},
+  eprint        = {2604.23478},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  note          = {arXiv preprint (v2)}
+}
+
+% BAS: decision-theoretic answer-or-abstain utility metric for LLM confidence; models with similar ECE/AURC
+% can differ sharply because of overconfident errors, and even frontier models remain overconfident.
+@misc{wu2026bas,
+  title         = {{BAS}: A Decision-Theoretic Approach to Evaluating Large Language Model Confidence},
+  author        = {Wu, Sean and Gustafsson, Fredrik K. and Phillips, Edward and Gao, Boyan and Thakur, Anshul and Clifton, David A.},
+  year          = {2026},
+  eprint        = {2604.03216},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  note          = {arXiv preprint}
+}
+
+% ReCoVERR: selective VLM QA over-abstains; gathering extra visual evidence via LLM-posed sub-questions lets
+% BLIP2/InstructBLIP/LLaVA-1.5 answer up to 20% more VQAv2/A-OKVQA questions at unchanged accuracy.
+@inproceedings{srinivasan2024recoverr,
+  title         = {Selective ``Selective Prediction'': Reducing Unnecessary Abstention in Vision-Language Reasoning},
+  author        = {Srinivasan, Tejas and Hessel, Jack and Gupta, Tanmay and Lin, Bill Yuchen and Choi, Yejin and Thomason, Jesse and Chandu, Khyathi Raghavi},
+  booktitle     = {Findings of the Association for Computational Linguistics: ACL 2024},
+  year          = {2024},
+  eprint        = {2402.15610},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL}
+}
+
+% Ortiz: confidence thresholding gives smooth risk-coverage control for video QA (NExT-QA, Gemini 2.0 Flash)
+% in distribution; the paper studies whether that control survives distribution shift (evidence truncation).
+@misc{ortiz2025abstention,
+  title         = {Explicit Abstention Knobs for Predictable Reliability in Video Question Answering},
+  author        = {Ortiz, Jorge},
+  year          = {2025},
+  eprint        = {2601.00138},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  note          = {arXiv preprint (v2, 2026)}
+}
+
+% Uncertainty-based selective prediction on multimodal ICU condition classification can degrade performance
+% despite strong aggregate metrics, driven by class-dependent miscalibration on underrepresented conditions.
+@inproceedings{lechugalopez2026calibration,
+  title         = {An Empirical Analysis of Calibration and Selective Prediction in Multimodal Clinical Condition Classification},
+  author        = {L{\'o}pez, L. Juli{\'a}n Lechuga and Shamout, Farah E. and Rudner, Tim G. J.},
+  booktitle     = {Conference on Health, Inference, and Learning (CHIL)},
+  year          = {2026},
+  eprint        = {2603.02719},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+% Cost-aware selective inference for driver monitoring: a learned accept/abstain gate over a lightweight
+% RGB-physiological student cuts unsafe false negatives (17.4% -> ~5%); worst-group calibration drift persists.
+@misc{qiu2026driver,
+  title         = {Risk-Aware Selective Multimodal Driver Monitoring with Driver-State World Modeling},
+  author        = {Qiu, Daosheng and Chi, Haozhuang and Su, Hao and Long, Shu and Miao, Xinyue and Dong, Yongle and Zhang, Wei},
+  year          = {2026},
+  eprint        = {2606.26922},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  note          = {arXiv preprint}
+}
+
+% LLM-as-a-judge for semantic evaluation of PDF table extraction correlates far better with 1,500+ human
+% quality judgments (Pearson r=0.93) than TEDS (0.68) or GriTS (0.70).
+@misc{horn2026tables,
+  title         = {Beyond String Matching: Semantic Evaluation of {PDF} Table Extraction},
+  author        = {Horn, Pius and Keuper, Janis},
+  year          = {2026},
+  eprint        = {2603.18652},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  note          = {arXiv preprint; submitted to BMVC 2026}
+}
+
+% Vision-free zero-shot composed image retrieval: attribute-augmented text scoring plus LLM reranking of
+% top candidates beats prior zero-shot CIR on CIRR (44.04% R@1); weaker on fine-grained FashionIQ.
+@misc{shimada2026visionfree,
+  title         = {Towards Vision-Free {CIR}: Attribute-Augmented Scoring and {LLM}-Based Reranking for Zero-Shot Composed Image Retrieval},
+  author        = {Shimada, Ryotaro and Lin, Yu-Chieh and Nozawa, Yuji and Ng, Youyang and Torii, Osamu and Matsui, Yusuke},
+  year          = {2026},
+  eprint        = {2607.12621},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  note          = {arXiv preprint}
+}

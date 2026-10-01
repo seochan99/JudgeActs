@@ -50,7 +50,7 @@ The primary outcome is \emph{selection regret}, measured from the mean human pro
 We make three contributions.
 \begin{itemize}
 \item \textbf{An audit of judges as decision-makers.} We score each returned image against held-out human ratings and against random choice from the same candidates, so every comparison is paired and free of the judge's own scores.
-\item \textbf{Evidence of strong position bias in small VLM judges.} Both judges favor early positions, and the same prompt can yield the worst or the best available image depending only on candidate order (Figures~\ref{fig:hero} and~\ref{fig:teaser}). Ablations show that the bias is not caused by our output format or label letters.
+\item \textbf{How position bias changes what users receive.} Position bias in model judges is known; we measure its consequence when the judge acts. Both judges favor early positions, and the same prompt can yield the worst or the best available image depending only on candidate order (Figures~\ref{fig:hero} and~\ref{fig:teaser}). Ablations show that the bias is not caused by our output format or label letters.
 \item \textbf{An audit of agreement gates.} Keeping only decisions that are consistent across orders retains choices that beat random, whereas agreement with a weaker second judge does not. A gate must therefore be audited on the prompts it rejects as well as on those it keeps.
 \end{itemize}
 
@@ -73,13 +73,13 @@ CulturalFrames supplies culturally situated prompts, multiple generated images, 
 K-Sort Eval uses multi-image VLM rankings, posterior correction, and adaptive comparisons to evaluate visual generators \citep{ksort2026}. Our study asks about the selected image within each prompt's candidate pool, rather than the accuracy or efficiency of a generator leaderboard. We do not claim that comparative image judging or best-of-pool selection is new.
 
 \paragraph{Position bias in model judges.}
-Language-model judges are sensitive to the order in which options are presented: pairwise judges favor a position \citep{zheng2023judging,wang2024fair,shi2025judging}, and multiple-choice accuracy shifts with option order \citep{pezeshkpour2024order}. Multimodal judges also show position and consistency effects on vision-language benchmarks \citep{chen2024mllmjudge}, over-score earlier sentences and prefer their own captions when assessing image-text alignment \citep{saito2025haldec}, and can be swayed by visual manipulations unrelated to quality \citep{hwang2025fooling}. Proposed mitigations include swapping or averaging over orders \citep{zheng2023judging,wang2024fair} and de-biased judging protocols \citep{asaria2026judging}. VLM evaluators are also used to audit generated images at scale, with human validation on a subset \citep{seo2026portrait}. We measure the same phenomenon when the judge's output is an action, and ask how it interacts with agreement-based abstention.
+Language-model judges are sensitive to the order in which options are presented: pairwise judges favor a position \citep{zheng2023judging,wang2024fair,shi2025judging}, and multiple-choice accuracy shifts with option order \citep{pezeshkpour2024order}; judge verdicts also change when the judging instruction is reworded \citep{bellibatlu2026judgesense}. Multimodal judges also show position and consistency effects on vision-language benchmarks \citep{chen2024mllmjudge}, over-score earlier sentences and prefer their own captions when assessing image-text alignment \citep{saito2025haldec}, and can be swayed by visual manipulations unrelated to quality \citep{hwang2025fooling}. Proposed mitigations include swapping or averaging over orders \citep{zheng2023judging,wang2024fair} and de-biased judging protocols \citep{asaria2026judging}. VLM evaluators are also used to audit generated images at scale, with human validation on a subset \citep{seo2026portrait}. We measure the same phenomenon when the judge's output is an action, and ask how it interacts with agreement-based abstention.
 
 \paragraph{Judgments used as decision rules.}
 \citet{yao2026} investigate multimodal reinforcement learning with imperfect rewards, where gains on a proxy can diverge from task performance. WORLDVIEW examines cultural stereotyping introduced during prompt revision \citep{urman2026}. We isolate a later decision, selecting an existing candidate. The experiment does not optimize generators against a reward model or simulate a sequential feedback process.
 
 \paragraph{Selective prediction.}
-Risk--coverage analysis evaluates prediction with a reject option \citep{elyaniv2010,geifman2017}. We apply it to image selection, using agreement across orders or judges as gates. These gates yield measured operating points, not calibrated confidence scores or risk guarantees.
+Risk--coverage analysis evaluates prediction with a reject option \citep{elyaniv2010,geifman2017}. We apply it to image selection, using agreement across orders or judges as gates. These gates yield measured operating points, not calibrated confidence scores or risk guarantees. Work on vision-language reasoning shows that selective models can abstain unnecessarily \citep{srinivasan2024recoverr}, and decision-theoretic metrics penalize confident errors more than abstentions \citep{wu2026bas}; our gate audit complements these by asking which decisions an agreement rule keeps and which it rejects.
 
 \section{Problem and Measures}
 \label{sec:measures}
@@ -159,6 +159,8 @@ The unit of analysis is a prompt with its candidate pool; the three order calls 
 \label{sec:clip}
 \input{generated/baselines_text}
 
+\input{generated/review_clip}
+
 \subsection{Is the Position Bias an Artifact?}
 \label{sec:ablations}
 \input{generated/ablations}
@@ -172,6 +174,8 @@ The unit of analysis is a prompt with its candidate pool; the three order calls 
 
 \subsection{Cultural-Error Outcomes}
 \input{generated/results_cultural}
+
+\input{generated/review_stereo}
 
 \begin{figure}[t]
 \centering
@@ -188,7 +192,7 @@ The unit of analysis is a prompt with its candidate pool; the three order calls 
 A judge that ranks images plausibly can still return a poor image when it must act. Comparing the returned image with the best available one and with random choice on the same pool makes the value of the decision visible, and it exposes failures that score correlation hides: here, a strong dependence on where an image appears.
 
 \paragraph{Agreement gates need their own audit.}
-Agreement can retain stable mistakes, and any reduction in regret must be compared with random choice on the kept prompts, and with the judge on the rejected ones. Position bias explains why the two gates we studied diverge. Unanimity across rotations demands the same image from different slots, so it filters out position-driven choices; two judges with similar slot preferences can agree for reasons unrelated to content. Order averaging, by voting across rotations, recovers part of the lost value without abstaining. Abstention still leaves a practical question: who handles the rejected request, at what cost, and with what outcome.
+Agreement is useful only when it breaks the judge's failure mode. Agreement can retain stable mistakes, and any reduction in regret must be compared with random choice on the kept prompts, and with the judge on the rejected ones. Position bias explains why the two gates we studied diverge. Unanimity across rotations demands the same image from different slots, so it filters out position-driven choices; two judges with similar slot preferences can agree for reasons unrelated to content. Order averaging, by voting across rotations, recovers part of the lost value without abstaining. Abstention still leaves a practical question: who handles the rejected request, at what cost, and with what outcome.
 
 \paragraph{Is the unanimity result explained by easy prompts?}
 No. Candidates on the prompts that unanimity keeps differ more in rating than those on the rejected prompts, so the kept pools leave more room for error, not less (Section~\ref{sec:results}); the judge's gain on them is large, and its gain on the rejected prompts is below zero.
@@ -196,8 +200,11 @@ No. Candidates on the prompts that unanimity keeps differ more in rating than th
 \paragraph{Why small open-weight judges?}
 Open weights allow a frozen, fully logged protocol with exact revisions and inputs. Larger judges may show weaker position bias, but the audit applies unchanged, and its main lesson does not depend on the judge: agreement rules need matched baselines and an audit of what they reject.
 
+\paragraph{What order checks cost.}
+\input{generated/review_cost} \input{generated/review_difficulty}
+
 \paragraph{Alignment and cultural errors are different targets.}
-Both the VLM judge and the CLIP baseline reduce missing cultural expectations while slightly raising stereotype ratings. A selector tuned or validated on prompt alignment should therefore be audited separately on stereotype outcomes, and composite scores would hide this trade-off.
+Both the VLM judge and the CLIP baseline reduce missing cultural expectations, but stereotype ratings move differently: the judge raises them slightly, and so does one CLIP backbone but not another. Aggregating the judge's decisions across orders leaves no detectable increase. A selector tuned or validated on prompt alignment should therefore be audited separately on stereotype outcomes, and composite scores would hide this trade-off.
 
 \section{Limitations and Ethics}
 CulturalFrames covers a limited set of countries, domains, prompts, and generators. Country labels compress substantial within-country diversity. Candidate images are existing outputs from a small generator pool, so the results depend on its visual styles and available alternatives. Hiding generator names does not remove recognizable stylistic signatures. Our local input resolution can obscure fine details and is part of the evaluated configuration.
@@ -357,6 +364,48 @@ Table~\ref{tab:baselines} compares the CLIP selector with the judges; Table~\ref
 \caption{Robustness to annotation consensus (exploratory). Rand.\ regret is random choice on the same prompts.}
 \label{tab:robustness}
 \end{table*}
+
+\FloatBarrier
+\section{Additional Analyses}
+\label{app:extras}
+This section reports analyses requested in internal review: the configuration and backbone sensitivity of the CLIP baseline (Table~\ref{tab:extras-clip}), the cost of order checks (Table~\ref{tab:extras-latency}), the relation between order sensitivity and pool difficulty (Table~\ref{tab:extras-difficulty}), a decomposition of the stereotype result (Tables~\ref{tab:extras-stereo}--\ref{tab:extras-genslot}), cultural-error profiles of aggregated policies (Table~\ref{tab:extras-profiles}), and risk--coverage operating points with three and four orders (Figure~\ref{fig:risk-coverage}, Table~\ref{tab:extras-rc}). All are post hoc and exploratory.
+
+\begin{table*}[p]
+\centering
+\input{generated/appendix_extras_clip}
+\captionof{table}{CLIP baseline with two backbones (original order). Both embed the raw prompt and each image with default CLIP preprocessing and return the most similar image. BMR in \%.}\label{tab:extras-clip}
+\vspace{1em}
+\input{generated/appendix_extras_latency}
+\captionof{table}{Inference cost on Apple Silicon (MPS, bfloat16, greedy decoding). Per-prompt times compare a single order with three orders.}\label{tab:extras-latency}
+\vspace{1em}
+\input{generated/appendix_extras_difficulty}
+\captionof{table}{Share of prompts on which Qwen's choice changes across the three orders, by tertile of the pool's rating range (best minus worst candidate).}\label{tab:extras-difficulty}
+\vspace{1em}
+\input{generated/appendix_extras_profiles}
+\captionof{table}{Cultural-error differences from matched random choice for Qwen's direct, majority-vote, and unanimous policies, and for the prompts unanimity rejects (95\% CI).}\label{tab:extras-profiles}
+\end{table*}
+
+\begin{table*}[p]
+\centering
+\input{generated/appendix_extras_stereo_generator}
+\captionof{table}{Stereotype decomposition by the generator of Qwen's chosen image: choice share against uniform, mean stereotype rating of the generator's images, and the stereotype difference from random when that generator is chosen.}\label{tab:extras-stereo}
+\vspace{1em}
+\input{generated/appendix_extras_stereo_ties}
+\captionof{table}{Stereotype difference on prompts where several candidates tie for the best alignment rating versus prompts with a unique best candidate.}\label{tab:extras-ties}
+\vspace{1em}
+\input{generated/appendix_extras_gen_slot}
+\captionof{table}{Qwen's choice rate for each generator by presentation slot, pooled over the three orders (number of presentations in parentheses).}\label{tab:extras-genslot}
+\vspace{1em}
+\input{generated/appendix_extras_risk_coverage}
+\captionof{table}{Risk--coverage operating points: selective regret on kept prompts versus matched random choice, for agreement thresholds with three orders (all prompts and four-image pools) and four orders (four-image pools).}\label{tab:extras-rc}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/risk_coverage.pdf}
+\caption{Risk--coverage operating points for agreement gates with three and four orders, next to matched random choice (95\% intervals).}
+\label{fig:risk-coverage}
+\end{figure}
 
 \section{Presentation Position}
 Table~\ref{tab:position} separates position bias by pool size. Qwen favors slot A in both pool sizes. Smol favors slot B for three-image pools and slots A and B for four-image pools, and rarely chooses later slots.

@@ -87,10 +87,54 @@ gates = {
     "crossmodel": {"label": "Cross-model agreement", "kept": g("Cross-model"), "rejected": g("Qwen, judges disagree"),
                    "keep": [int(p["prompt_id"] in members["Cross-model"]) for p in prompts]},
 }
+# 8B judge (post-hoc scale extension, MLX 8-bit): order unanimity per prompt from the raw run,
+# per-prompt gain from the derived utilities; both checked against results/main/extension.json.
+ext = json.load(open(R / "extension.json"))
+x8 = ext["judges"]["mlx_8b"]
+runs8 = {}
+for l in open("runs/extension/qwen8b_mlx_main.jsonl"):
+    d = json.loads(l)
+    if d.get("parse_ok") and d["permutation"] in (0, 1, 2):
+        runs8.setdefault(d["prompt_id"], {})[d["permutation"]] = d["selected_id"]
+def unanimous8(pid):
+    sel = runs8.get(pid, {})
+    return len(sel) == 3 and len(set(sel.values())) == 1
+def gain8(p):
+    u = {c["id"]: c["utility"] for c in p["candidates"]}
+    return u[runs8[p["prompt_id"]][0]] - sum(u.values()) / len(u)
+keep8 = [int(unanimous8(p["prompt_id"])) for p in prompts]
+for flag, key in ((1, "unanimous"), (0, "rejected_by_unanimity")):
+    gs = [gain8(p) for p, k in zip(prompts, keep8) if k == flag]
+    assert len(gs) == x8[key]["n"] and abs(sum(gs) / len(gs) - x8[key]["gain"]) < 1e-9, (key, len(gs))
+def gx(b):
+    return {"n": b["n"], "gain": r4(b["gain"]), "ci": [r4(x) for x in b["gain_ci"]]}
+gates["unanimity8b"] = {"label": "8B: order unanimity", "kept": gx(x8["unanimous"]),
+                        "rejected": gx(x8["rejected_by_unanimity"]), "all": gx(x8["original_order"]), "keep": keep8}
 for k, v in gates.items():
     assert sum(v["keep"]) == v["kept"]["n"], (k, sum(v["keep"]), v["kept"]["n"])
 json.dump({"n_prompts": len(prompts), "countries": [p["country"] for p in prompts], "gates": gates,
            "reference": {"clip": {"gain": r4(json.load(open(R / "baselines.json"))["policies"]["CLIP"]["gain"])},
                          "oracle": {"gain": r4(summary["Oracle"]["gain"])}}},
           open(OUT / "gates.json", "w"), separators=(",", ":"))
-print("ok", len(prompts), [v["label"] for v in variants])
+# 4. scale extension --------------------------------------------------------------
+labels = {"bf16_4b": ("4B", "Qwen3-VL-4B, bf16 (main run)"),
+          "mlx_4b": ("4B, 8-bit", "Qwen3-VL-4B, 8-bit MLX (quantization control)"),
+          "mlx_8b": ("8B, 8-bit", "Qwen3-VL-8B, 8-bit MLX")}
+scale = []
+for k, (short, long) in labels.items():
+    j = ext["judges"][k]
+    assert j["complete"] and j["valid_calls"] == j["calls"] == 900, k
+    e = {"key": k, "label": short, "long": long, "calls": j["calls"],
+         "first": r4(j["first_slot_share"]), "first_uniform": r4(j["first_slot_uniform"]),
+         "flip": r4(j["flip_rate"]), "flip_ci": [r4(x) for x in j["flip_ci"]],
+         "unanimous_n": j["unanimous_prompts"],
+         "all": gx(j["original_order"]), "agree": gx(j["unanimous"]), "disagree": gx(j["rejected_by_unanimity"]),
+         "stereo": {kk: {"delta": r4(j[kk]["stereotype_delta"]), "ci": [r4(x) for x in j[kk]["stereotype_delta_ci"]]}
+                    for kk in ("original_order", "majority_vote", "unanimous")}}
+    if "agreement_with_bf16_4b" in j:
+        a = j["agreement_with_bf16_4b"]["all"]
+        e["agree_with_4b"] = {"rate": r4(a["rate"]), "ci": [r4(x) for x in a["ci"]], "n": a["n"]}
+    scale.append(e)
+json.dump({"judges": scale, "clip_gain": r4(json.load(open(R / "baselines.json"))["policies"]["CLIP"]["gain"])},
+          open(OUT / "scale.json", "w"), indent=1)
+print("ok", len(prompts), [v["label"] for v in variants], "8B kept", sum(keep8))

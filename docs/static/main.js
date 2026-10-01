@@ -319,6 +319,56 @@
     });
   }
 
+  /* ---------------- 2b. Scale small multiples ---------------- */
+  function initScale(data) {
+    var host = $('#scale-sm');
+    if (!host) return;
+    var lo = -0.1, hi = 0.2, fmax = 0.6;
+    function gx(v) { return ((v - lo) / (hi - lo)) * 100; }
+    function fx(v) { return (v / fmax) * 100; }
+    var rowsDef = [['all', 'All prompts', 'a'], ['agree', 'Orders agree', 'k'], ['disagree', 'Orders disagree', 'r']];
+    host.innerHTML = '';
+    data.judges.forEach(function (j, pi) {
+      var p = mk('div', 'smp' + (j.key === 'mlx_8b' ? ' big8' : ''), host);
+      p.style.setProperty('--p', pi);
+      mk('p', 'smp-h', p, '<b>' + j.label + '</b><span>' + j.long.replace(/^Qwen3-VL-\dB, /, '') + '</span>');
+      // first-slot share
+      mk('p', 'smp-k', p, 'Picks the first slot');
+      var f = mk('div', 'smf', p);
+      var ft = mk('div', 'smf-track', f);
+      var fb = mk('div', 'smf-bar', ft); fb.style.width = fx(j.first) + '%';
+      var fu = mk('div', 'smf-uni', ft); fu.style.left = fx(j.first_uniform) + '%';
+      mk('span', 'smf-val', f, pct(j.first));
+      mk('p', 'smp-sub', p, 'uniform ' + pct(j.first_uniform) + ' &middot; reordering changes the pick on ' + pct(j.flip));
+      // gains
+      mk('p', 'smp-k', p, 'Gain over random (95% CI)');
+      var gw = mk('div', 'smg', p);
+      var ax = mk('div', 'smg-axis', gw);
+      [-0.1, 0, 0.1, 0.2].forEach(function (v) {
+        var gl = mk('div', v === 0 ? 'zl' : 'gl', ax); gl.style.left = gx(v) + '%';
+        if (v < 0) return;
+        var tl = mk('span', 'tl' + (v === 0 ? ' z' : ''), ax, v === 0 ? 'random' : '+' + v.toFixed(1));
+        tl.style.left = gx(v) + '%';
+      });
+      var cl = mk('div', 'clip', ax); cl.style.left = gx(data.clip_gain) + '%';
+      if (pi === 0) { var ct = mk('span', 'clip-l', ax, 'CLIP ' + signed(data.clip_gain)); ct.style.left = gx(data.clip_gain) + '%'; }
+      rowsDef.forEach(function (rd, ri) {
+        var g = j[rd[0]];
+        var r = mk('div', 'smg-row ' + rd[2], gw);
+        r.style.setProperty('--r', ri);
+        mk('span', 'smg-lab', r, rd[1] + ' <i>' + g.n + '</i>');
+        var t = mk('div', 'smg-track', r);
+        var a = Math.min(0, g.gain), b = Math.max(0, g.gain);
+        var bar = mk('div', 'smg-bar', t); bar.style.left = gx(a) + '%'; bar.style.width = (gx(b) - gx(a)) + '%';
+        bar.style.transformOrigin = g.gain < 0 ? '100% 50%' : '0 50%';
+        var ci = mk('div', 'smg-ci', t); ci.style.left = gx(g.ci[0]) + '%'; ci.style.width = (gx(g.ci[1]) - gx(g.ci[0])) + '%';
+        mk('span', 'smg-val', r, signed(g.gain));
+      });
+    });
+    if (reduce) { host.classList.add('in'); return; }
+    onVisible(host, function () { requestAnimationFrame(function () { host.classList.add('in'); }); }, 0.35);
+  }
+
   /* ---------------- 3. Gate explorer ---------------- */
   function initGates(data) {
     var grid = $('#dotgrid');
@@ -360,7 +410,8 @@
     var texts = {
       none: function (g) { return 'Without a filter, Qwen acts on every prompt and beats random by ' + signed(g.kept.gain) + ' on average. The content-only CLIP scorer reaches ' + signed(data.reference.clip.gain) + '.'; },
       unanimity: function (g) { return 'The order filter keeps a prompt only if Qwen returns the same image in all three orders. Kept prompts beat random by ' + signed(g.kept.gain) + '; the prompts it rejects fall below random (' + signed(g.rejected.gain) + ').'; },
-      crossmodel: function (g) { return 'The two-judge filter keeps a prompt when Qwen and SmolVLM2 pick the same image. Both favour early slots, so they agree for the wrong reason: kept prompts fall below random (' + signed(g.kept.gain) + '), rejected ones beat it (' + signed(g.rejected.gain) + ').'; }
+      crossmodel: function (g) { return 'The two-judge filter keeps a prompt when Qwen and SmolVLM2 pick the same image. Both favour early slots, so they agree for the wrong reason: kept prompts fall below random (' + signed(g.kept.gain) + '), rejected ones beat it (' + signed(g.rejected.gain) + ').'; },
+      unanimity8b: function (g) { return 'The same order filter on Qwen3-VL-8B, which shows almost no position bias. Kept prompts beat random by ' + signed(g.kept.gain) + ', but the ' + g.rejected.n + ' it rejects still beat random by ' + signed(g.rejected.gain) + ', and the 8B without any filter reaches ' + signed(g.all.gain) + '. Here the filter mostly discards good decisions.'; }
     };
 
     function setRow(row, g, total, label) {
@@ -932,6 +983,7 @@
     exP.then(initDemo).catch(function (e) { console.error(e); });
     getJSON('static/data/slots.json').then(initSlots).catch(function (e) { console.error(e); });
     gatesP.then(initGates).catch(function (e) { console.error(e); });
+    getJSON('static/data/scale.json').then(initScale).catch(function (e) { console.error(e); });
     Promise.all([exP, gatesP]).then(function (r) { initScrolly(r[0], r[1]); }).catch(function (e) { console.error(e); });
   }
 

@@ -537,6 +537,63 @@ html:not(.js) .st-card { opacity: 1; }
 .chart .qt { fill: var(--qwen); } .chart .st { fill: var(--smol); }
 .chart-note { font-size: 12.5px; color: var(--faint); }
 
+/* ---------- Scale small multiples ---------- */
+.sm-fig { margin: 8px 0 26px; }
+.sm { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.smp { padding: 14px 24px 4px 0; min-width: 0; }
+.smp + .smp { padding-left: 24px; border-left: 1px solid var(--rule); }
+.smp-h { margin: 0 0 14px; line-height: 1.2; }
+.smp-h b { display: block; font: 600 30px/1 var(--serif); letter-spacing: -0.01em; }
+.smp-h span { display: block; margin-top: 5px; font-size: 12.5px; color: var(--muted); }
+.smp-k { margin: 0 0 6px; font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.smp-sub { margin: 4px 0 18px; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+.smf { display: grid; grid-template-columns: minmax(0, 1fr) 50px; align-items: center; gap: 10px; }
+.smf-track { position: relative; height: 18px; background: #f3f3f3; }
+.smf-bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--qwen); transform-origin: 0 50%; }
+.smf-uni { position: absolute; top: -4px; bottom: -4px; border-left: 1.5px dashed var(--ink); }
+.smf-val { font: 600 17px/1 var(--serif); text-align: right; font-variant-numeric: tabular-nums; }
+.smg { position: relative; padding: 16px 0 22px; }
+.smg-axis { position: absolute; left: 0; right: 56px; top: 0; bottom: 0; pointer-events: none; }
+.smg-axis .gl, .smg-axis .zl, .smg-axis .clip { position: absolute; top: 14px; bottom: 18px; width: 1px; }
+.smg-axis .gl { background: var(--hair); }
+.smg-axis .zl { background: var(--ink); }
+.smg-axis .clip { width: 0; border-left: 1.5px dashed #8a8a8a; }
+.smg-axis .tl { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 11px; color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.smg-axis .tl.z { color: var(--ink); }
+.smg-axis .clip-l { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.smg-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 56px; grid-template-rows: auto 22px; align-items: center; margin-bottom: 4px; }
+.smg-lab { grid-column: 1 / -1; justify-self: start; font-size: 12px; line-height: 1.3; color: #333; white-space: nowrap; padding: 0 6px 0 0; background: var(--paper); position: relative; z-index: 1; }
+.smg-lab i { font-style: normal; color: var(--faint); margin-left: 3px; font-variant-numeric: tabular-nums; }
+.smg-track { position: relative; height: 100%; }
+.smg-bar { position: absolute; top: 50%; margin-top: -6px; height: 12px; background: var(--ink); }
+.smg-row.a .smg-bar { background: var(--qwen); }
+.smg-row.r .smg-bar { background: #9b9b9b; }
+.smg-ci { position: absolute; top: 50%; margin-top: -.75px; height: 1.5px; background: var(--ink); }
+.smg-ci::before, .smg-ci::after { content: ""; position: absolute; top: -4px; width: 1.5px; height: 9.5px; background: var(--ink); }
+.smg-ci::before { left: 0; } .smg-ci::after { right: 0; }
+.smg-val { font: 600 15px/1 var(--serif); text-align: right; font-variant-numeric: tabular-nums; }
+.take { max-width: 760px; font: 400 19px/1.5 var(--serif); color: var(--ink); margin: 0 0 30px; padding-left: 16px; border-left: 2px solid var(--ink); }
+.cult-note { max-width: 760px; font-size: 14.5px; line-height: 1.6; color: #333; margin: -18px 0 40px; }
+
+.js .sm .smf-bar, .js .sm .smg-bar { transform: scaleX(0); transition: transform .8s var(--ease); }
+.js .sm .smf-bar { transition-delay: calc(var(--p) * 220ms); }
+.js .sm .smg-bar { transition-delay: calc(var(--p) * 220ms + 350ms + var(--r) * 110ms); }
+.js .sm .smg-ci, .js .sm .smf-uni, .js .sm .smf-val, .js .sm .smg-val, .js .sm .smp-sub { opacity: 0; transition: opacity .45s ease; }
+.js .sm .smf-uni { transition-delay: calc(var(--p) * 220ms + 500ms); }
+.js .sm .smf-val, .js .sm .smp-sub { transition-delay: calc(var(--p) * 220ms + 600ms); }
+.js .sm .smg-ci, .js .sm .smg-val { transition-delay: calc(var(--p) * 220ms + 900ms + var(--r) * 110ms); }
+.js .sm.in .smf-bar, .js .sm.in .smg-bar { transform: none; }
+.js .sm.in .smg-ci, .js .sm.in .smf-uni, .js .sm.in .smf-val, .js .sm.in .smg-val, .js .sm.in .smp-sub { opacity: 1; }
+@media (max-width: 860px) {
+  .sm { grid-template-columns: 1fr; }
+  .smp, .smp + .smp { padding: 14px 0 6px; border-left: 0; }
+  .smp + .smp { border-top: 1px solid var(--rule); }
+  .smp-h { display: flex; align-items: baseline; gap: 10px; }
+  .smp-h b { font-size: 24px; }
+  .smp-h span { margin: 0; }
+  .take { font-size: 17px; }
+}
+
 /* ---------- Gates ---------- */
 .gate {
   display: grid;

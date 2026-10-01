@@ -1,0 +1,204 @@
+{
+ "judges": [
+  {
+   "key": "bf16_4b",
+   "label": "4B",
+   "long": "Qwen3-VL-4B, bf16 (main run)",
+   "calls": 900,
+   "first": 0.4878,
+   "first_uniform": 0.2778,
+   "flip": 0.5967,
+   "flip_ci": [
+    0.54,
+    0.6533
+   ],
+   "unanimous_n": 121,
+   "all": {
+    "n": 300,
+    "gain": 0.0393,
+    "ci": [
+     0.0164,
+     0.0616
+    ]
+   },
+   "agree": {
+    "n": 121,
+    "gain": 0.1414,
+    "ci": [
+     0.1104,
+     0.1725
+    ]
+   },
+   "disagree": {
+    "n": 179,
+    "gain": -0.0297,
+    "ci": [
+     -0.0569,
+     -0.0024
+    ]
+   },
+   "stereo": {
+    "original_order": {
+     "delta": 0.0233,
+     "ci": [
+      0.0023,
+      0.0451
+     ]
+    },
+    "majority_vote": {
+     "delta": 0.0069,
+     "ci": [
+      -0.0129,
+      0.0271
+     ]
+    },
+    "unanimous": {
+     "delta": 0.0104,
+     "ci": [
+      -0.0186,
+      0.0389
+     ]
+    }
+   }
+  },
+  {
+   "key": "mlx_4b",
+   "label": "4B, 8-bit",
+   "long": "Qwen3-VL-4B, 8-bit MLX (quantization control)",
+   "calls": 900,
+   "first": 0.4822,
+   "first_uniform": 0.2778,
+   "flip": 0.5733,
+   "flip_ci": [
+    0.5167,
+    0.63
+   ],
+   "unanimous_n": 128,
+   "all": {
+    "n": 300,
+    "gain": 0.0442,
+    "ci": [
+     0.0221,
+     0.0662
+    ]
+   },
+   "agree": {
+    "n": 128,
+    "gain": 0.1346,
+    "ci": [
+     0.1043,
+     0.165
+    ]
+   },
+   "disagree": {
+    "n": 172,
+    "gain": -0.0231,
+    "ci": [
+     -0.0508,
+     0.0037
+    ]
+   },
+   "stereo": {
+    "original_order": {
+     "delta": 0.0213,
+     "ci": [
+      0.0007,
+      0.0428
+     ]
+    },
+    "majority_vote": {
+     "delta": 0.0091,
+     "ci": [
+      -0.011,
+      0.0294
+     ]
+    },
+    "unanimous": {
+     "delta": 0.0092,
+     "ci": [
+      -0.0187,
+      0.0372
+     ]
+    }
+   },
+   "agree_with_4b": {
+    "rate": 0.9489,
+    "ci": [
+     0.9344,
+     0.9633
+    ],
+    "n": 900
+   }
+  },
+  {
+   "key": "mlx_8b",
+   "label": "8B, 8-bit",
+   "long": "Qwen3-VL-8B, 8-bit MLX",
+   "calls": 900,
+   "first": 0.2733,
+   "first_uniform": 0.2778,
+   "flip": 0.43,
+   "flip_ci": [
+    0.3733,
+    0.4867
+   ],
+   "unanimous_n": 171,
+   "all": {
+    "n": 300,
+    "gain": 0.0969,
+    "ci": [
+     0.0768,
+     0.117
+    ]
+   },
+   "agree": {
+    "n": 171,
+    "gain": 0.1185,
+    "ci": [
+     0.0922,
+     0.1446
+    ]
+   },
+   "disagree": {
+    "n": 129,
+    "gain": 0.0683,
+    "ci": [
+     0.0359,
+     0.0994
+    ]
+   },
+   "stereo": {
+    "original_order": {
+     "delta": 0.0163,
+     "ci": [
+      -0.0037,
+      0.0364
+     ]
+    },
+    "majority_vote": {
+     "delta": 0.0144,
+     "ci": [
+      -0.0059,
+      0.035
+     ]
+    },
+    "unanimous": {
+     "delta": 0.0072,
+     "ci": [
+      -0.019,
+      0.0331
+     ]
+    }
+   },
+   "agree_with_4b": {
+    "rate": 0.6422,
+    "ci": [
+     0.6111,
+     0.6733
+    ],
+    "n": 900
+   }
+  }
+ ],
+ "clip_gain": 0.0688
+}

@@ -79,17 +79,18 @@ def text(e):
     b, c, g = J["bf16_4b"], J["mlx_4b"], J["mlx_8b"]
     cm = e["cross_model_gate_mlx8b_bf16_4b"]
     clip = json.loads((RES / "baselines.json").read_text())["policies"]["CLIP"] if (RES / "baselines.json").exists() else None
+    diff = paired_vs_clip()
     t = [
         "Is position bias a property of small judges? We ran the larger Qwen3-VL-8B-Instruct on the same 300 prompts and "
         "three orders. To fit it in memory we used 8-bit weights, so we also reran the 4B judge with the same quantization "
         f"as a control. The control agrees with the main 4B run on {p(c['agreement_with_bf16_4b']['all']['rate'])} of calls "
         f"and reproduces its first-slot share ({p(c['first_slot_share'])}) and gain ({v(c['original_order']['gain'])}), so "
-        "quantization does not explain the differences below (Figure~\\ref{fig:scale}, Appendix Table~\\ref{tab:scale}).",
+        "neither quantization nor the MLX runtime explains the differences below (Figure~\\ref{fig:scale}, Appendix Table~\\ref{tab:scale}).",
         f"At 8B the position bias largely disappears: the first slot is chosen in {p(g['first_slot_share'])} of calls, close "
         f"to the uniform {p(g['first_slot_uniform'])} ($p={g['position_p']:.2f}$), although the choice still changes across "
         f"orders on {p(g['flip_rate'])} of prompts. The 8B judge is also much better: its gain over random is "
         f"{v(g['original_order']['gain'])} {ci(g['original_order']['gain_ci'])}"
-        + (f", above the CLIP baseline ({v(clip['gain'])})" if clip else "")
+        + (f", above the CLIP baseline ({v(clip['gain'])}; paired difference {v(diff[0])} {ci(diff[1])})" if clip and diff else "")
         + f", and its stereotype difference is no longer detectable ({v(g['original_order']['stereotype_delta'])} "
         f"{ci(g['original_order']['stereotype_delta_ci'])}).",
         "The value of the unanimity gate changes with it. For the 4B judge, the prompts unanimity rejects fall below random; "
@@ -100,6 +101,26 @@ def text(e):
         "while it filters the failure mode of the judge in front of it, and must be re-audited when the judge changes.",
     ]
     (GEN / "scale_text.tex").write_text("\n\n".join(t) + "\n")
+
+
+def paired_vs_clip():
+    """Paired per-prompt difference in returned utility, 8B original order minus CLIP ViT-L/14."""
+    from .content_baselines import select
+    from .metrics import bootstrap_mean
+    from src.common import load_jsonl
+    path = RES / "clip_scores.json"
+    run = ROOT / "runs/extension/qwen8b_mlx_main.jsonl"
+    if not (path.exists() and run.exists()):
+        return None
+    scores = json.loads(path.read_text())["scores"]
+    picks = {r["prompt_id"]: r["selected_id"] for r in load_jsonl(run) if r["permutation"] == 0 and r["parse_ok"]}
+    d = []
+    for g in load_jsonl(ROOT / "data/derived/main.jsonl"):
+        if g["prompt_id"] in picks:
+            u = {c["id"]: c["utility"] for c in g["candidates"]}
+            d.append(u[picks[g["prompt_id"]]] - u[select(g, scores)])
+    d = np.array(d)
+    return float(d.mean()), bootstrap_mean(d)
 
 
 def main():

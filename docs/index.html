@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>When the Judge Acts: Auditing VLM Image Selection</title>
-<meta name="description" content="We audit VLM judges by the images they choose. On 300 culturally situated prompts, a 4B judge barely beats random choice and changes its pick on 60% of prompts when the images are reordered.">
+<meta name="description" content="We audit VLM judges by the images they choose. On 300 culturally situated prompts, a 4B judge barely beats random choice and changes its pick on 60% of prompts when the images are reordered; an 8B judge from the same family shows almost no position bias.">
 <meta name="author" content="Huichan Seo">
 <meta name="keywords" content="VLM-as-a-judge, vision-language models, image selection, position bias, order sensitivity, self-consistency, agreement filters, selective prediction, cultural alignment, text-to-image, CulturalFrames, audit">
 <meta name="theme-color" content="#ffffff">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="JudgeActs">
 <meta property="og:title" content="When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts">
-<meta property="og:description" content="Same images, different order, different answer. A 4B VLM judge barely beats random choice, favors the first image shown, and changes its pick on 60% of prompts when the images are reordered. Choices that survive reordering are the ones worth trusting.">
+<meta property="og:description" content="Same images, different order, different answer. A 4B VLM judge barely beats random choice, favors the first image shown, and changes its pick on 60% of prompts when the images are reordered. For this judge, choices that survive reordering are much better than random; at 8B the bias nearly disappears and the same filter mostly discards good choices.">
 <meta property="og:url" content="https://seochan99.github.io/JudgeActs/">
 <meta property="og:image" content="https://seochan99.github.io/JudgeActs/static/images/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="Three generated images of a Chilean family lunch. The judge always picks slot A, so the returned image is rated 0.00, 0.50 or 0.83 depending only on order.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="When the Judge Acts: Auditing VLM Image Selection">
-<meta name="twitter:description" content="Same images, different order, different answer. We audit VLM judges by the images they choose, on 300 culturally situated prompts.">
+<meta name="twitter:description" content="Same images, different order, different answer. We audit VLM judges by the images they choose, on 300 culturally situated prompts, at 4B and 8B.">
 <meta name="twitter:image" content="https://seochan99.github.io/JudgeActs/static/images/og.jpg">
 <meta name="twitter:image:alt" content="Three generated images; the judge always picks slot A, so the returned image depends on order.">
 
@@ -42,7 +42,7 @@
       "@id": "https://seochan99.github.io/JudgeActs/#article",
       "headline": "When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts",
       "name": "When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts",
-      "description": "Vision-language models are increasingly used as judges that pick the best of several generated images. We audit them as decision-makers: on 300 culturally situated prompts, a 4B judge improves only marginally on random choice, shows strong position bias, and changes its choice on 60% of prompts when the candidates are reordered; decisions that survive reordering are much better than random.",
+      "description": "Vision-language models are increasingly used as judges that pick the best of several generated images. We audit them as decision-makers: on 300 culturally situated prompts, a 4B judge improves only marginally on random choice, shows strong position bias, and changes its choice on 60% of prompts when the candidates are reordered; for this judge, decisions that survive reordering are much better than random. An 8B judge from the same family shows almost no position bias, and for it the same order-agreement filter mostly discards good decisions.",
       "author": {"@type": "Person", "name": "Huichan Seo", "affiliation": {"@type": "Organization", "name": "Independent Researcher"}},
       "datePublished": "2026",
       "inLanguage": "en",
@@ -90,6 +90,7 @@
       <a href="#findings">Findings</a>
       <a href="#method">Method</a>
       <a href="#position">Position bias</a>
+      <a href="#scale">Scale</a>
       <a href="#filters">Filters</a>
       <a href="#results">Results</a>
       <a href="#examples">Examples</a>
@@ -171,13 +172,13 @@
     <li class="reveal">
       <p class="fk">48.8%</p>
       <h3>Strong position bias</h3>
-      <p>of Qwen&rsquo;s 900 calls pick the first image shown, against 27.8% if it chose uniformly. SmolVLM2-2.2B rarely looks past the second image.</p>
+      <p>of Qwen3-VL-4B&rsquo;s 900 calls pick the first image shown, against 27.8% if it chose uniformly. At 8B the share falls to 27.3%, close to uniform.</p>
       <a href="#position">Position bias</a>
     </li>
     <li class="reveal">
       <p class="fk">+0.141</p>
-      <h3>Self-consistency is the signal</h3>
-      <p>gain on the 40.3% of prompts where all three orders agree. Agreeing with a second, weaker judge instead keeps below-random picks (&minus;0.060).</p>
+      <h3>Agreement helps if it targets the failure</h3>
+      <p>gain for the 4B on the 40.3% of prompts where all three orders agree; a weaker second judge instead keeps below-random picks (&minus;0.060). At 8B, the prompts this filter rejects still beat random (+0.068).</p>
       <a href="#filters">Agreement filters</a>
     </li>
   </ol>
@@ -186,7 +187,7 @@
 <!-- ============ Abstract ============ -->
 <section id="abstract">
   <h2>Abstract</h2>
-  <p>Vision-language models (VLMs) are increasingly used as judges that pick the best of several generated images, so their choices decide what users see. Such judges are usually validated by how well their scores agree with human ratings, not by the quality of the images they actually choose. We audit VLM judges as decision-makers. On 300 culturally situated prompts, we compare the image a judge returns with human ratings it never sees and with random choice from the same candidates, and we repeat every decision with the candidates reordered. A 4B-parameter judge improves only marginally on random selection and falls short of a simple CLIP similarity baseline. Its choices show strong position bias: it picks the first image shown 1.8 times as often as chance, and reordering the same candidates changes its choice on 60% of prompts. Agreement across orders is nonetheless informative: decisions that survive reordering are much better than random, whereas agreement with a second, weaker judge keeps the wrong decisions. Both the judge and the CLIP baseline reduce missing cultural details but slightly raise stereotype ratings. We argue that judges should be evaluated by what they choose, with order sensitivity reported and cultural errors measured separately from prompt alignment.</p>
+  <p>Vision-language models (VLMs) are increasingly used as judges that pick the best of several generated images, so their choices decide what users see. Such judges are usually validated by how well their scores agree with human ratings, not by the images they choose. We audit VLM judges as decision-makers: on 300 culturally situated prompts, we compare the image a judge returns with human ratings it never sees and with random choice from the same candidates, and we repeat every decision with the candidates reordered. A 4B-parameter judge barely beats random selection and falls short of a CLIP similarity baseline. Its choices show strong position bias: it picks the first image shown in 49% of calls, where chance would give 28%, and reordering changes the image it returns on 60% of prompts. For this judge, agreement across orders is informative: decisions that survive reordering are much better than random, whereas agreement with a weaker second judge keeps the wrong ones. An 8B judge from the same family shows almost no position bias and beats the CLIP baseline, and for it the same order-agreement filter mostly discards good decisions. Agreement helps only when it targets the judge&rsquo;s failure mode, so such filters must be re-audited whenever the judge changes. The 4B judge&rsquo;s slight rise in stereotype ratings is no longer detectable after aggregating across orders or with the larger judge.</p>
 </section>
 
 <!-- ============ Method ============ -->
@@ -258,12 +259,24 @@
   </figure>
 </section>
 
+<!-- ============ Scale ============ -->
+<section id="scale" aria-labelledby="scale-h">
+  <h2 id="scale-h">Does scale remove the bias?</h2>
+  <p class="sec-lead">After the main audit we re-ran all 900 calls with Qwen3-VL-8B from the same family, and with an 8-bit copy of the 4B as a control for quantization and runtime. Each column is one judge, on the same 300 prompts and the same three orders.</p>
+  <figure class="sm-fig">
+    <div class="sm" id="scale-sm" role="img" aria-label="Small multiples for three judges. First-slot share: 4B 48.8%, 4B 8-bit 48.2%, 8B 27.3%, uniform 27.8%. Gain over random on all prompts / orders agree / orders disagree: 4B +0.039 / +0.141 / −0.030; 4B 8-bit +0.044 / +0.135 / −0.023; 8B +0.097 / +0.118 / +0.068."></div>
+    <noscript><p>First-slot share: 4B 48.8%, 4B 8-bit 48.2%, 8B 27.3% (uniform 27.8%). Gain over random, all prompts / orders agree / orders disagree: 4B +0.039 / +0.141 / &minus;0.030; 4B 8-bit +0.044 / +0.135 / &minus;0.023; 8B +0.097 / +0.118 / +0.068.</p></noscript>
+    <figcaption id="scale-caption">Top: share of calls choosing the first slot; dashes mark uniform choice. Bottom: gain over random choice in human rating with 95% bootstrap intervals, for every prompt (original order), for prompts where all three orders return the same image, and for the rest; the dashed line is the CLIP baseline. The 8-bit 4B control returns the same image as the main 4B run on 94.9% of calls, so the 8B differences are unlikely to come from quantization or the runtime. Post hoc; 8B and control run on Apple MLX with 8-bit language-model weights.</figcaption>
+  </figure>
+  <p class="take">At 8B the position bias nearly disappears, and the order-agreement filter mostly discards good decisions: the prompts it rejects still beat random by +0.068. Agreement helps only when it targets the judge&rsquo;s failure mode.</p>
+</section>
+
 <!-- ============ Agreement filters ============ -->
 <section id="filters">
   <h2>Agreement filters: what they keep and reject</h2>
-  <p class="sec-lead">An agreement filter lets the judge act only on prompts where its choices agree, and abstain on the rest. Each dot is one of the 300 prompts, one row per country. Judge a filter by both sides: kept prompts should beat random, and rejected ones should not.</p>
+  <p class="sec-lead">An agreement filter lets the judge act only on prompts where its choices agree, and abstain on the rest. Each dot is one of the 300 prompts, one row per country. The first three filters use Qwen3-VL-4B; the last applies the order filter to the 8B judge. Judge a filter by both sides: kept prompts should beat random, and rejected ones should not.</p>
   <div class="chart-controls" role="group" aria-label="Agreement filter">
-    <button type="button" class="seg" data-gate="none" aria-pressed="false">No filter</button><button type="button" class="seg is-on" data-gate="unanimity" aria-pressed="true">3/3 orders<span class="long"> agree</span></button><button type="button" class="seg" data-gate="crossmodel" aria-pressed="false">Both judges<span class="long"> agree</span></button>
+    <button type="button" class="seg" data-gate="none" aria-pressed="false">No filter</button><button type="button" class="seg is-on" data-gate="unanimity" aria-pressed="true">3/3 orders<span class="long"> agree</span></button><button type="button" class="seg" data-gate="crossmodel" aria-pressed="false">Both judges<span class="long"> agree</span></button><button type="button" class="seg" data-gate="unanimity8b" aria-pressed="false">8B<span class="long">: 3/3 orders agree</span></button>
   </div>
   <div class="gate">
     <div class="gate-dots">
@@ -309,6 +322,7 @@
       <a href="static/images/cultural_deltas.png"><img src="static/images/cultural_deltas.png" width="1004" height="519" loading="lazy" decoding="async" alt="Paired differences between Qwen's choices and random choice in three cultural-error ratings: missing explicit expectations decreases, missing implicit expectations changes little, stereotype rating rises slightly."></a>
     <figcaption><b>Figure 2.</b> Cultural-error ratings of Qwen&rsquo;s choices minus random choice; negative is fewer errors. Qwen reduces missing explicit expectations (&minus;0.056) but slightly raises stereotype ratings (+0.023, pointwise CI [0.002, 0.045]); the Bonferroni-adjusted interval [&minus;0.002, 0.051] includes zero, so this is exploratory.</figcaption>
   </figure>
+  <p class="cult-note">The 4B&rsquo;s small stereotype rise does not survive aggregation. Taking the majority choice across the three orders gives +0.007 [&minus;0.013, 0.027]; keeping only unanimous prompts gives +0.010 [&minus;0.019, 0.039]; the 8B judge&rsquo;s original-order choices give +0.016 [&minus;0.004, 0.036]. All three intervals include zero.</p>
 
   <figure class="wide">
     <a href="static/images/country_bars.png"><img src="static/images/country_bars.png" width="1754" height="527" loading="lazy" decoding="async" alt="Selection regret by country group for random, Qwen and Smol across ten countries, with bootstrap intervals."></a>
@@ -365,7 +379,7 @@
 <!-- ============ Notes ============ -->
 <section id="notes">
   <h2>Limitations and data use</h2>
-  <p>The audit covers two small open judges, 300 prompts, and one set of released human ratings. Country groups are dataset contexts, not homogeneous cultural preferences. Position, complement-set, CLIP, ablation and stereotype comparisons were added after main inference and are exploratory. All images and ratings come from CulturalFrames (Nayak et&nbsp;al., <a href="https://aclanthology.org/2025.findings-emnlp.1141/">Findings of EMNLP 2025</a>); images appear here only to illustrate the analysis. Please obtain the data from its original release.</p>
+  <p>The main audit covers two small open judges, 300 prompts, and one set of released human ratings. Country groups are dataset contexts, not homogeneous cultural preferences. Position, complement-set, CLIP, ablation and stereotype comparisons, and the 8B scale extension (run with 8-bit weights on a different runtime, with an 8-bit 4B control), were added after main inference and are exploratory. All images and ratings come from CulturalFrames (Nayak et&nbsp;al., <a href="https://aclanthology.org/2025.findings-emnlp.1141/">Findings of EMNLP 2025</a>); images appear here only to illustrate the analysis. Please obtain the data from its original release.</p>
 </section>
 
 <section id="bibtex">

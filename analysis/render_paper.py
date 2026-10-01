@@ -1,6 +1,7 @@
 """Build anonymous manuscript text, figures and PDF from recorded artifacts."""
 import json
 import subprocess
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from src.common import ROOT
@@ -70,8 +71,16 @@ def main():
     subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "analysis.figures"], cwd=ROOT, check=True)
     subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "analysis.extra_text"], cwd=ROOT, check=True)
     subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "analysis.review_text"], cwd=ROOT, check=True)
-    subprocess.run(["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "main.tex"],
-                   cwd=ROOT / "paper", check=True)
+    # Build in an isolated copy: editors that auto-compile paper/ (e.g. LaTeX Workshop) can race with this build.
+    import shutil, tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        build = Path(tmp) / "paper"
+        shutil.copytree(ROOT / "paper", build, ignore=shutil.ignore_patterns(
+            "main.aux", "main.bbl", "main.blg", "main.fdb_latexmk", "main.fls", "main.log", "main.pdf", "main.synctex.gz"))
+        subprocess.run(["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "main.tex"],
+                       cwd=build, check=True, stdout=subprocess.DEVNULL)
+        for name in ["main.pdf", "main.log", "main.bbl"]:
+            shutil.copy(build / name, ROOT / "paper" / name)
 
 
 if __name__ == "__main__":

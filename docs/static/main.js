@@ -406,108 +406,509 @@
     });
   }
 
-  /* ---------------- Protocol diagram (6 steps) ---------------- */
-  function initFlow() {
-    var fig = $('#flow-fig');
-    if (!fig) return;
-    var wrap = $('#flow-wrap'), flow = $('#flow'), controls = $('.flow-controls', fig);
-    var cap = $('#flow-txt'), num = $('#flow-n'), playBtn = $('#flow-play');
-    var line = $('#flow-line'), lp = $('.fl-p', line), lm = $('.fl-m', line), lt = $('.fl-t', line);
-    var withheld = $('#flow-withheld'), join = $('#flow-join'), panelC = $('.panel[data-panel="c"]', flow);
-    var panels = $$('.panel', flow);
-    var TEXT = {
-      1: 'Freeze 300 culturally situated prompts with 3–4 generated images each.',
-      2: 'Show each pool in three rotated orders.',
-      3: 'Ask each judge to pick one image per order.',
-      4: 'Agreement filters (gates) act only when the picks agree, and abstain otherwise.',
-      5: 'Only now join the human ratings the judge never saw.',
-      6: 'Score the returned image against random choice and the best available.',
-      all: 'Selection never sees the ratings; the audit never changes a selection.'
-    };
-    var PANEL = { 1: 'a', 2: 'b', 3: 'b', 4: 'b', 5: 'c', 6: 'c' };
-    var step = 'all', len = 0, timer = null, playing = false;
+  /* ---------------- Method: scrollytelling walkthrough ---------------- */
+  // SmolVLM2-2.2B's choices for the example prompt, orders 1-3 (runs/smol_main.jsonl).
+  var SMOL_PICKS = ['B', 'B', 'A'];
+  var SLOTS = ['A', 'B', 'C', 'D'];
+  var GEN_SHORT = { 'SD35': 'SD3.5', 'flux': 'Flux', 'gpt-image': 'GPT-Image' };
 
-    function route() {
-      var wr = wrap.getBoundingClientRect(), a = withheld.getBoundingClientRect(), jn = join.getBoundingClientRect(), pc = panelC.getBoundingClientRect();
-      if (!wr.width) return;
-      var stacked = flow.getBoundingClientRect().width - pc.width < 60;
-      var d, L = function (v) { return Math.round(v) + 0.5; };
-      if (!stacked) {
-        var x0 = a.left + a.width / 2 - wr.left, y0 = a.bottom - wr.top, yb = wr.height - 16;
-        var x1 = pc.left - wr.left + 26, y1 = pc.bottom - wr.top + 3;
-        d = 'M' + L(x0) + ' ' + L(y0) + ' V' + L(yb) + ' H' + L(x1) + ' V' + L(y1);
-        lt.setAttribute('x', (x0 + x1) / 2); lt.setAttribute('y', yb + 4); lt.style.display = '';
+  function mk(tag, cls, parent, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // One stage = one drawing of the example prompt that can be put into any of the six states.
+  function makeStage(host, ex, gates) {
+    var N = gates.n_prompts, countries = gates.countries;
+    var keep = gates.gates.unanimity.keep, keptN = gates.gates.unanimity.kept.n;
+    // Grid order in gates.json is (country, category, prompt_id); the example prompt sits at 75.
+    var EX = 75;
+    if (countries[EX] !== ex.country) EX = countries.indexOf(ex.country);
+    var cands = ex.candidates, K = cands.length, orders = ex.orders;
+    var ratings = cands.map(function (c) { return c.rating; });
+    var best = Math.max.apply(null, ratings), worst = Math.min.apply(null, ratings);
+    var mean = ratings.reduce(function (a, b) { return a + b; }, 0) / K;
+    var keyIdx = {}; cands.forEach(function (c, i) { keyIdx[c.key] = i; });
+    function colOf(r, k) { var sl = orders[r].slots; for (var s in sl) if (sl[s] === cands[k].key) return SLOTS.indexOf(s); return k; }
+    function pickCol(r) { return SLOTS.indexOf(orders[r].choice); }
+    function pickIdx(r) { return keyIdx[orders[r].selected]; }
+
+    host.innerHTML = '';
+    var L = {}, step = 0, timers = [], countRaf = null;
+
+    // --- build ---
+    var rowOf = [], colIdx = [], cnames = [], prev = null, ci = -1, cc = 0;
+    countries.forEach(function (c) {
+      if (c !== prev) { ci++; cc = 0; prev = c; cnames.push(c.replace(/_/g, ' ')); }
+      rowOf.push(ci); colIdx.push(cc++);
+    });
+    var NC = Math.max.apply(null, colIdx) + 1, NR = cnames.length;
+    var cellLayer = mk('div', 'st-cells', host);
+    var cells = [];
+    for (var i = 0; i < N; i++) cells.push(mk('span', 'st-cell' + (rowOf[i] % 2 ? ' alt' : '') + (i === EX ? ' ex' : '') + (keep[i] ? ' kept' : ''), cellLayer));
+    var CODES = { 'Brazil': 'BR', 'Canada': 'CA', 'Chile': 'CL', 'China': 'CN', 'Germany': 'DE', 'India': 'IN', 'Iran': 'IR', 'Japan': 'JP', 'Poland': 'PL', 'South Africa': 'ZA' };
+    var clabs = cnames.map(function (n) {
+      return mk('span', 'st-lab', host, '<span class="lw">' + (n === 'South Africa' ? 'S. Africa' : n) + '</span><span class="ln" title="' + n + '">' + (CODES[n] || n.slice(0, 2).toUpperCase()) + '</span>');
+    });
+    var gcap = mk('span', 'st-cap', host, N + ' prompts &middot; ' + NR + ' countries &times; ' + NC);
+    var lead = mk('span', 'st-lead', host);
+    var prompt = mk('div', 'st-prompt', host, '<span class="st-meta">' + ex.country + ' &middot; ' + ex.category + ' &middot; ' + K + ' images</span><q>' + ex.prompt + '</q>');
+    var genl = cands.map(function (c) { return mk('span', 'st-gen', host, c.generator); });
+
+    var colh = [0, 1, 2].map(function (c) { return mk('span', 'st-colh', host, 'Slot ' + SLOTS[c]); });
+    var rowl = orders.map(function (o, r) { return mk('span', 'st-rowl', host, 'Order ' + (r + 1)); });
+
+    function ratingCls(v) { return v === best ? 'good' : v === worst ? 'bad' : 'mid'; }
+    var ims = []; // ims[r][k]
+    orders.forEach(function (o, r) {
+      ims.push(cands.map(function (c, k) {
+        var w = mk('div', 'st-im' + (r ? ' clone' : ''), host);
+        var img = mk('img', null, w); img.src = c.src; img.alt = ''; img.decoding = 'async';
+        mk('span', 'st-tag', w, GEN_SHORT[c.key] || c.key);
+        mk('span', 'st-rt ' + ratingCls(c.rating), w, fmt2(c.rating));
+        return w;
+      }));
+    });
+    var qf = orders.map(function () { var f = mk('div', 'st-fr q', host); mk('span', null, f, 'Qwen'); return f; });
+    var sf = orders.map(function () { var f = mk('div', 'st-fr s', host); mk('span', null, f, 'Smol'); return f; });
+
+    var legend = mk('div', 'st-legend', host,
+      '<p><i class="sw q"></i><b class="c-q">Qwen3-VL-4B</b><br>picks slot ' + orders.map(function (o) { return o.choice; }).join(', ') + '</p>' +
+      '<p><i class="sw s"></i><b class="c-s">SmolVLM2-2.2B</b><br>picks slot ' + SMOL_PICKS.join(', ') + '</p>' +
+      '<p class="st-mute">Neither judge sees a rating.</p>');
+
+    var ccap = mk('span', 'st-ccap', host, 'Qwen returned');
+    var thumbs = orders.map(function (o, r) {
+      var t = mk('div', 'st-th', host); var img = mk('img', null, t); img.src = cands[pickIdx(r)].src; img.alt = ''; return t;
+    });
+    var nes = [0, 1].map(function () { return mk('span', 'st-ne', host, '&ne;'); });
+    var stamp = mk('div', 'st-stamp', host, 'Abstain');
+    var note = mk('p', 'st-note', host, 'Three orders, three different images. With no agreement, the filter returns nothing for this prompt.');
+    var counter = mk('div', 'st-ctr', host, '<span class="st-ctr-n"><b>' + keptN + '</b> of ' + N + ' prompts kept</span><span class="st-ctr-k"><i class="kp"></i>all orders agree <i class="me"></i>this prompt</span>');
+    var ctrB = counter.querySelector('b');
+
+    var rbox = mk('div', 'st-rbox', host, '<b>Human ratings</b><span>hidden from the judge</span><span class="st-mute">mean of 3 raters per image</span>');
+    var ln = svg('svg', { 'class': 'st-ln', focusable: 'false', 'aria-hidden': 'true' }, host);
+    var uid = 'stm' + Math.random().toString(36).slice(2, 7);
+    var defs = svg('defs', {}, ln);
+    var mkr = svg('marker', { id: uid + 'a', viewBox: '0 0 8 8', refX: 7, refY: 4, markerWidth: 8, markerHeight: 8, markerUnits: 'userSpaceOnUse', orient: 'auto' }, defs);
+    svg('path', { d: 'M0,0 L8,4 L0,8 z' }, mkr);
+    var mask = svg('mask', { id: uid + 'm', maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: 4000, height: 4000 }, defs);
+    var lm = svg('path', { d: '', fill: 'none', stroke: '#fff', 'stroke-width': 14, 'class': 'st-lm' }, mask);
+    var lg = svg('g', { mask: 'url(#' + uid + 'm)' }, ln);
+    var lp = svg('path', { d: '', 'class': 'st-lp', 'marker-end': 'url(#' + uid + 'a)' }, lg);
+    var llen = 0;
+
+    var axes = orders.map(function () { return mk('span', 'st-axis', host); });
+    var dots = orders.map(function () { return mk('span', 'st-dot', host); });
+    var brs = orders.map(function (o, r) {
+      var reg = best - cands[pickIdx(r)].rating;
+      var b = mk('span', 'st-br' + (reg < 1e-9 ? ' zero' : ''), host);
+      return b;
+    });
+    var brl = orders.map(function (o, r) {
+      var reg = best - cands[pickIdx(r)].rating;
+      return mk('span', 'st-brl', host, reg < 1e-9 ? 'regret 0, the best' : 'regret ' + fmt2(reg));
+    });
+    var vRand = mk('span', 'st-v rand', host), vBest = mk('span', 'st-v best', host);
+    var lRand = mk('span', 'st-vl rand', host, 'random ' + fmt2(mean));
+    var lBest = mk('span', 'st-vl best', host, 'best ' + fmt2(best));
+    var end0 = mk('span', 'st-end', host, '0'), end1 = mk('span', 'st-end', host, '1');
+    var take = mk('p', 'st-take', host, 'Same judge, same images. Only the order changed, and the returned image went from the worst to the best.');
+
+    // --- geometry ---
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+    function layout() {
+      var W = host.clientWidth, H = host.clientHeight;
+      if (!W || !H) return false;
+      var wide = W >= 600, p = wide ? 20 : 10;
+      L = { W: W, H: H, wide: wide, p: p };
+      // step 1: prompt grid + example pool
+      var gl = wide ? 80 : 24, capH = wide ? 24 : 20;
+      prompt.style.width = Math.min(W - 2 * p, 560) + 'px';
+      var ph = prompt.offsetHeight || 48;
+      var g1 = wide ? 16 : 8, genH = 22;
+      var s1 = Math.min(wide ? 176 : 118, (W - 2 * p - 2 * g1) / 3);
+      var rest = capH + 22 + ph + 12 + genH;
+      // shrink the grid before the pool images get small
+      var pitch = Math.min((W - 2 * p - gl) / NC, wide ? 22 : 12, Math.max(6, (H - 2 * p - rest - Math.min(s1, H * 0.3)) / NR));
+      var gridW = gl + NC * pitch;
+      L.gx0 = (W - gridW) / 2; L.gx = L.gx0 + gl; L.pitch = pitch; L.c1 = Math.max(3, pitch - (wide ? 3 : 2));
+      var fixed = rest + NR * pitch;
+      s1 = Math.max(40, Math.min(s1, H - 2 * p - fixed));
+      var total = fixed + s1;
+      var top = Math.max(p, (H - total) / 2);
+      L.capY = top; L.gy = top + capH; L.gridB = L.gy + NR * pitch;
+      L.promptX = (W - Math.min(W - 2 * p, 560)) / 2; L.promptY = L.gridB + 22;
+      L.s1 = s1; L.g1 = g1; L.poolY = L.promptY + ph + 12; L.poolX = (W - (3 * s1 + 2 * g1)) / 2;
+      // steps 2-6: three order rows
+      var Lw = wide ? 66 : 54, g = wide ? 12 : 6, hh = 22;
+      var Rw = wide ? clamp(W * 0.27, 180, 230) : 0;
+      var bb = wide ? 64 : Math.max(100, H * 0.25);
+      var Wl = W - 2 * p - (wide ? Rw + 30 : 0);
+      var s = Math.floor(Math.min((Wl - Lw - 2 * g) / 3, (H - 2 * p - hh - bb - 2 * g) / 3, 150));
+      var rowsW = Lw + 3 * s + 2 * g, blockH = hh + 3 * s + 2 * g;
+      L.s = s; L.g = g; L.hh = hh; L.Lw = Lw; L.Rw = Rw;
+      var left = wide ? p + Math.max(0, (Wl - rowsW) / 2) : (W - rowsW) / 2;
+      L.rx = left; L.x0 = left + Lw;
+      L.y0 = (wide ? Math.max(p, (H - bb - blockH) / 2) : p) + hh;
+      L.rowsR = L.x0 + 3 * s + 2 * g; L.rowsB = L.y0 + 3 * s + 2 * g; L.rowsM = (L.y0 + L.rowsB) / 2;
+      L.panX = wide ? L.rowsR + 30 : p; L.panW = wide ? W - p - L.panX : W - 2 * p;
+      L.bandY = L.rowsB + 14;
+      // mini grid (step 4)
+      if (wide) {
+        L.th = Math.min(58, (L.panW - 2 * 24) / 3);
+        L.thY = L.y0 + 2;
+        L.mp = Math.min(7, L.panW / NC);
       } else {
-        var sx = a.left - wr.left, sy = a.top + a.height / 2 - wr.top, jy = jn.top + jn.height / 2 - wr.top;
-        d = 'M' + L(sx) + ' ' + L(sy) + ' H6.5 V' + L(jy) + ' H' + L(jn.left - wr.left - 2);
-        lt.style.display = 'none';
+        L.th = clamp((H - p - L.bandY) * 0.42, 26, 40);
+        L.thY = L.bandY + 16;
+        L.mp = 4;
+      }
+      // scale (step 6)
+      L.sx0 = L.x0 + s + (wide ? 34 : 18);
+      L.sx1 = W - p - (wide ? 40 : 14);
+      return true;
+    }
+    function imRect(r, c) { return { x: L.x0 + c * (L.s + L.g), y: L.y0 + r * (L.s + L.g), w: L.s, h: L.s }; }
+    function sx(v) { return L.sx0 + v * (L.sx1 - L.sx0); }
+
+    // --- helpers ---
+    function put(e, x, y, w, h, extra) {
+      e.style.transform = 'translate(' + Math.round(x * 10) / 10 + 'px,' + Math.round(y * 10) / 10 + 'px)' + (extra || '');
+      if (w != null) e.style.width = Math.max(0, w) + 'px';
+      if (h != null) e.style.height = Math.max(0, h) + 'px';
+    }
+    function vis(e, on, delay, op) {
+      e.style.transitionDelay = (delay || 0) + 'ms';
+      e.style.opacity = on ? (op == null ? 1 : op) : 0;
+      e.classList.toggle('on', !!on);
+    }
+    function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function countUp(target, ms) {
+      if (countRaf) cancelAnimationFrame(countRaf);
+      var t0 = null;
+      function f(ts) {
+        if (t0 === null) t0 = ts;
+        var q = Math.min(1, (ts - t0) / ms), e = 1 - Math.pow(1 - q, 3);
+        ctrB.textContent = Math.round(target * e);
+        if (q < 1) countRaf = requestAnimationFrame(f);
+      }
+      ctrB.textContent = '0';
+      countRaf = requestAnimationFrame(f);
+    }
+    function routeLine() {
+      var d;
+      if (L.wide) {
+        var bx = L.panX, by = L.rowsM;
+        d = 'M' + (bx - 2) + ' ' + by + ' H' + (L.rowsR + 10);
+      } else {
+        var cx = L.W / 2, ty = L.bandY + 12;
+        d = 'M' + cx + ' ' + ty + ' V' + (L.rowsB + 6);
       }
       lp.setAttribute('d', d); lm.setAttribute('d', d);
-      len = Math.ceil(lp.getTotalLength ? lp.getTotalLength() : 2000) + 12;
-      lm.style.transition = 'none';
-      lm.style.strokeDasharray = len + ' ' + len;
-      lm.style.strokeDashoffset = drawn() ? 0 : len;
-      lm.getBoundingClientRect();
-      lm.style.transition = '';
-    }
-    function drawn() { return step === 'all' || step >= 5; }
-
-    function show(s) {
-      step = s;
-      if (s === 'all') wrap.removeAttribute('data-active'); else wrap.setAttribute('data-active', s);
-      setSegs(controls, 'data-step', s);
-      num.textContent = s === 'all' ? '' : 'STEP ' + s + ' OF 6';
-      cap.textContent = TEXT[s];
-      panels.forEach(function (p) { p.classList.toggle('is-active', s !== 'all' && p.getAttribute('data-panel') === PANEL[s]); });
-      line.classList.toggle('drawn', drawn());
-      lm.style.strokeDashoffset = drawn() ? 0 : len;
-    }
-    function stop() {
-      playing = false; clearTimeout(timer); timer = null;
-      playBtn.textContent = 'Play'; playBtn.setAttribute('aria-pressed', 'false');
-    }
-    function tick() {
-      timer = setTimeout(function () {
-        if (step === 'all') { stop(); return; }
-        show(step >= 6 ? 'all' : step + 1);
-        if (step === 'all') stop(); else tick();
-      }, step === 5 ? 3200 : 2600);
-    }
-    function play(from) {
-      playing = true;
-      playBtn.textContent = 'Pause'; playBtn.setAttribute('aria-pressed', 'true');
-      show(from); clearTimeout(timer); tick();
+      try { llen = Math.ceil(lp.getTotalLength()) + 12; } catch (e) { llen = 400; }
+      lm.style.strokeDasharray = llen + ' ' + llen;
     }
 
-    $$('button.seg', controls).forEach(function (b) {
-      b.addEventListener('click', function () {
-        stop(); var v = b.getAttribute('data-step'); show(v === 'all' ? 'all' : +v);
+    // --- states ---
+    function apply(st, instant) {
+      var prevStep = step;
+      step = st;
+      timers.forEach(clearTimeout); timers = [];
+      host.className = host.className.replace(/\bs\d\b/g, '').trim() + ' s' + st;
+      var fwd = st > prevStep;
+      var s = L.s, wide = L.wide;
+
+      // prompt grid cells
+      var kMini = (L.mp * 0.78) / L.c1;
+      cells.forEach(function (e, i) {
+        var r = rowOf[i], c = colIdx[i];
+        e.style.width = e.style.height = L.c1 + 'px';
+        var d = 0;
+        if (st <= 1) {
+          put(e, L.gx + c * L.pitch, L.gy + r * L.pitch, null, null, st === 0 ? ' scale(.2)' : '');
+          d = fwd && prevStep === 0 ? c * 11 + r * 16 : (i % 23) * 6;
+          vis(e, st === 1, d);
+        } else if (st === 4) {
+          vis(e, true, 120 + c * 9 + r * 4); // placed below, once the counter is measured
+        } else {
+          vis(e, false, (i % 17) * 5);
+        }
       });
-    });
-    playBtn.hidden = false;
-    playBtn.addEventListener('click', function () {
-      if (playing) { stop(); return; }
-      play(step === 'all' || step >= 6 ? 1 : step + 1);
-    });
+      host.classList.toggle('ex-on', st === 1);
+      clabs.forEach(function (e, r) {
+        put(e, L.gx0, L.gy + r * L.pitch + L.pitch / 2 - 7, (L.gx - L.gx0) - (L.wide ? 8 : 5));
+        vis(e, st === 1, fwd ? 200 + r * 30 : 0);
+      });
+      put(gcap, L.gx0, L.capY); vis(gcap, st === 1, fwd ? 100 : 0);
+      var exX = L.gx + colIdx[EX] * L.pitch, exY = L.gy + rowOf[EX] * L.pitch;
+      put(lead, exX + L.c1 / 2 - 0.5, exY + L.c1 + 2, 1, Math.max(0, L.promptY - exY - L.c1 - 6));
+      vis(lead, st === 1, st === 1 && fwd ? 700 : 0);
+      put(prompt, L.promptX, L.promptY);
+      vis(prompt, st === 1, st === 1 && fwd ? 760 : 0);
+      genl.forEach(function (e, k) {
+        put(e, L.poolX + k * (L.s1 + L.g1), L.poolY + L.s1 + 6, L.s1);
+        vis(e, st === 1, st === 1 ? 1150 + k * 80 : 0);
+      });
 
-    route();
-    show('all');
-    if ('ResizeObserver' in window) new ResizeObserver(function () { route(); }).observe(wrap);
-    else window.addEventListener('resize', route);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(route);
-
-    // Walk through the six steps once, the first time the diagram is on screen.
-    if (!reduce && hasIO) {
-      var started = false;
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting && !started) { started = true; play(1); }
-          else if (!e.isIntersecting && playing) { clearTimeout(timer); timer = null; }
-          else if (e.isIntersecting && playing && !timer) { tick(); }
+      // images
+      ims.forEach(function (row, r) {
+        row.forEach(function (e, k) {
+          var col = colOf(r, k), R, op = 1, on = true, d = 0;
+          if (st === 0) { R = { x: exX, y: exY, w: L.c1, h: L.c1 }; on = false; }
+          else if (st === 1) {
+            R = { x: L.poolX + k * (L.s1 + L.g1), y: L.poolY, w: L.s1, h: L.s1 };
+            on = r === 0;
+            d = r === 0 && fwd ? 820 + k * 110 : 0;
+          } else {
+            R = imRect(r, col);
+            if (st === 2) d = fwd ? r * 170 + col * 40 : 0;
+            if (st === 4) op = 0.42;
+            if (st === 6 && col !== pickCol(r)) on = false;
+          }
+          put(e, R.x, R.y, R.w, R.h);
+          vis(e, on, d, op);
+          e.classList.toggle('big', st === 1);
         });
-      }, { threshold: 0.4 });
-      io.observe(wrap);
+      });
+      // the first appearance of the pool grows out of the example square
+      if (st === 1 && prevStep === 0 && !instant) {
+        ims[0].forEach(function (e) { e.style.transition = 'none'; put(e, exX, exY, L.c1, L.c1); e.style.opacity = 0; });
+        host.getBoundingClientRect();
+        ims[0].forEach(function (e, k) {
+          e.style.transition = '';
+          put(e, L.poolX + k * (L.s1 + L.g1), L.poolY, L.s1, L.s1);
+          vis(e, true, 820 + k * 110);
+        });
+      }
+      host.classList.toggle('rated', st >= 5);
+      ims.forEach(function (row, r) {
+        row.forEach(function (e, k) {
+          var rt = e.querySelector('.st-rt');
+          rt.style.transitionDelay = st === 5 && fwd && !instant ? (650 + (r * 3 + colOf(r, k)) * 70) + 'ms' : '0ms';
+        });
+      });
+
+      colh.forEach(function (e, c) {
+        var R = imRect(0, c);
+        put(e, R.x, L.y0 - L.hh, s);
+        vis(e, st >= 2 && st <= 5 || (st === 6 && c === 0), st === 2 && fwd ? 300 + c * 60 : 0);
+      });
+      rowl.forEach(function (e, r) {
+        var R = imRect(r, 0);
+        put(e, L.rx, R.y + s / 2 - 9, L.Lw - 8);
+        vis(e, st >= 2, st === 2 && fwd ? 200 + r * 170 : 0);
+      });
+
+      // judge frames
+      orders.forEach(function (o, r) {
+        var R = imRect(r, pickCol(r)), q = qf[r];
+        var dQ = 3, dS = 7;
+        var onQ = st >= 3;
+        put(q, R.x - dQ, R.y - dQ, s + 2 * dQ, s + 2 * dQ, onQ ? '' : ' scale(1.22)');
+        vis(q, onQ, st === 3 && fwd ? 150 + r * 160 : 0, st === 4 ? 0.35 : 1);
+        q.classList.toggle('dim', st === 4);
+        var Rs = imRect(r, SLOTS.indexOf(SMOL_PICKS[r])), sfr = sf[r];
+        var onS = st === 3;
+        put(sfr, Rs.x - dS, Rs.y - dS, s + 2 * dS, s + 2 * dS, onS ? '' : ' scale(1.22)');
+        vis(sfr, onS, st === 3 && fwd ? 750 + r * 160 : 0);
+      });
+      if (wide) put(legend, L.panX, L.y0, L.panW);
+      else put(legend, L.p, L.bandY, L.W - 2 * L.p);
+      vis(legend, st === 3, st === 3 && fwd ? 1100 : 0);
+
+      // agreement filter
+      var thGap = wide ? 24 : 18, thX0 = wide ? L.panX : L.p;
+      put(ccap, thX0, L.thY - 18);
+      vis(ccap, st === 4, st === 4 ? 200 : 0);
+      thumbs.forEach(function (e, r) {
+        var on = st === 4, R;
+        if (on) R = { x: thX0 + r * (L.th + thGap), y: L.thY, w: L.th, h: L.th };
+        else { var P = imRect(r, pickCol(r)); R = { x: P.x, y: P.y, w: s, h: s }; }
+        put(e, R.x, R.y, R.w, R.h);
+        vis(e, on, on ? 120 + r * 120 : 0);
+      });
+      nes.forEach(function (e, j) {
+        put(e, thX0 + (j + 1) * L.th + j * thGap, L.thY + L.th / 2 - 10, thGap);
+        vis(e, st === 4, st === 4 ? 600 + j * 80 : 0);
+      });
+      var stX = wide ? thX0 + (3 * L.th + 2 * thGap) / 2 : thX0 + 3 * L.th + 2 * thGap + 14;
+      var stY = L.thY + L.th / 2;
+      put(stamp, stX, stY, null, null, wide ? ' translate(-50%,-50%) rotate(-7deg)' + (st === 4 ? '' : ' scale(1.7)') : ' translate(0,-50%) rotate(-7deg)' + (st === 4 ? '' : ' scale(1.7)'));
+      vis(stamp, st === 4, st === 4 ? 950 : 0);
+      if (wide) {
+        put(note, L.panX, L.thY + L.th + 16, L.panW);
+        vis(note, st === 4, st === 4 ? 1150 : 0);
+        L.ctrY = L.thY + L.th + 16 + note.offsetHeight + 18;
+      } else {
+        vis(note, false);
+        L.ctrY = L.thY + L.th + 10;
+      }
+      if (wide) { put(counter, L.panX, L.ctrY, L.panW); L.miniY = L.ctrY + counter.offsetHeight + 8; }
+      else { put(counter, L.p, L.ctrY, L.W - 2 * L.p - NC * L.mp - 12); L.miniY = L.ctrY + 2; L.panX = L.W - L.p - NC * L.mp; }
+      vis(counter, st === 4, st === 4 ? 300 : 0);
+      if (st === 4) {
+        cells.forEach(function (e, i) { put(e, L.panX + colIdx[i] * L.mp, L.miniY + rowOf[i] * L.mp, null, null, ' scale(' + kMini + ')'); });
+        if (!instant && prevStep !== 4) countUp(keptN, 1100); else ctrB.textContent = keptN;
+      }
+      if (!wide) L.panX = L.p;
+      host.classList.toggle('mini', st === 4);
+      host.classList.toggle('narrow', !wide);
+
+      // ratings reveal
+      if (wide) put(rbox, L.panX, L.rowsM - 38, L.panW);
+      else put(rbox, (L.W - Math.min(260, L.W - 2 * L.p)) / 2, L.bandY + 12, Math.min(260, L.W - 2 * L.p));
+      vis(rbox, st === 5, st === 5 && fwd ? 80 : 0);
+      routeLine();
+      lm.style.transitionDelay = st === 5 && !instant ? '350ms' : '0ms';
+      lm.style.strokeDashoffset = st === 5 ? 0 : llen;
+      ln.classList.toggle('on', st === 5);
+
+      // scoring scale
+      var on6 = st === 6;
+      orders.forEach(function (o, r) {
+        var R = imRect(r, 0), y = R.y + s * 0.4;
+        var v = cands[pickIdx(r)].rating;
+        put(axes[r], L.sx0, y, L.sx1 - L.sx0, null, on6 ? '' : ' scaleX(0)');
+        vis(axes[r], on6, on6 && !instant ? 150 + r * 120 : 0);
+        put(dots[r], on6 ? sx(v) : L.sx0, y);
+        vis(dots[r], on6, on6 && !instant ? 350 + r * 120 : 0);
+        var x0 = sx(v), x1 = sx(best);
+        put(brs[r], x0, y + 15, x1 - x0, null, on6 ? '' : ' scaleX(0)');
+        vis(brs[r], on6, on6 && !instant ? 1100 + r * 140 : 0);
+        put(brl[r], (x0 + x1) / 2, y + 21, null, null, ' translateX(-50%)');
+        vis(brl[r], on6, on6 && !instant ? 1300 + r * 140 : 0);
+      });
+      var vy0 = L.y0 - 4, vy1 = L.rowsB;
+      put(vRand, sx(mean), vy0, null, vy1 - vy0, on6 ? '' : ' scaleY(0)');
+      put(vBest, sx(best), vy0, null, vy1 - vy0, on6 ? '' : ' scaleY(0)');
+      vis(vRand, on6, on6 && !instant ? 700 : 0); vis(vBest, on6, on6 && !instant ? 800 : 0);
+      put(lRand, sx(mean), L.y0 - L.hh, null, null, ' translateX(-50%)');
+      if (wide) put(lBest, sx(best), L.y0 - L.hh, null, null, ' translateX(-50%)');
+      else put(lBest, sx(best), L.rowsB + 3, null, null, ' translateX(-50%)');
+      vis(lRand, on6, on6 && !instant ? 800 : 0); vis(lBest, on6, on6 && !instant ? 900 : 0);
+      var ly = imRect(2, 0).y + s * 0.4 - 22;
+      put(end0, L.sx0, ly, null, null, ' translateX(-50%)'); put(end1, L.sx1, ly, null, null, ' translateX(-50%)');
+      vis(end0, on6, on6 ? 500 : 0); vis(end1, on6, on6 ? 500 : 0);
+      if (wide) put(take, L.rx, Math.min(L.H - L.p - 44, L.rowsB + 26), L.W - L.p - L.rx);
+      else put(take, L.p, L.rowsB + 24, L.W - 2 * L.p);
+      vis(take, on6, on6 && !instant ? 1700 : 0);
     }
+
+    function set(st, instant) {
+      if (!layout()) { step = st; return; }
+      if (instant) host.classList.add('instant');
+      apply(st, instant);
+      if (instant) { host.getBoundingClientRect(); host.classList.remove('instant'); }
+    }
+    function relayout() {
+      if (!layout()) return;
+      host.classList.add('instant');
+      var st = step; step = st; apply(st, true);
+      host.getBoundingClientRect();
+      host.classList.remove('instant');
+    }
+    set(0, true);
+    if ('ResizeObserver' in window) {
+      var lastW = 0, lastH = 0;
+      new ResizeObserver(function () {
+        if (host.clientWidth === lastW && host.clientHeight === lastH) return;
+        lastW = host.clientWidth; lastH = host.clientHeight; relayout();
+      }).observe(host);
+    } else window.addEventListener('resize', relayout);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+    return { go: function (st, instant) { if (st !== step) set(st, instant); }, step: function () { return step; } };
+  }
+
+  function initScrolly(ex, gates) {
+    var root = $('#scrolly');
+    if (!root) return;
+    var host = $('#st-stage'), steps = $$('.st-step', root), count = $('#st-count'), allBtn = $('#st-all');
+    $$('[data-fill="kept"]', root).forEach(function (e) { e.textContent = gates.gates.unanimity.kept.n; });
+    var stage = makeStage(host, ex, gates);
+    var cur = 0, io = null, statics = null, isStatic = false;
+    var mq = window.matchMedia('(max-width: 860px)');
+
+    function setActive(n) {
+      if (n === cur) return;
+      cur = n;
+      stage.go(n);
+      steps.forEach(function (s) { s.classList.toggle('is-active', +s.getAttribute('data-step') === n); });
+      count.textContent = 'Step ' + n + ' of ' + steps.length;
+    }
+    function line() { return mq.matches ? 0.82 : 0.5; }
+    function observe() {
+      if (io) io.disconnect();
+      if (!hasIO || isStatic) return;
+      var top = Math.round(line() * 100);
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) setActive(+e.target.closest('.st-step').getAttribute('data-step')); });
+      }, { rootMargin: '-' + top + '% 0px -' + (99 - top) + '% 0px', threshold: 0 });
+      // Phones: the stage covers the top of the screen, so watch the cards in the window below it.
+      steps.forEach(function (s) { io.observe(mq.matches ? $('.st-card', s) : s); });
+    }
+    function scrollToStep(n) {
+      n = Math.max(1, Math.min(steps.length, n));
+      var r = $('.st-card', steps[n - 1]).getBoundingClientRect();
+      var target = window.scrollY + r.top + r.height / 2 - window.innerHeight * line();
+      window.scrollTo({ top: target, behavior: reduce ? 'auto' : 'smooth' });
+      setActive(n);
+    }
+    $$('.st-btn', root).forEach(function (b) {
+      b.addEventListener('click', function () { scrollToStep((cur || 0) + +b.getAttribute('data-dir')); });
+    });
+    root.addEventListener('keydown', function (e) {
+      if (isStatic || e.target.tagName === 'A') return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); scrollToStep(cur + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); scrollToStep(cur - 1); }
+    });
+
+    function buildStatics() {
+      statics = steps.map(function (s) {
+        var n = +s.getAttribute('data-step');
+        var h = mk('div', 'st-stage st-static', s);
+        h.setAttribute('aria-hidden', 'true');
+        return { n: n, host: h, stage: null };
+      });
+    }
+    function setStatic(on) {
+      isStatic = on;
+      root.classList.toggle('is-static', on);
+      allBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      allBtn.textContent = on ? 'Back to scrolling story' : 'Show all steps';
+      if (on) {
+        if (!statics) buildStatics();
+        statics.forEach(function (o) {
+          if (!o.stage) o.stage = makeStage(o.host, ex, gates);
+          o.stage.go(o.n, true);
+        });
+        if (io) io.disconnect();
+      } else {
+        observe();
+      }
+    }
+    allBtn.addEventListener('click', function () {
+      setStatic(!isStatic);
+      root.scrollIntoView({ block: 'start', behavior: 'auto' });
+    });
+    // In static mode the toggle lives in the first card.
+    var topToggle = mk('button', 'st-all st-all-top', null, 'Back to scrolling story');
+    topToggle.type = 'button';
+    root.insertBefore(topToggle, root.firstChild);
+    topToggle.addEventListener('click', function () { setStatic(false); root.scrollIntoView({ block: 'start' }); });
+
+    if (reduce || !hasIO) { setStatic(true); return; }
+    observe();
+    // Start the first scene as soon as the stage comes into view.
+    var io0 = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) { io0.disconnect(); if (!cur && !isStatic) setActive(1); }
+    }, { threshold: 0.3 });
+    io0.observe(host);
+    if (mq.addEventListener) mq.addEventListener('change', observe);
   }
 
   /* ---------------- BibTeX copy ---------------- */
@@ -527,10 +928,11 @@
     initReveal();
     initNav();
     initCopy();
-    initFlow();
-    getJSON('static/data/example.json').then(initDemo).catch(function (e) { console.error(e); });
+    var exP = getJSON('static/data/example.json'), gatesP = getJSON('static/data/gates.json');
+    exP.then(initDemo).catch(function (e) { console.error(e); });
     getJSON('static/data/slots.json').then(initSlots).catch(function (e) { console.error(e); });
-    getJSON('static/data/gates.json').then(initGates).catch(function (e) { console.error(e); });
+    gatesP.then(initGates).catch(function (e) { console.error(e); });
+    Promise.all([exP, gatesP]).then(function (r) { initScrolly(r[0], r[1]); }).catch(function (e) { console.error(e); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

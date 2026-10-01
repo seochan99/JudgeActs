@@ -192,79 +192,51 @@
 <!-- ============ Method ============ -->
 <section id="method" aria-labelledby="method-h">
   <h2 id="method-h">How the audit works</h2>
-  <p class="sec-lead">The judge never sees a human rating. We record what it picks, and only afterwards compare that pick with the ratings and with random choice from the same images.</p>
-  <figure class="flow-fig" id="flow-fig">
-    <div class="flow-head">
-      <div class="flow-controls" role="group" aria-label="Protocol step">
-        <button type="button" class="seg" data-step="1" aria-pressed="false" aria-label="Step 1">1</button><button type="button" class="seg" data-step="2" aria-pressed="false" aria-label="Step 2">2</button><button type="button" class="seg" data-step="3" aria-pressed="false" aria-label="Step 3">3</button><button type="button" class="seg" data-step="4" aria-pressed="false" aria-label="Step 4">4</button><button type="button" class="seg" data-step="5" aria-pressed="false" aria-label="Step 5">5</button><button type="button" class="seg" data-step="6" aria-pressed="false" aria-label="Step 6">6</button><button type="button" class="seg is-on" data-step="all" aria-pressed="true">All</button>
-        <button type="button" class="play" id="flow-play" aria-pressed="false" hidden>Play</button>
+  <p class="sec-lead">The judge never sees a human rating. We record what it picks, and only afterwards compare that pick with the ratings and with random choice from the same images. Scroll to follow one prompt through the audit.</p>
+  <div class="scrolly" id="scrolly">
+    <div class="st-sticky">
+      <div class="st-stage" id="st-stage" aria-hidden="true"></div>
+      <div class="st-bar" role="group" aria-label="Audit walkthrough">
+        <button type="button" class="st-btn" data-dir="-1" aria-label="Previous step"><span aria-hidden="true">&larr;</span> Prev</button>
+        <span class="st-count" id="st-count" aria-live="polite">Step 1 of 6</span>
+        <button type="button" class="st-btn" data-dir="1" aria-label="Next step">Next <span aria-hidden="true">&rarr;</span></button>
+        <button type="button" class="st-all" id="st-all" aria-pressed="false">Show all steps</button>
       </div>
-      <p class="flow-cap" id="flow-cap" aria-live="polite"><span class="flow-n" id="flow-n"></span><span id="flow-txt">Selection never sees the ratings; the audit never changes a selection.</span></p>
     </div>
-    <div class="flow-wrap" id="flow-wrap">
-      <div class="flow" id="flow">
-        <div class="panel" data-panel="a">
-          <h3 class="panel-h"><span class="pl">(a)</span> Frozen candidate pools</h3>
-          <div class="part" data-s="1">
-            <h4><span class="sn">1</span>Prompts and images</h4>
-            <p class="node strong">CulturalFrames <span class="sub">300 prompts</span></p>
-            <div class="facet"><h4>10 countries</h4><p>Brazil, Canada, Chile, China, Germany, India, Iran, Japan, Poland, South Africa</p></div>
-            <div class="facet"><h4>5 categories</h4><p>Dates of significance, Etiquette, Family, Greetings, Religion</p></div>
-            <div class="facet"><h4>4 generators</h4><p>SD-3.5-Large, Flux.1-Dev, GPT-Image, Imagen3</p></div>
-            <div class="pool"><span class="stack" aria-hidden="true"><i></i><i></i><i></i></span><span>3&ndash;4 candidate images per prompt</span></div>
-          </div>
-          <div class="part" data-s="5">
-            <p class="node withheld" id="flow-withheld">human ratings withheld</p>
-          </div>
-        </div>
-        <div class="panel" data-panel="b">
-          <h3 class="panel-h"><span class="pl">(b)</span> Selection policy</h3>
-          <div class="part" data-s="2">
-            <h4><span class="sn">2</span>Cyclic orders</h4>
-            <div class="orders"><span class="ord"><span>A</span><span>B</span><span>C</span></span><span class="ord"><span>B</span><span>C</span><span>A</span></span><span class="ord"><span>C</span><span>A</span><span>B</span></span></div>
-          </div>
-          <div class="down" aria-hidden="true"></div>
-          <div class="part" data-s="3">
-            <h4><span class="sn">3</span>Judges</h4>
-            <div class="row"><span class="node q">Qwen3-VL-4B</span><span class="node s">SmolVLM2-2.2B</span></div>
-            <div class="down short" aria-hidden="true"></div>
-            <div class="row"><span class="node">one pick per order</span></div>
-          </div>
-          <div class="down" aria-hidden="true"></div>
-          <div class="part" data-s="4">
-            <h4><span class="sn">4</span>Agreement filters</h4>
-            <div class="row"><span class="node">3/3 orders</span><span class="node">&ge;2/3 orders</span><span class="node">both judges</span></div>
-            <div class="fork" aria-hidden="true"><span></span><span></span></div>
-            <div class="row split"><span class="outcome"><span class="fl">agree</span><span class="node act">act</span></span><span class="outcome"><span class="fl">otherwise</span><span class="node abstain">abstain</span></span></div>
-          </div>
-        </div>
-        <div class="panel" data-panel="c">
-          <h3 class="panel-h"><span class="pl">(c)</span> Retrospective audit</h3>
-          <div class="part" data-s="5">
-            <h4><span class="sn">5</span>Join ratings</h4>
-            <div class="row"><span class="node strong" id="flow-join">join human ratings by image ID</span></div>
-          </div>
-          <div class="part" data-s="6">
-            <h4><span class="sn">6</span>Outcomes</h4>
-            <div class="row"><span class="node">selection regret</span><span class="node">gain over random</span><span class="node">below-mean rate</span></div>
-            <h4>Cultural errors</h4>
-            <div class="row"><span class="node">stereotype</span><span class="node">missing explicit</span><span class="node">missing implicit</span></div>
-            <h4>Diagnostics</h4>
-            <div class="row"><span class="node">country groups</span><span class="node">slot bias</span><span class="node">matched-subset baselines</span></div>
-          </div>
-        </div>
-      </div>
-      <svg class="flow-line part" data-s="5" id="flow-line" aria-hidden="true" focusable="false">
-        <defs>
-          <marker id="fl-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker>
-          <mask id="fl-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="4000" height="4000"><path class="fl-m" d="" fill="none" stroke="#fff" stroke-width="14"/></mask>
-        </defs>
-        <g mask="url(#fl-mask)"><path class="fl-p" d="" marker-end="url(#fl-arrow)"/></g>
-        <text class="fl-t" text-anchor="middle">ratings withheld from the judge, joined only in the audit</text>
-      </svg>
-    </div>
-    <figcaption><b>Figure 1.</b> Audit protocol. (a) Frozen candidate pools from CulturalFrames. (b) Selection: each judge sees only the prompt and the images, in three cyclic orders; agreement filters decide whether to act or abstain. (c) Retrospective audit: human ratings are joined after selection and compared with exact random choice on the same pools. <a href="static/images/framework.png">Static version</a></figcaption>
-  </figure>
+    <ol class="st-steps">
+      <li class="st-step" data-step="1"><div class="st-card">
+        <p class="st-k">Step 1 of 6</p>
+        <h3>300 prompts, each with 3&ndash;4 generated images</h3>
+        <p>Each square is one prompt about everyday culture, 30 per country. Every prompt comes with 3 or 4 images from different generators, fixed before any judging.</p>
+      </div></li>
+      <li class="st-step" data-step="2"><div class="st-card">
+        <p class="st-k">Step 2 of 6</p>
+        <h3>Show the same images in three orders</h3>
+        <p>The judge gets the prompt and the images, nothing else. We ask three times and rotate the images, so each one takes a turn in slot A.</p>
+      </div></li>
+      <li class="st-step" data-step="3"><div class="st-card">
+        <p class="st-k">Step 3 of 6</p>
+        <h3>The judge picks one image per order</h3>
+        <p>Qwen3-VL-4B picks slot A all three times, so it returns a different image each time. SmolVLM2-2.2B picks B, B, then A.</p>
+      </div></li>
+      <li class="st-step" data-step="4"><div class="st-card">
+        <p class="st-k">Step 4 of 6</p>
+        <h3>Agreement filter: act or abstain</h3>
+        <p>The filter acts only if all three orders return the same image. Here they don&rsquo;t, so it abstains. Across all prompts it keeps <span data-fill="kept">121</span> of 300.</p>
+      </div></li>
+      <li class="st-step" data-step="5"><div class="st-card">
+        <p class="st-k">Step 5 of 6</p>
+        <h3>Only now, reveal the human ratings</h3>
+        <p>Human ratings stayed hidden while the judge chose. We attach them by image ID only after every pick is recorded.</p>
+      </div></li>
+      <li class="st-step" data-step="6"><div class="st-card">
+        <p class="st-k">Step 6 of 6</p>
+        <h3>Score the pick against random and the best</h3>
+        <p>Regret is the gap between the pick and the best image; random is the average of the pool. Here the order alone moves the result from 0.00 to 0.83.</p>
+      </div></li>
+    </ol>
+  </div>
+  <p class="st-full"><a href="static/images/framework.png">See the full protocol diagram</a> <span>(Figure 1 in the paper)</span></p>
   <noscript>
     <figure class="wide">
       <a href="static/images/framework.png"><img src="static/images/framework.png" width="1800" height="699" loading="lazy" decoding="async" alt="Three-panel protocol diagram: (a) frozen candidate pools from CulturalFrames, (b) the selection policy with three cyclic orders and agreement filters, (c) the retrospective audit that joins withheld human ratings and compares with random choice on the same pool."></a>

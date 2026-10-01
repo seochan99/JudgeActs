@@ -51,7 +51,7 @@ We make three contributions.
 \begin{itemize}
 \item \textbf{An audit of judges as decision-makers.} We score each returned image against held-out human ratings and against random choice from the same candidates, so every comparison is paired and free of the judge's own scores.
 \item \textbf{How position bias changes what users receive.} Position bias in model judges is known; we measure its consequence when the judge acts. Both judges favor early positions, and the same prompt can yield the worst or the best available image depending only on candidate order (Figures~\ref{fig:hero} and~\ref{fig:teaser}). Ablations show that the bias is not caused by our output format or label letters.
-\item \textbf{An audit of agreement gates.} Keeping only decisions that are consistent across orders retains choices that beat random, whereas agreement with a weaker second judge does not. A gate must therefore be audited on the prompts it rejects as well as on those it keeps.
+\item \textbf{An audit of agreement gates across judges.} For the 4B judge, keeping only decisions that are consistent across orders retains choices that beat random, whereas agreement with a weaker second judge does not. For a larger 8B judge with little position bias, the same gate mostly discards good decisions. A gate must therefore be audited on the prompts it rejects as well as on those it keeps, and re-audited when the judge changes.
 \end{itemize}
 
 \begin{figure*}[t]
@@ -172,6 +172,17 @@ The unit of analysis is a prompt with its candidate pool; the three order calls 
 \label{fig:ablations}
 \end{figure}
 
+\subsection{Does Scale Remove the Bias?}
+\label{sec:scale}
+\input{generated/scale_text}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/scale.pdf}
+\caption{Scale extension. (a) Share of calls choosing the first slot; dashes mark the uniform rate. (b) Gain over random on all prompts, on prompts where all three orders agree, and on prompts where they do not (95\% intervals). The 8-bit 4B run is a control for quantization.}
+\label{fig:scale}
+\end{figure}
+
 \subsection{Cultural-Error Outcomes}
 \input{generated/results_cultural}
 
@@ -197,8 +208,8 @@ Agreement is useful only when it breaks the judge's failure mode. Agreement can 
 \paragraph{Is the unanimity result explained by easy prompts?}
 No. Candidates on the prompts that unanimity keeps differ more in rating than those on the rejected prompts, so the kept pools leave more room for error, not less (Section~\ref{sec:results}); the judge's gain on them is large, and its gain on the rejected prompts is below zero.
 
-\paragraph{Why small open-weight judges?}
-Open weights allow a frozen, fully logged protocol with exact revisions and inputs. Larger judges may show weaker position bias, but the audit applies unchanged, and its main lesson does not depend on the judge: agreement rules need matched baselines and an audit of what they reject.
+\paragraph{What changes with scale?}
+The 8B extension shows that the specific failure is not universal: position bias nearly vanishes, and with it the value of the order-agreement gate. The audit itself transfers unchanged and is what reveals the difference. This is the practical lesson: a filter validated for one judge is not validated for the next.
 
 \paragraph{What order checks cost.}
 \input{generated/review_cost} \input{generated/review_difficulty}
@@ -211,7 +222,7 @@ CulturalFrames covers a limited set of countries, domains, prompts, and generato
 
 Human annotation means are imperfect references. Different annotators can disagree, small rating panels create ties and noise, and selecting a maximum can exploit annotation noise. The oracle should be interpreted accordingly. Primary bootstrap intervals condition on these means; they are not estimates of uncertainty over all possible human evaluations. Prompts can share semantic templates even after exact-text deduplication, so unmodeled dependence may also narrow intervals. Prompt alignment reflects ordinary request satisfaction and cannot isolate culture-specific value by itself. Missing-expectation and stereotype endpoints provide additional descriptions without an arbitrary composite.
 
-The setting simulates selecting a returned image; it measures neither observed user harm nor live sequential editing. We do not treat independent generations as temporal trajectories or claim a feedback-amplification result. Two small open judges (4B and 2.2B parameters) do not represent larger or proprietary models, quantizations, prompts, or compute budgets; stronger judges may show weaker position preference. With 30 prompts per country, country-group intervals are wide, and the study is underpowered to detect moderate group differences. Position, complement-set, content-baseline, and ablation analyses were added after main inference and are exploratory. The CLIP comparison uses a single similarity model. Agreement statistics are not epistemic confidence, and selective risk is not overall system risk when abstained cases remain unresolved.
+The setting simulates selecting a returned image; it measures neither observed user harm nor live sequential editing. We do not treat independent generations as temporal trajectories or claim a feedback-amplification result. Our main judges are small (4B and 2.2B parameters); a single 8B extension, run with 8-bit weights and a matched quantization control, shows that position bias can shrink sharply with scale, and we do not test larger or proprietary models. With 30 prompts per country, country-group intervals are wide, and the study is underpowered to detect moderate group differences. Position, complement-set, content-baseline, and ablation analyses were added after main inference and are exploratory. The CLIP comparison uses a single similarity model. Agreement statistics are not epistemic confidence, and selective risk is not overall system risk when abstained cases remain unresolved.
 
 This is secondary analysis of an independently released public benchmark, with no new participant recruitment or collection of personal data. Derived artifacts retain aggregate scores and candidate identifiers, not annotator identifiers, demographics, or free-text comments. The public dataset card does not declare a dataset license; public availability does not establish redistribution permission. We provide newly written code, manifests, and derived outputs; source images and raw human records are not redistributed. Figures~\ref{fig:hero}, \ref{fig:teaser}, and~\ref{fig:gallery} reproduce dataset images with attribution for illustration. Applicable institutional requirements for secondary analysis remain an author responsibility.
 
@@ -219,7 +230,7 @@ This is secondary analysis of an independently released public benchmark, with n
 AI coding and writing assistants (OpenAI Codex and Anthropic Claude) assisted with code development, manuscript drafting and revision, figure code, and draft review. All empirical results are computed from released annotations and recorded local judge outputs; writing assistance does not supply experimental observations. Authors remain responsible for verifying the analysis, references, and final manuscript.
 
 \paragraph{Statement of Contributions.}
-This paper contributes (i) a matched-baseline, order-rotated audit protocol for VLM judges that select from fixed candidate pools, released with a deterministic artifact and an offline browser for every recorded decision (Appendix~\ref{app:browser}); (ii) evidence of strong position bias in two small open judges, with post-hoc ablations of the output format and label identity; and (iii) an audit of agreement gates on both the prompts they keep and the prompts they reject, compared with a content-only baseline. The paper has no earlier published version; all experiments, analyses, and text are new.
+This paper contributes (i) a matched-baseline, order-rotated audit protocol for VLM judges that select from fixed candidate pools, released with a deterministic artifact and an offline browser for every recorded decision (Appendix~\ref{app:browser}); (ii) evidence of strong position bias in two small open judges, with post-hoc ablations of the output format and label identity and a scale extension showing that the bias shrinks in a larger judge; and (iii) an audit of agreement gates on both the prompts they keep and the prompts they reject, compared with a content-only baseline. The paper has no earlier published version; all experiments, analyses, and text are new.
 
 \section{Conclusion}
 \input{generated/conclusion_result}
@@ -340,12 +351,19 @@ Table~\ref{tab:outcomes} reports paired differences from matched random selectio
 Table~\ref{tab:countries} expands Figure~\ref{fig:country}. The last column reports how many prompts per country pass the unanimity gate and their regret; the gate represents all countries, but acceptance ranges widely across groups. Table~\ref{tab:categories} reports the declared category analysis.
 
 \section{Ablation Details}
-Table~\ref{tab:ablations} lists every condition summarized in Section~\ref{sec:ablations}. Taken alone, the added fourth rotation is not balanced across generators, so only the combined four-order results are reported.
+Table~\ref{tab:ablations} lists every condition summarized in Section~\ref{sec:ablations}, and Table~\ref{tab:scale} the scale extension of Section~\ref{sec:scale}. Taken alone, the added fourth rotation is not balanced across generators, so only the combined four-order results are reported.
 \begin{table*}[t]
 \centering
 \input{generated/appendix_ablations}
 \caption{Post-hoc ablations (Qwen, 300 prompts; four orders use the 200 four-image pools). Choice changes: share of prompts whose returned image differs across orders. Unanimous: prompts where all orders return the same image.}
 \label{tab:ablations}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\resizebox{\textwidth}{!}{\input{generated/appendix_scale}}
+\caption{Scale extension (300 prompts, three orders). The 8-bit runs use Apple MLX with the same inputs, decoding, and parser as the main run; the 8-bit 4B run controls for quantization and agrees with the main 4B run on most calls. Rejected: prompts on which the three orders disagree.}
+\label{tab:scale}
 \end{table*}
 
 \section{Content-Only Baseline and Annotation Robustness}

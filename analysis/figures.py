@@ -7,6 +7,7 @@ from .gallery_figure import main as render_gallery
 from .result_figures import main as render_results
 from .appendix_tables import main as render_appendix_tables
 from .ablation_figure import main as render_ablations
+from .scale import main as render_scale
 
 
 def main():
@@ -18,6 +19,7 @@ def main():
     render_results()
     render_appendix_tables()
     render_ablations()
+    render_scale()
     crop_all()
 
 

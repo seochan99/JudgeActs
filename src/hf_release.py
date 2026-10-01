@@ -43,6 +43,12 @@ configs:
     path: ablations/opaque_labels.jsonl
   - split: rotation4
     path: ablations/rotation4.jsonl
+- config_name: scale_extension
+  data_files:
+  - split: qwen4b_8bit_control
+    path: extension/qwen4b_mlx_main.jsonl
+  - split: qwen8b_8bit
+    path: extension/qwen8b_mlx_main.jsonl
 - config_name: prompt_metrics
   data_files: metrics/prompt_metrics.csv
 ---
@@ -63,6 +69,7 @@ A vision-language model judge chooses one of three or four generated images for 
 | `pools` | 300 frozen candidate pools: prompt, country, category, and per-candidate aggregated human ratings (prompt alignment, stereotype, missing explicit and implicit expectations, image quality, overall satisfaction) |
 | `judge_calls` | Every recorded call for Qwen3-VL-4B-Instruct (900) and SmolVLM2-2.2B-Instruct (900): presentation mapping, raw output, parsed choice, validity flags, timing |
 | `ablations` | Post-hoc Qwen runs: choice-only output format, opaque labels, and a fourth rotation for four-image pools |
+| `scale_extension` | Qwen3-VL-8B (8-bit, MLX) on the same prompts and orders, plus an 8-bit Qwen3-VL-4B quantization control |
 | `prompt_metrics` | Prompt-level outcomes for every policy (regret, gain over exact random choice, below-mean indicator, cultural-error ratings) |
 | `results/` | Every summary estimate reported in the paper, with bootstrap intervals |
 | `manifests/` | Frozen development, main, and reserve splits and presentation orders |
@@ -103,6 +110,9 @@ def build():
     (OUT / "ablations").mkdir()
     for p in sorted((ROOT / "runs/ablations").glob("*.jsonl")):
         shutil.copy(p, OUT / "ablations" / p.name)
+    (OUT / "extension").mkdir()
+    for p in sorted((ROOT / "runs/extension").glob("*mlx_main.jsonl")):
+        shutil.copy(p, OUT / "extension" / p.name)
     (OUT / "metrics").mkdir()
     for name in ["prompt_metrics.csv", "order_metrics.csv"]:
         shutil.copy(ROOT / "results/main" / name, OUT / "metrics" / name)

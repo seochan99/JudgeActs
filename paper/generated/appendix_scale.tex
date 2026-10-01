@@ -1,0 +1,9 @@
+\begin{tabular}{lrrlrrlll}
+\toprule
+Judge & First slot (\%) & Choice changes (\%) & Gain [95\% CI] & Regret & BMR (\%) & Unanimous: cov.\ (\%), gain & Rejected: gain [95\% CI] & $\Delta$Stereo.\ [95\% CI]\\
+\midrule
+Qwen3-VL-4B (main, bf16) & 48.8 & 59.7 & 0.039 [0.016, 0.062] & 0.160 & 36.3 & 40.3, 0.141 & $-$0.030 [$-$0.057, $-$0.002] & 0.023 [0.002, 0.045]\\
+Qwen3-VL-4B (8-bit control) & 48.2 & 57.3 & 0.044 [0.022, 0.066] & 0.155 & 36.0 & 42.7, 0.135 & $-$0.023 [$-$0.051, 0.004] & 0.021 [0.001, 0.043]\\
+Qwen3-VL-8B (8-bit) & 27.3 & 43.0 & 0.097 [0.077, 0.117] & 0.102 & 24.0 & 57.0, 0.118 & 0.068 [0.036, 0.099] & 0.016 [$-$0.004, 0.036]\\
+\bottomrule
+\end{tabular}
